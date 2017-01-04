@@ -1,0 +1,8 @@
+<map id="convertcoordinates2" name="convertcoordinates2">
+<area shape="rect" id="node2" href="$declare1_8h.html#a621b5880f0f69cb2bdcbe9098e03ae68" title="grid_lat" alt="" coords="199,5,263,32"/>
+<area shape="rect" id="node3" href="$declare1_8h.html#a95f5f61f5d8cf50c3e5cdd4e0d98bf19" title="grid_long" alt="" coords="194,56,269,83"/>
+<area shape="rect" id="node4" href="$declare1_8h.html#ac7814e6d7c48d05329788fa63414abf6" title="grid_dlat" alt="" coords="196,107,267,133"/>
+<area shape="rect" id="node5" href="$declare1_8h.html#a61a71fe6610eb2c5afb0acd3b413dab1" title="grid_dlong" alt="" coords="191,157,272,184"/>
+<area shape="rect" id="node6" href="$declare1_8h.html#ac29792c01f0cf1350ba99f381677e728" title="grid_x" alt="" coords="203,208,260,235"/>
+<area shape="rect" id="node7" href="$declare1_8h.html#a4d1fadc3bb143444ccbafd19f9f6608f" title="grid_y" alt="" coords="203,259,260,285"/>
+</map>

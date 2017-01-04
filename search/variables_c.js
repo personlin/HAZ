@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['n1',['n1',['../declare1_8h.html#aa679c260b6e1515b7222ae5af951c549',1,'declare1.h']]],
+  ['n2',['n2',['../declare1_8h.html#ab0776af43fdd3fefc150053ee1cbeb50',1,'declare1.h']]],
+  ['nattentype',['nAttenType',['../declare1_8h.html#aee9997706b083f98cdfc52dd8003c944',1,'declare1.h']]],
+  ['ndistbins',['nDistBins',['../declare1_8h.html#a37f1c4bd5ed94672d501f0ccbadc7aa7',1,'declare1.h']]],
+  ['nepsbins',['nEpsBins',['../declare1_8h.html#a2315bf7141dad21fdb4f4af1602cf675',1,'declare1.h']]],
+  ['nflt',['nFlt',['../declare1_8h.html#aa42f3567f3f657a4b100c47b26895c3d',1,'declare1.h']]],
+  ['nhypox',['nHypoX',['../declare1_8h.html#a15b8f9923956d06d6e0854fd88bc54ca',1,'declare1.h']]],
+  ['nhypoxstep',['nHypoXStep',['../declare1_8h.html#aca0180e24e13d5b393a3bd7a42bd1711',1,'declare1.h']]],
+  ['nhypoz',['nHypoZ',['../declare1_8h.html#acd80619d17ab80d9d044229e6e4b5141',1,'declare1.h']]],
+  ['nhypozstep',['nHypoZStep',['../declare1_8h.html#af86bb281614fa323779d012766ba0261',1,'declare1.h']]],
+  ['nlocx',['nLocX',['../declare1_8h.html#a32310cdf90fdf2ca708d246ba8d1cb64',1,'declare1.h']]],
+  ['nlocxas',['nLocXAS',['../declare1_8h.html#a0f2c3bd15aee6dbbc2b6a4b2ca4c3f55',1,'declare1.h']]],
+  ['nlocy',['nLocY',['../declare1_8h.html#a4dcceb706d6c50c3c889d93b3a0eb310',1,'declare1.h']]],
+  ['nlocyst1',['nLocYST1',['../declare1_8h.html#a5391484ce18e196187bcdd6e538d4d22',1,'declare1.h']]],
+  ['nmagbins',['nMagBins',['../declare1_8h.html#ae3bc177bed16dd387e64b5f5cc6b06c4',1,'declare1.h']]],
+  ['nprob',['nProb',['../declare1_8h.html#a8d09f9af34b2210d2f83af385c1691b0',1,'declare1.h']]],
+  ['npts',['nPts',['../declare1_8h.html#a29931c47dc3df84ca9956e71a8dbb957',1,'declare1.h']]],
+  ['nrefgm',['nRefGM',['../declare1_8h.html#a4a65aef63ac0114859ee868bcdbc4ea6',1,'declare1.h']]],
+  ['nrefmag',['nRefMag',['../declare1_8h.html#ab687dd2fd20439007e6ac2cfeca0bbae',1,'declare1.h']]],
+  ['nrefper',['nRefPer',['../declare1_8h.html#ad477c2833dc5c2b896ff6a3802c235e8',1,'declare1.h']]],
+  ['nsite',['nSite',['../declare1_8h.html#a3fc79bf57e5c559719731054df97cd22',1,'declare1.h']]],
+  ['nxcostbins',['nXcostBins',['../declare1_8h.html#a826b08b9fd3eb0d35723c89be72e0aed',1,'declare1.h']]]
+];
