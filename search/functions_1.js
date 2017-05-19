@@ -1,20 +1,4 @@
 var searchData=
 [
-  ['ba_5fnga_5f2008',['ba_nga_2008',['../_n_g_a2008_8_f.html#a15fc2d941ceeff893c79be06f1f76895',1,'NGA2008.F']]],
-  ['ba_5fnga_5f2008tr',['ba_nga_2008tr',['../_n_g_a2008___t_r_adjusted___v3_8_f.html#a354e9265ff64feb03a4b9c842a9d919a',1,'NGA2008_TRAdjusted_V3.F']]],
-  ['bc_5fngawest2_5f2013_5fvert',['bc_ngawest2_2013_vert',['../_n_g_a_west2___vert_8_f.html#a2b34e79161a2d0e21b63a56b06115e61',1,'NGAWest2_Vert.F']]],
-  ['bchhr2vs760',['bchhr2vs760',['../bc_hydro__subduction_8f.html#aadfeb24a71d64e6c950cdc7d49feeff4',1,'bcHydro_subduction.f']]],
-  ['bchydrosub2008_5fmodel',['bchydrosub2008_model',['../bc_hydro__subduction_8f.html#ae75485839ddbdc4298fce3390c5e6459',1,'bcHydro_subduction.f']]],
-  ['bchydrosub2008_5fmodelsm',['bchydrosub2008_modelsm',['../bc_hydro__subduction_8f.html#a7170eac3236bff9e46bf1951e28a3d3b',1,'bcHydro_subduction.f']]],
-  ['bchydrosub2010_5fmodel',['bchydrosub2010_model',['../bc_hydro__subduction_8f.html#a8b926823e2e47d151c5aa7491f3a5fcb',1,'bcHydro_subduction.f']]],
-  ['bchydrosub_5fv2',['bchydrosub_v2',['../bc_hydro__subduction_8f.html#abc23c6f647181354fb2d5f83d82e010e',1,'bcHydro_subduction.f']]],
-  ['bchydrosub_5fv3',['bchydrosub_v3',['../bc_hydro__subduction_8f.html#acf676faad1fa4473e92fc84aeabc237f',1,'bcHydro_subduction.f']]],
-  ['beta',['beta',['../declare1_8h.html#a109b7250162d39fb6bc1a2dba1ccb63c',1,'declare1.h']]],
-  ['bindi_5fhor_5f2009',['bindi_hor_2009',['../_a_t_t_e_n_8_f.html#a09fae4f363a30a4df30049e08570ae68',1,'ATTEN.F']]],
-  ['bindi_5fhor_5f2011',['bindi_hor_2011',['../_a_t_t_e_n_8_f.html#adafbac5a98566a9f84c32a832fbddb7d',1,'ATTEN.F']]],
-  ['bindi_5fhor_5f2013',['bindi_hor_2013',['../_a_t_t_e_n_8_f.html#a44528f10d28cdcec9f815ba26d74d378',1,'ATTEN.F']]],
-  ['bjf94',['bjf94',['../_a_t_t_e_n_8_f.html#ac743df7ad81e6b40c6a2bf36fccce77b',1,'ATTEN.F']]],
-  ['bjf97',['bjf97',['../_a_t_t_e_n_8_f.html#a0ebb5525cd1631b267f73e1a61da10e7',1,'ATTEN.F']]],
-  ['bradley_5f2010',['bradley_2010',['../_a_t_t_e_n_8_f.html#a8bc513be52d434a7adafc8d9bc90ec6e',1,'ATTEN.F']]],
-  ['bssa_5fngawest2_5f2013',['bssa_ngawest2_2013',['../_n_g_a_west2_8_f.html#a92390c3f99375fb3450e084f4fd5c00c',1,'NGAWest2.F']]]
+  ['beta',['beta',['../declare1_8h.html#a109b7250162d39fb6bc1a2dba1ccb63c',1,'declare1.h']]]
 ];

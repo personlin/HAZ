@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['z0',['z0',['../declare1_8h.html#aab01ece185838b5e4628d931daf5d322',1,'declare1.h']]],
-  ['zflt',['zFlt',['../declare1_8h.html#a7d5e227cf3c662655cdb0442e71371e8',1,'declare1.h']]],
-  ['zhaoetal2006',['zhaoetal2006',['../_a_t_t_e_n_8_f.html#ab0c33e48b4b8a054c01e8caa5e181fb0',1,'ATTEN.F']]],
-  ['ztor',['ZTOR',['../declare1_8h.html#a4aed9f0e2d247ec27efa088e26df1f97',1,'declare1.h']]]
+  ['x0',['x0',['../declare1_8h.html#a71d0af8a6371efa7ae06a5f4c339dbee',1,'declare1.h']]],
+  ['xcost',['xcost',['../declare1_8h.html#a949115b391df95c002a1212b5cc1a93b',1,'declare1.h']]],
+  ['xcost_5fbar',['Xcost_bar',['../declare1_8h.html#adb32490ffa62713697d319b3c71f243a',1,'declare1.h']]],
+  ['xcostbins',['xCostBins',['../declare1_8h.html#a37a9b1b8e276ae4908ff4c3c7a803607',1,'declare1.h']]],
+  ['xflt',['xFlt',['../declare1_8h.html#aa2494c4f851274d25e2dc77c2319fe08',1,'declare1.h']]],
+  ['xstep',['xStep',['../declare1_8h.html#af9d48ae4c90f23ed8c8e7c97fd1ba9a2',1,'declare1.h']]]
 ];

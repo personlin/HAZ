@@ -1,26 +1,10 @@
 var searchData=
 [
-  ['n1as',['n1AS',['../declare1_8h.html#a1659a2fb8552b0a84eb498f667b057f8',1,'declare1.h']]],
-  ['n2as',['n2AS',['../declare1_8h.html#a5b393e896c980c37b2f83a28f0605388',1,'declare1.h']]],
-  ['natten',['nAtten',['../declare1_8h.html#ace16d9cc3c7c1715251119723cdfbdeb',1,'declare1.h']]],
-  ['ncounts7',['ncountS7',['../declare1_8h.html#aa84d5876f47dd4153568c389c12f3196',1,'declare1.h']]],
-  ['ncree_5f2011',['ncree_2011',['../atten__eq__tw_8f.html#a1fb7f79632d3170160f7c01ac948cc2e',1,'atten_eq_tw.f']]],
-  ['ndd',['nDD',['../declare1_8h.html#af199b415dd361a3d0daca4866f81f30f',1,'declare1.h']]],
-  ['ndtr',['ndtr',['../_n_p_r_o_b_8_f.html#a82668ec33d38bc12601b7a49c70dc644',1,'NPROB.F']]],
-  ['ndtr3',['ndtr3',['../_n_p_r_o_b_8_f.html#a35f360804dd5894c1413d1a326cbeaf5',1,'NPROB.F']]],
-  ['nfltgrid',['nfltGrid',['../declare1_8h.html#a8242b2a9c8b4cb940a2e67a466b1ed90',1,'declare1.h']]],
-  ['nfp',['nfp',['../declare1_8h.html#aef655e8bd0b6a7a325a3a2e49f069ca9',1,'declare1.h']]],
-  ['nftype',['nfType',['../declare1_8h.html#af78a1f100e0894d4315f40ccb31f703c',1,'declare1.h']]],
-  ['ngasigma',['ngasigma',['../eus__atten2_8f.html#a1f7faf94f96815d7f94020ae36b325a7',1,'eus_atten2.f']]],
-  ['ninten',['nInten',['../declare1_8h.html#adc674cd71198a0ebf061dbbb300430b7',1,'declare1.h']]],
-  ['nlocxcells',['nlocxcells',['../n_ruptures_8f.html#a95ef26cb609a77ec5e7afa5bf3eaf94a',1,'nRuptures.f']]],
-  ['nlocycells',['nlocycells',['../n_ruptures_8f.html#a0756b081bb6d950b457e511460b4edb4',1,'nRuptures.f']]],
-  ['nmag',['nMag',['../declare1_8h.html#a96620afd525cf8de985b20e45a663f78',1,'declare1.h']]],
-  ['nmaxmag2',['nMaxMag2',['../declare1_8h.html#a85c56631b5dd61bd8b519118cc6161cd',1,'declare1.h']]],
-  ['nparamvar',['nParamVar',['../declare1_8h.html#aa4d897b420591241d3d62e137f3ffa72',1,'declare1.h']]],
-  ['nruparea',['nRupArea',['../declare1_8h.html#af7aeb7bcd0c2687243beadf388a1208b',1,'declare1.h']]],
-  ['nrupwidth',['nRupWidth',['../declare1_8h.html#a3a430cc3711a15e3e274f3597624013c',1,'declare1.h']]],
-  ['nsegmodel',['nSegModel',['../declare1_8h.html#a9bfb8c8a767bc4b651910346da0a1a57',1,'declare1.h']]],
-  ['nsyn_5fcase',['nSyn_Case',['../declare1_8h.html#a3054665f77636d6acf65299013c3a41b',1,'declare1.h']]],
-  ['nwidth',['nWidth',['../declare1_8h.html#ad812c23c9fe561ac8da9062682ed2477',1,'declare1.h']]]
+  ['parameter',['parameter',['../pfrisk_8h.html#a07b5af1b8e2529943ce4641a39eb2595',1,'pfrisk.h']]],
+  ['period1',['period1',['../declare1_8h.html#a660eed0839e8efa3f34828c3cec4b74b',1,'declare1.h']]],
+  ['plocy',['pLocY',['../declare1_8h.html#a4285881169d899a1fb4e67ab902321eb',1,'declare1.h']]],
+  ['pmag',['pMag',['../declare1_8h.html#ac88095a04bcc74ca8f57a990802f63a4',1,'declare1.h']]],
+  ['probact',['probAct',['../declare1_8h.html#a5ecd238cf333300656da5d89d921a40d',1,'declare1.h']]],
+  ['pxceed',['pxceed',['../27___n_p_r_o_b_8_f.html#a0997b76bf4d9b1963d7f4b1cff61a42c',1,'27_NPROB.F']]],
+  ['pxceed3',['pxceed3',['../27___n_p_r_o_b_8_f.html#a593aa71d3aa997fbe4239c0743583e66',1,'27_NPROB.F']]]
 ];

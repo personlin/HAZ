@@ -1,0 +1,13 @@
+<map id="s23_initdeagg2" name="s23_initdeagg2">
+<area shape="rect" id="node2" href="$declare1_8h.html#af36e952aa7a050a230ac429ad69aa0c9" title="rjb_bar_s" alt="" coords="186,5,261,32"/>
+<area shape="rect" id="node3" href="$declare1_8h.html#aded0d2d92d2d93d8e0302f5560248f16" title="rx_bar_s" alt="" coords="187,56,259,83"/>
+<area shape="rect" id="node4" href="$declare1_8h.html#a206d3f645b8c949b6129e1e843a0862d" title="e_bar_s" alt="" coords="189,107,257,133"/>
+<area shape="rect" id="node5" href="$declare1_8h.html#a421001411821dd9c493c60139df0f2b0" title="ry0_bar_s" alt="" coords="184,157,263,184"/>
+<area shape="rect" id="node6" href="$declare1_8h.html#ae57d2d2f74fabccc048b69ecef9221e4" title="mag_bar_s" alt="" coords="180,208,267,235"/>
+<area shape="rect" id="node7" href="$declare1_8h.html#a821494559765c32c95ecac59fe6df05e" title="ftype_bar_s" alt="" coords="179,259,268,285"/>
+<area shape="rect" id="node8" href="$declare1_8h.html#a8b0feb1a5daca84d561eca3ac84827f5" title="hypodepth_bar_s" alt="" coords="163,309,284,336"/>
+<area shape="rect" id="node9" href="$declare1_8h.html#a5411b660ab312feaf58a7d7b8f6a3c66" title="dipavgd_bar_s" alt="" coords="171,360,275,387"/>
+<area shape="rect" id="node10" href="$declare1_8h.html#adf19022ce708d6ca0dad2f3fc27849bb" title="ztor_bar_s" alt="" coords="182,411,265,437"/>
+<area shape="rect" id="node11" href="$declare1_8h.html#ae33b2186e7aef56e33482222ea8c1417" title="thetasite_bar_s" alt="" coords="168,461,279,488"/>
+<area shape="rect" id="node12" href="$declare1_8h.html#a50c3ccb8cb8a502ce6859713c1a7d327" title="rupwidth_bar_s" alt="" coords="169,512,278,539"/>
+</map>

@@ -1,12 +1,20 @@
 var searchData=
 [
-  ['lgtestinten',['lgTestInten',['../declare1_8h.html#a39c4f3aa66242415afaf8b525600baf1',1,'declare1.h']]],
-  ['lin2009',['lin2009',['../atten__eq__tw_8f.html#a0569ddb2b45c646a19d8c1fbea6e332b',1,'atten_eq_tw.f']]],
-  ['lin_5ffw_5frock',['lin_fw_rock',['../atten__eq__tw_8f.html#aaec5cbf5ef1d3c847a81c3d456263fa3',1,'atten_eq_tw.f']]],
-  ['lin_5ffw_5fsoil',['lin_fw_soil',['../atten__eq__tw_8f.html#aaa64570362b51220a393b7e9b5a7436c',1,'atten_eq_tw.f']]],
-  ['lin_5fhw_5frock',['lin_hw_rock',['../atten__eq__tw_8f.html#ad819d198f2f9d726ee8ce1bbecefeff3',1,'atten_eq_tw.f']]],
-  ['lin_5fhw_5fsoil',['lin_hw_soil',['../atten__eq__tw_8f.html#a0a43fa0e0a2ab43ee32085399a9d5e4d',1,'atten_eq_tw.f']]],
-  ['linlee08rock',['linlee08rock',['../_a_t_t_e_n_8_f.html#a4061b4de61631e26b4060f364cda40c2',1,'ATTEN.F']]],
-  ['linlee08soil',['linlee08soil',['../_a_t_t_e_n_8_f.html#a0feb5a0e8afb2c817a66b51ee540df71',1,'ATTEN.F']]],
-  ['loh96',['loh96',['../_a_t_t_e_n_8_f.html#a1894775605d72c29339855d7bef3c3f5',1,'ATTEN.F']]]
+  ['m_5fbar',['m_bar',['../declare1_8h.html#a9be97e5ce41416ace67ec17d5518fa5c',1,'declare1.h']]],
+  ['mag_5fbar_5fs',['mag_bar_s',['../declare1_8h.html#ae57d2d2f74fabccc048b69ecef9221e4',1,'declare1.h']]],
+  ['magbar1',['magbar1',['../declare1_8h.html#ab3c17a2c36893962139c274f6402f665',1,'declare1.h']]],
+  ['magbins',['magBins',['../declare1_8h.html#aeac871ef6475650dee73ce428704dd0a',1,'declare1.h']]],
+  ['magrecur',['MagRecur',['../declare1_8h.html#a8f75f3366e09faffa5faad8377cb5de0',1,'declare1.h']]],
+  ['magrecurwt',['magRecurWt',['../declare1_8h.html#aaf61e9d701f489a85badc4f8bb210024',1,'declare1.h']]],
+  ['mags7',['magS7',['../declare1_8h.html#aa555f9a61c74aaaff6e36f3cfffccacf',1,'declare1.h']]],
+  ['magstep',['magStep',['../declare1_8h.html#a0d01e25383fac28644448ad11897c66b',1,'declare1.h']]],
+  ['maxmag',['maxMag',['../declare1_8h.html#a2c034d757ec36b858159d701c25e121e',1,'declare1.h']]],
+  ['maxmagwt',['maxMagWt',['../declare1_8h.html#ad413e533484022833b4429ea2350d7e6',1,'declare1.h']]],
+  ['mechs7',['mechS7',['../declare1_8h.html#a5c6c2c94357a2967e0ad38ed69ac1f33',1,'declare1.h']]],
+  ['mindepth',['minDepth',['../declare1_8h.html#aa5d156a7bcebe8f83bef5b9aee39be71',1,'declare1.h']]],
+  ['minmag',['minMag',['../declare1_8h.html#acccfe19d8ae7dad2c6c50a9c2e8c4bf9',1,'declare1.h']]],
+  ['minrrup',['MinRrup',['../declare1_8h.html#aa7b09efb197f30988a7cdd206ec9837e',1,'declare1.h']]],
+  ['mmagout',['mMagout',['../declare1_8h.html#a48c85f1837178673ea448855d073748b',1,'declare1.h']]],
+  ['mmagoutwt',['mMagoutWt',['../declare1_8h.html#a206848b59143ee6f35e356854be90fce',1,'declare1.h']]],
+  ['mpdf_5fparam',['mpdf_param',['../declare1_8h.html#a2713f4e8b84f0415af10eaa0131d4fad',1,'declare1.h']]]
 ];

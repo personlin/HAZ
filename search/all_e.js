@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['output_5fhazbins',['output_hazbins',['../_f_r_i_s_k___i_o_8_f.html#a384dc1e35a73edd23be722bc9e8f9c8a',1,'FRISK_IO.F']]],
-  ['output_5fsourcedeagg',['output_sourcedeagg',['../_f_r_i_s_k___i_o_8_f.html#ab38f0aab9bda8d709db93904173085fb',1,'FRISK_IO.F']]],
-  ['output_5ftotalhaz',['output_totalhaz',['../_f_r_i_s_k___i_o_8_f.html#abb532610f97521aa4eea1a5ad080dd24',1,'FRISK_IO.F']]]
+  ['lginten',['lgInten',['../declare1_8h.html#a189a763b5abb3b5710ef8a26c16a02f0',1,'declare1.h']]],
+  ['lginten0',['lgInten0',['../declare1_8h.html#a023d6f5dd3bea14e9474e64ffaf8493a',1,'declare1.h']]],
+  ['lgintens',['lgIntenS',['../declare1_8h.html#a669bba5555189adc4c03ff8a1db761f3',1,'declare1.h']]],
+  ['lgtestinten',['lgTestInten',['../declare1_8h.html#a39c4f3aa66242415afaf8b525600baf1',1,'declare1.h']]]
 ];
