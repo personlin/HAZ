@@ -1,8 +1,9 @@
 c ------------------------------------------------------------------
 
       subroutine S31_Set_Rates ( sourceType, nParamVar, magRecur, rate, beta, minMag,
-     1           maxMag, iFlt, iWidth, faultArea, coeff_area, RateParam, mpdf_param, magStep,
-     2           RateType, charMeanMo, expMeanMo )
+     1           maxMag, iFlt, iWidth, faultArea,
+     1           RateParam, mpdf_param, magStep, RateType, charMeanMo, expMeanMo,
+     2           iSR_flag, SR_Rake, dip_top )
 
       implicit none
       include 'pfrisk.h'
@@ -11,7 +12,7 @@ c ------------------------------------------------------------------
      1     beta(MAX_FLT,MAXPARAM,MAX_WIDTH),
      1     minMag(MAX_FLT), maxMag(MAX_FLT,MAXPARAM,MAX_WIDTH),
      1     rate(MAXPARAM,MAX_WIDTH),charMeanMo(MAXPARAM,MAX_WIDTH),
-     1     expMeanMo(MAXPARAM,MAX_WIDTH), coeff_area(2,MAX_FLT),
+     1     expMeanMo(MAXPARAM,MAX_WIDTH),
      2     RateParam(MAX_FLT,MAXPARAM,MAX_WIDTH),
      3     mpdf_param(MAX_FLT,MAXPARAM,MAX_WIDTH,6)
       real magStep(MAX_FLT)
@@ -28,6 +29,9 @@ c ------------------------------------------------------------------
       real bAC, gamma, bGR, fGR, fAC, gAC, meanMoChar, pRatio
       real c2, c3, c4, bM2, bM1, scale1, faultArea, x, deltamac
       real meanMoRelease1, meanMoRelease2, meanMoRelease3, fix_step
+
+      integer iSR_Flag(MAX_FLT)
+      real SR_rake(MAX_FLT,MAXPARAM), dip_top, SR_vert, SR_net
 
 c     No rate calculation needed for SourceType 7
       if (sourceType .eq. 7) then
@@ -50,10 +54,36 @@ c     No rate calculation needed for SourceType 7
 c         Is this a slip-rate or moment rate?
           if (RateType(iFlt,iParam,i) .eq. 1 .or. RateType(iFlt,iParam,i) .eq. 4) then
 
+c           Is this slip rate?
             if ( RateType(iFlt,iParam,i) .eq. 1 ) then
-              momentRate2 = rateParam(iFlt,iParam,i)*faultArea * rigidity * 1.0e9
-c              write (80,'( 3i5,2e12.4)') iflt, i, iParam,faultArea, rateParam(iFlt,iParam,i)
+c             THis is a slip rate
+c             Check if this is a vertical slip rate or net slip rate
+              if ( iSR_Flag(iFlt) .eq. 1 ) then
+c              This is a vertical slip rate, so check for devide by zero
+               if ( dip_top .eq. 0 .or. SR_rake(iFlt,iParam) .eq. 0. ) then
+                 write (*,'( 2x,''Error: cannot compute net slip rate from vertical slip rate'')')
+                 write (*,'( 2x,''Dip ='',f10.2, 5x,''rake ='',f10.2)') dip_top,
+     1             SR_rake(iFlt,iParam)
+                 stop 99
+               endif
+
+c              convert vertical slip rate to net slip rate
+               SR_vert = rateParam(iFlt,iParam,i)
+               SR_net = (SR_vert /sin(dip_top)) / sin( SR_rake(iFlt,iParam) )
+               write (18,'( 2x,''convert vertical slip rate to net'')')
+               write (18,'( 2x,''iFlt, iParam, iWidth, SR_vert, dip, rake, sr_net'',3i5,4f10.3)')
+     1              iFlt, iParam, iWidth, SR_vert, dip_top*180./3.1415926, SR_rake(iFlt,iParam)*180./3.1415926,
+     2              SR_net
+
+               momentRate2 = SR_net * faultArea * rigidity * 1.0e9
+
+              else
+c              This is a net slip rate
+               momentRate2 = rateParam(iFlt,iParam,i)*faultArea * rigidity * 1.0e9
+              endif
+
             else
+c             This is a moment rate
               momentRate2 = rateParam(iFlt,iParam,i)
             endif
 
@@ -217,8 +247,7 @@ c            Use a fixed mag step of 0.01 for getting the moment balance
 
 c     WAACY Model
           elseif (magRecur(iFlt,iParam,i) .eq. 10 ) then
-             call S31_calc_sum_waacy ( sum, mpdf_param, maxMag, beta, minMag, iFlt, iParam, iwidth,
-     1                                 faultArea, coeff_area, pRatio )
+             call S31_calc_sum_waacy ( sum, mpdf_param, maxMag, beta, minMag, iFlt, iParam, iwidth, faultArea, pRatio )
              rate_M_gt_0 = momentRate2/sum
 
 c            Set the rate for M> Mmin (scale the rate for M>0 by pRatio,
@@ -401,25 +430,23 @@ c........does not work with BC Hydro Alternative Characteristic Model
 c -----------------------------------------------------------
 
       subroutine S31_calc_sum_waacy ( sum, mpdf_param, maxMag, beta, minmag,
-     1          iFlt, iParam, iwidth, faultArea, coeff_area, pRatio)
+     1          iFlt, iParam, iwidth, faultArea, pRatio)
 
       implicit none
       include 'pfrisk.h'
 
       real  mpdf_param(MAX_FLT,MAXPARAM,MAX_WIDTH,6),
      1       beta(MAX_FLT,MAXPARAM,MAX_WIDTH),
-     1       maxMag(MAX_FLT,MAXPARAM,MAX_WIDTH), coeff_area(2,MAX_FLT)
+     1       maxMag(MAX_FLT,MAXPARAM,MAX_WIDTH)
       real minMag(MAX_FLT), Mmin
       real MaxMagWA, Btail, SigM, Fract_Exp, mChar, b_value, stepM
       real*8 sum, moment, sum1, sum2
       real WA_PMag(10000)
       real cumProb(10000)
-      real mag, M1, C2, rigidity
+      real mag, M1
       integer iMag, nMag, iFlt, iParam, iWidth, iMag1
       real pratio
       real faultArea, areaRatio, area_rup
-
-
 c     Set WAACY model parameters (haz45 version)
       if ( mpdf_param(iFlt,iParam,iwidth,5) .eq. 0. ) then
         MaxMagWA =  mpdf_param(iFlt,iParam,iwidth,2)
@@ -439,6 +466,7 @@ c     start integration at Mag=0 for momment balance
       Mmin = 0
       stepM =0.001
       nMag = inT ( (MaxMagWA - Mmin) / stepM )
+c      write (*,'( i5)') nMag
 
 c     Compute the probabilities of magnitudes using WAACY
 c     without correction for rupture past the modelled fault
@@ -461,16 +489,8 @@ c     in the char part (sum2)
         moment = 10.**(1.5*mag+16.05)
 
 c       Scale the moment from the eqk for the part that is released on the modelled fault
-c       rupture coefficient is C2 (Leonard)
-        if (int(coeff_area(1,iflt)) .eq. -999) then
-          C2 = coeff_area(2,iflt)* 10.**(-5.)
-          rigidity = 3.0e11
-          area_rup = 10.**(log10(moment/(C2*rigidity))*(2./3.)) * (10.**(-10.))
-c       rupture coefficients are a and b (Wells and Coppersmith)
-        else
-          area_rup = 10.**(coeff_area(1,iflt)+coeff_area(2,iflt)*mag)
-        endif
-
+c       Just use log(A)= M-4 for now
+        area_rup = 10.**(mag -4)
         areaRatio = area_rup / faultArea
         if (areaRatio .gt. 1. ) then
           moment = moment / areaRatio
@@ -502,16 +522,8 @@ c     Compute the moment * mag pdf for the part of the rupture this is modelled.
         moment = 10.**(1.5*mag+16.05)
 
 c       Scale the moment from the eqk for the part that is released on the modelled fault
-c       rupture coefficient is C2 (Leonard)
-        if (int(coeff_area(1,iflt)) .eq. -999) then
-          C2 = coeff_area(2,iflt)* 10.**(-5.)
-          rigidity = 3.0e11
-          area_rup = 10.**(log10(moment/(C2*rigidity))*(2./3.)) * (10.**(-10.))
-c       rupture coefficients are a and b (Wells and Coppersmith)
-        else
-          area_rup = 10.**(coeff_area(1,iflt)+coeff_area(2,iflt)*mag)
-        endif
-
+c       Just use log(A)= M-4 for now
+        area_rup = 10.**(mag -4)
         areaRatio = area_rup / faultArea
         if (areaRatio .gt. 1. ) then
           moment = moment / areaRatio

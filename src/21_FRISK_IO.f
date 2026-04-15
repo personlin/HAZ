@@ -1,11 +1,11 @@
 
       subroutine S21_RdInput ( nProb, nAttenType, nAtten, jcalc, specT, sigTrunc,
-     1               gmScale, dirFlag, PCflag, nInten, testInten, lgTestInten,
+     1               gmScale, dirFlag, nInten, testInten, lgTestInten,
      2               psCorFlag, minlat, maxlat, minlong, maxlong, distmax,
      3               nMagBins, magBins, nDistBins, distBins, nepsBins, epsBins,
      4               nXcostBins, xcostBins, soilAmpFlag, gm_wt, sigvaradd,
      5               sCalc, sigfix, bnumflag, cfcoefrrup, cfcoefrjb,
-     6               coefcountrrup, coefcountRjb, iMixture, version, starttime )
+     6               coefcountrrup, coefcountRjb, iMixture, version )
 
       implicit none
       include 'pfrisk.h'
@@ -15,16 +15,15 @@
      2        dirflag(MAX_PROB), jCalc(MAX_PROB,4,MAX_ATTEN), i, j,
      3        sCalc(MAX_PROB,4,MAX_ATTEN), nAttenType, j1, k, jj,
      4        nAtten(MAX_PROB,4), soilAmpFlag, charcount
-      integer coefcountrrup, coefcountrjb, PCflag(MAX_PROB),
+      integer coefcountrrup, coefcountrjb,
      1        iMixture(MAX_PROB,4,MAX_ATTEN)
-      integer*4 starttime(3)
       real testInten(MAX_PROB,MAX_INTEN), distmax, minlat, maxlat,
      1     minlong, maxlong, lgTestInten(MAX_PROB,MAX_INTEN),
      2     distBins(MAX_DIST), epsBins(MAX_EPS), XcostBins(MAX_Xcost),
      3     sigTrunc(MAX_PROB), sigfix(MAX_PROB,4,MAX_ATTEN),
      4     magBins(MAX_MAG), specT(MAX_PROB), gm1, gm2
       real gmScale(MAX_PROB,4,MAX_ATTEN), gm_wt(MAX_PROB,4,MAX_ATTEN),
-     1     sigvaradd(MAX_PROB,4,MAX_ATTEN), cfcoefrrup(MAX_Atten,11),
+     1     sigvaradd(MAX_PROB,4,MAX_ATTEN), cfcoefrrup(MAX_Atten,14),
      2     cfcoefrjb(MAX_Atten,11), checkattenwt, version
       character*80 filein, title, file1, filelog
 
@@ -114,9 +113,8 @@ c     Input options
 
 c     Enter GM models for each problem
       do i=1,nProb
-        read (13,*,err=2004) specT(i), sigTrunc(i), dirflag(i), PCflag(i)
+        read (13,*,err=2004) specT(i), sigTrunc(i), dirflag(i)
         call S16_CheckDir (dirflag(i))
-        call S21_CheckPC (PCflag(i))
         read (13,*,err=2005) nInten(i), (testInten(i,j),j=1,nInten(i))
         call S21_CheckDim ( nInten(i), MAX_INTEN, 'MAX_INTEN ' )
         do j1=1,nInten(i)
@@ -126,7 +124,6 @@ c     Enter GM models for each problem
         write (18,'(a19,2x,f8.4)') 'Spectral Period  = ', specT(i)
         write (18,'(a19,2x,f8.4)') 'Sigma Trunc      = ', sigTrunc(i)
         write (18,'(a19,2x,i8)')   'Directivity Flag = ', dirflag(i)
-        write (18,'(a19,2x,i8)')    'Poly Chaos Flag = ', PCflag(i)
         write (18,'(a21)')         'Ground Motion Values:'
         do j1=1,nInten(i)
           write (18,'(f12.4)') testInten(i,j1)
@@ -159,22 +156,29 @@ C     Check for Common Functional Form with Rrup Distance (10000<jcalc<11000) se
             if (abs(jcalc(i,j,k)) .gt. 10000 .and. abs(jcalc(i,j,k)) .lt. 11000) then
                 coefcountrrup = abs(jcalc(i,j,k)) - 10000
                 read (13,*,err=2008) (cfcoefrrup(coefcountrrup,jj),jj=1,11)
-                write (18,'(a16,2xi8,11(2x,f12.6))')
+                write (18,'(a16,2xi8,10(2x,f12.6))')
      1             'CF(RRup) Coefs: ', coefcountrrup,(cfcoefrrup(coefcountrrup,jj),jj=1,11)
             endif
 C     Check for Common Functional Form with RJB Distance (11000<jcalc<12000) selected and if so read in coefficients.
             if (abs(jcalc(i,j,k)) .gt. 11000 .and. abs(jcalc(i,j,k)) .lt. 12000) then
                 coefcountrjb = abs(jcalc(i,j,k)) - 11000
                 read (13,*,err=2008) (cfcoefrjb(coefcountrjb,jj),jj=1,11)
-                write (18,'(a16,2x,i8,11(2x,f12.6))')
+                write (18,'(a16,2x,i8,10(2x,f12.6))')
      1              'CF(RJB) Coefs:  ', coefcountrjb, (cfcoefrrup(coefcountrjb,jj),jj=1,11)
             endif
-C     Check for DCPP Common Functional Form with Rrup Distance (12000<jcalc<13000) selected and if so read in coefficients.
-            if (abs(jcalc(i,j,k)) .gt. 12000 .and. abs(jcalc(i,j,k)) .lt. 13000) then
-                coefcountrrup = abs(jcalc(i,j,k)) - 12000
-                read (13,*,err=2008) (cfcoefrrup(coefcountrrup,jj),jj=1,11)
-                write (18,'(a16,2x,i8,11(2x,f12.6))')
-     1              'CF(RRup) Coefs: ', coefcountrrup,(cfcoefrrup(coefcountrrup,jj),jj=1,11)
+C     Check for Taiwan Crustal Common Functional Form (16000<jcalc<17000) selected and if so read in coefficients.
+            if (abs(jcalc(i,j,k)) .gt. 16000 .and. abs(jcalc(i,j,k)) .lt. 17000) then
+                coefcountrrup = abs(jcalc(i,j,k)) - 16000
+                read (13,*,err=2008) (cfcoefrrup(coefcountrrup,jj),jj=1,14)
+                write (18,'(a16,2x,i8,14(2x,f12.6))')
+     1              'CF(RRup) Coefs: ', coefcountrrup,(cfcoefrrup(coefcountrrup,jj),jj=1,14)
+            endif
+C     Check for Taiwan Subduction Common Functional Form (17000<jcalc<18000) selected and if so read in coefficients.
+            if (abs(jcalc(i,j,k)) .gt. 17000 .and. abs(jcalc(i,j,k)) .lt. 18000) then
+                coefcountrrup = abs(jcalc(i,j,k)) - 17000
+                read (13,*,err=2008) (cfcoefrrup(coefcountrrup,jj),jj=1,12)
+                write (18,'(a16,2x,i8,12(2x,f12.6))')
+     1              'CF(RRup) Coefs: ', coefcountrrup,(cfcoefrrup(coefcountrrup,jj),jj=1,12)
             endif
 
             gmScale(i,j,k) = gm1 + gm2
@@ -213,8 +217,6 @@ c     Read bins for de-aggregating the hazard
       read (13,*,err=2017) (XcostBins(k),k=1,nXcostBins)
 
       read (13,*,err=2018) soilAmpFlag
-
-      call itime(starttime)
 
       return
  2001 write (*,'( 2x,''input file error: minlat, maxlat line'')')
@@ -291,7 +293,7 @@ c  --------------------------
       include 'pfrisk.h'
 
       integer i, n
-      real x(*), sum
+      real x(MAXPARAM), sum
       character*20 name, fName
 
       sum = 0.
@@ -359,7 +361,7 @@ c  --------------------------
       end
 
 c  -------------------------------------------------------------------
-      subroutine S21_WriteTempHaz ( PCflag, tempHaz, tempPC_D, nPC, nParamVar, nInten,
+      subroutine S21_WriteTempHaz ( tempHaz, nParamVar, nInten,
      1                nProb, nAtten, iFlt, jtype, nfType, iFltWidth, nWidth )
 
       implicit none
@@ -367,25 +369,18 @@ c  -------------------------------------------------------------------
 
       integer nProb, jType, iProb, iFtype, j, nParamVar(MAX_FLT,MAX_WIDTH),
      1        nInten(MAX_PROB), nAtten(MAX_PROB,4), iflt, nfType(MAX_FLT),
-     2        iFltWidth, nWidth(MAX_FLT), iAtten, iParam, nPC, iPC, PCflag(MAX_PROB)
-      real*8 tempHaz(MAXPARAM,MAX_INTEN,MAX_PROB,MAX_ATTEN,MAX_FTYPE),
-     1       tempPC_D(7,MAXPARAM,MAX_INTEN,MAX_PROB,MAX_FTYPE)
+     2        iFltWidth, nWidth(MAX_FLT), iAtten, iParam
+      real*8 tempHaz(MAXPARAM,MAX_INTEN,MAX_PROB,MAX_ATTEN,MAX_FTYPE)
 
       do iProb=1,nProb
 
-        write (11,'( 20i5)') iFlt, iFltWidth, iProb, nAtten(iProb,jType),
+        write (11,'( 30i5)') iFlt, iFltWidth, iProb, nAtten(iProb,jType),
      1     nWidth(iFlt), nFtype(iFlt),nParamVar(iFlt,iFltWidth), nInten(iProb)
 
         do iAtten = 1,nAtten(iProb,jType)
           do iFtype=1,nFtype(iFlt)
             do iParam=1,nParamVar(iFlt,iFltWidth)
-              if (PCflag(iProb) .eq. 0) then
-                write (11,'( 20e15.6 )')  (tempHaz(iParam,j,iProb,iAtten,iFtype),j=1,nInten(iProb))
-              elseif (PCflag(iProb) .eq. 1) then
-                do iPC=1,nPC
-                  write (11,'( 20e15.6 )') (tempPC_D(iPC,iParam,j,iProb,iFtype),j=1,nInten(iProb))
-                enddo
-              endif
+              write (11,'( 30e15.6 )')  (tempHaz(iParam,j,iProb,iAtten,iFtype),j=1,nInten(iProb))
             enddo
           enddo
         enddo
@@ -393,9 +388,7 @@ c  -------------------------------------------------------------------
 
       return
       end
-
 c  -------------------------------------------------------------------
-
       subroutine S21_WriteTempHaz1 ( tempHaz1,nParamVar, nInten,
      1                nProb, nAtten, iFlt, jtype, nfType, iFltWidth, nWidth )
 
@@ -417,7 +410,7 @@ c  -------------------------------------------------------------------
 
           do iFtype=1,nFtype(iFlt)
            do iParam=1,nParamVar(iFlt,iFltWidth)
-             write (27, '( 15e12.4)')  (tempHaz1(iParam,j,iProb,iFtype),j=1,nInten(iProb))
+             write (27, '( 30e12.4)')  (tempHaz1(iParam,j,iProb,iFtype),j=1,nInten(iProb))
            enddo
           enddo
       enddo
@@ -426,7 +419,6 @@ c  -------------------------------------------------------------------
       end
 
 c  -------------------------------------------------------------------
-
       subroutine S21_WriteTempHaz2 ( tempHaz2, nInten, nProb, nAtten, nattenType )
 
       implicit none
@@ -438,6 +430,7 @@ c  -------------------------------------------------------------------
 
       nwr = 28
 
+      write (*,'( i5)') nProb
       do iProb=1,nProb
         do jType=1,nattenType
            do iAtten = 1,nAtten(iProb,jType)
@@ -457,14 +450,14 @@ c  -------------------------------------------------------------------
      2           attenName, period1, probAct, nWidth,
      4           m_bar, d_bar, e_bar, riskBins, nMagBins, nDistBins,
      5           nEpsBins, magBins, distBins, epsBins,
-     6           al_segWt, MinRrup, nAttenType, attenType, pdfsum, segWt1,
+     6           al_segWt, MinRrup, nAttenType, attenType, segWt1,
      7           dirflag,tapflag, intflag, fsys, SourceDist, mMagout,
      8           hwflagout, ftype, vs, nmaxmag2, mMagoutwt, specT)
 
       implicit none
       include 'pfrisk.h'
 
-      real siteX, siteY, ati(MAX_PROB, MAX_INTEN), pdfsum(MAX_FLT)
+      real siteX, siteY, ati(MAX_PROB, MAX_INTEN)
       real*8 risk(MAX_INTEN,MAX_PROB,MAX_FLT)
       real al_segWt(MAX_FLT), segWt1(MAX_FLT), magbins(MAX_MAG), distbins(MAX_DIST),
      1     epsBins(MAX_EPS)
@@ -479,13 +472,13 @@ c  -------------------------------------------------------------------
       real  period1(4,MAX_PROB),
      1     sigTrunc(MAX_PROB), probAct(MAX_FLT), SourceDist(MAX_FLT,MAX_WIDTH,3)
       integer csrflag(MAX_PROB), attenType(MAX_FLT), nAttenType, dirflag(MAX_PROB)
-      integer tapflag(MAX_PROB), intflag, nAtten, nwr, ii, k, l
+      integer tapflag(MAX_PROB), intflag(4,MAX_PROB), nAtten, nwr, ii, k, l
       integer nMagBins, nDistBins, nEpsBins, fsys(MAX_FLT), kk
       integer isite, nInten(MAX_PROB), nFlt, jCalc(MAX_PROB,4,MAX_ATTEN), nWidth(MAX_FLT)
       integer hwflagout(MAX_FLT), nMaxmag2(MAX_FLT), casecount, iProb
       integer J2, iInten, iFlt, M, iMagBin, iDistBin, iEpsBin
       real ftype(1), vs, specT(MAX_PROB)
-      character*80 fName(MAX_FLT), file1, attenName
+      character*80 fName(MAX_FLT), file1, attenName(4,MAX_PROB)
 
       nwr = 12
 c     Loop over different maximum magnitude values to get
@@ -525,10 +518,10 @@ c     a total number of fault listings in the output file.
       write (18,*)
       write (18,'(i8,10x,''Number of faults'')') nFlt
       write (18,*)
-      write (18,'(a50)') 'Fault Name                     nFlt  nSys  p1sum '
+      write (18,'(a50)') 'Fault Name                  nFlt System Number'
       write (18,'(1x,a50)') '--------------------------------------------------'
       do ii=1,nFlt
-         write (18,'(a30,i5,i5,4x,f7.5)') fname(ii), ii, fsys(ii), pdfsum(ii)
+         write (18,'(a30,i5,i5)') fname(ii), ii, fsys(ii)
       enddo
 
 c     Write Site Coordinates
@@ -679,10 +672,6 @@ c     Write number of bins and bin values.
       write (18,'(20f10.3)') (epsBins(i),i=1,nepsbins)
       write (18,'(i5,5x,a25)') nXcostbins,'Number of Xcos(T) Bins  '
       write (18,'(20f10.3)') (xCostBins(i),i=1,nxCostbins)
-
-      write (18,*)
-      write (18,'(1x,a50)') '--------------------------------------------------'
-      write (18,*)
 
 c     Write Site Coordinates
       write(NWR,910) iSite, siteX, siteY
@@ -964,23 +953,3 @@ c        Write MBar, RrupBar, Rjbbar, Rxbar and EpsBar Results
       end
 
 c  -------------------------------------------------------------------
-
-      subroutine S21_CheckPC (PCflag)
-
-      implicit none
-
-      integer PCflag
-
-        if (PCflag .eq. 0) then
-          goto 100
-        elseif (PCflag .eq. 1) then
-          goto 100
-        else
-          write (*,*) 'Invalid PC flag in run file.'
-          stop 99
-        endif
-
- 100  continue
-
-      return
-      end

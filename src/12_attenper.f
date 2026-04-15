@@ -1,6 +1,6 @@
 C Spectral Attenuation Model Period Subroutine
 C     This subroutine will return the array of
-C     spectral periods for the computation of
+C     spectral periods fo the computation of
 C     deterministic spectra.
 
       subroutine S12_attenper ( jcalc, anper, minaper, maxaper )
@@ -184,13 +184,13 @@ c ******* Gulrce, Kamai, Abrahamson and Silva (NGA West2 2013) *********
 C     Gulrce, Kamai, Abrahamson and Silva (NGA West2 2013) - Vertical
 C        Same spectral periods for all variations of the GMPE model
 C     Model Number = 4787
-      if ( jcalc .eq. 4787 ) then
+      if ( jcalc .ge. 4787 ) then
          anper = 24
          minaper = 0.01
          maxaper = 10.0
        endif
 C     Model Number = 4788
-      if ( jcalc .eq. 4788 ) then
+      if ( jcalc .ge. 4788 ) then
          anper = 24
          minaper = 0.01
          maxaper = 10.0
@@ -200,13 +200,13 @@ c ******* Gulrce, Kamai, Abrahamson and Silva (NGA West2 2013) *********
 C     Gulrce, Kamai, Abrahamson and Silva (NGA West2 2013) - V/H Ratip
 C        Same spectral periods for all variations of the GMPE model
 C     Model Number = 6787
-      if ( jcalc .eq. 6787 ) then
+      if ( jcalc .ge. 6787 ) then
          anper = 24
          minaper = 0.01
          maxaper = 10.0
        endif
 C     Model Number = 6788
-      if ( jcalc .eq. 6788 ) then
+      if ( jcalc .ge. 6788 ) then
          anper = 24
          minaper = 0.01
          maxaper = 10.0
@@ -1318,6 +1318,13 @@ C     Model Numbers = 351-365
          maxaper = 10.0
       endif
 
+C     Model Numbers = 381-386
+      if (jcalc .ge. 381 .and. jcalc .le. 386) then
+         anper = 24
+         minaper = 0.02
+         maxaper = 10.0
+      endif
+
 C  **** Atkinson&Macias (2009), Cascadia, NEHRP B/C *******
 C     Model Number = 370
       if (jcalc .eq. 370) then
@@ -2344,65 +2351,6 @@ C     Model Number = 201335
          maxaper = 2.0
       endif
 
-c *** PEER NGAEast Models *****
-c     Goulet et al., 2018 (PEER Report 2018/08) **
-c     Model Numbers 7001 - 7017 (Median, VS30 = 3000 m/s)
-      if (jcalc .ge. 7001 .and. jcalc .le. 7017) then
-        anper = 25
-        minaper = 0.01
-        maxaper = 10.0
-      endif
-
-C *** Abrahamson and Gulerce (AG) 2020 Subduction model ****
-C     Model Numbers = 390-399, 1398, 2398, 2392
-C     Model Numbers = 390-399
-      if (jcalc .ge. 390 .and. jcalc .le. 399) then
-         anper = 25
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-C     Model Numbers = 1398
-      if (jcalc .eq. 1398) then
-         anper = 25
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-C     Model Numbers = 2398
-      if (jcalc .eq. 2398) then
-         anper = 25
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-C     Model Numbers = 2392
-      if (jcalc .eq. 2392) then
-         anper = 25
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-
-C *** Kuehn et al. (KBCG) 2019 Subduction model ****
-C     Model Numbers = 650-665
-      if (jcalc .ge. 650 .and. jcalc .le. 665) then
-         anper = 23
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-
-C *** Parker et al. (PSHAB) 2020 Subduction model ****
-C     Model Numbers = 610-626
-      if (jcalc .ge. 610 .and. jcalc .le. 626) then
-         anper = 26
-         minaper = 0.01
-         maxaper = 10.0
-      endif
-
-C *** Si et al. (SMK) 2019 Subduction model ****
-C     Model Numbers = 675-676
-      if (jcalc .ge. 675 .and. jcalc .le. 676) then
-         anper = 23
-         minaper = 0.01
-         maxaper = 10.0
-      endif
 
 
 

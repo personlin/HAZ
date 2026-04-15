@@ -94,8 +94,6 @@ c     From SWUS eq 7.3.3-1a
       return
       end
 
-
-
 c --------------------
 
       subroutine S32_SWUS_PHISS_CA2 ( mag, specT, phiSS, iflag, iBranch )
@@ -230,8 +228,6 @@ C     CA Mag Dep - Upper
       elseif (ssscalc1 .eq. 18) then
          call S32_DCPP_CAMag ( specT, Rrup, Mag, PhiSSS )
          phiSSS = phiSSS + 0.05
-
-
 
 C     Preliminary PVNGS Models - Local Host source
 C     Local Global Constant - Base
@@ -400,8 +396,6 @@ C     PhiSS, European, Outside Zone1,2,3: High
          modelflag = 2
          call S32_PVNGS_PSSEuro_2014 ( specT, modelflag, PhiSSS )
 
-
-
       else
          write (*,*) 'Invalid Single Station Sigma Model.'
          write (*,*) 'SSSCalc1 = ', ssscalc1
@@ -433,8 +427,6 @@ c     July 26, 2011
 
       data period  / 0.01, 0.1, 0.2, 0.3, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.46, 0.45, 0.48, 0.48, 0.46, 0.45, 0.41 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -494,8 +486,6 @@ c     July 26, 2011
       data period  / 0.01, 0.1, 0.2, 0.3, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.46, 0.45, 0.48, 0.48, 0.46, 0.45, 0.41 /
       data std_PhiSS1 / 0.08, 0.08, 0.11, 0.09, 0.08, 0.07, 0.07 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -559,8 +549,6 @@ c     July 26, 2011
       data period  / 0.01, 0.1, 0.2, 0.3, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.46, 0.45, 0.48, 0.48, 0.46, 0.45, 0.41 /
       data std_PhiSS1 / 0.08, 0.08, 0.11, 0.09, 0.08, 0.07, 0.07 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -626,8 +614,6 @@ c     July 26, 2011
       data PhiSS2 / 0.45, 0.44, 0.47, 0.47, 0.45, 0.44, 0.40 /
       data Rc1 / 16, 16, 16, 16, 16, 16, 16 /
       data Rc2 / 32, 32, 32, 32, 32, 32, 36 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -709,8 +695,6 @@ c     July 26, 2011
       data C2 / 0.34, 0.43, 0.37, 0.36, 0.36, 0.37, 0.37 /
       data Mc1 / 5.2, 5.2, 5.2, 5.2, 5.2, 5.3, 5.5 /
       data Mc2 / 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -783,8 +767,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end subroutine S32_PhiSS_PRP_3Mean
-
-
 C--------------------------------------------------------------------------------------
 C     Preliminary PhiSS Model - DCPP California Constant
 C     Models from Linda Al-Atik (3/2014)
@@ -800,8 +782,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.01, 0.1, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.3621, 0.3657, 0.4260, 0.4326, 0.4242 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -858,8 +838,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.01, 0.1, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.3889, 0.4164, 0.4344, 0.4593, 0.4671 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -918,8 +896,6 @@ C     Models from Linda Al-Atik (3/2014)
       data a / -0.06297, -0.06954, -0.03137, -0.03816, -0.1146 /
       data b / 0.7598, 0.7998, 0.6138, 0.66, 1.153 /
       data c / 0.31901, 0.31302, 0.39421, 0.39288, 0.3508 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -972,8 +948,6 @@ C     Compute magnitude dependent PhiSS
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     Preliminary PhiSS Model - PVNGS Local Normal Global Constant
 C     Models from Linda Al-Atik (3/2014)
@@ -989,8 +963,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.01, 0.1, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.4066, 0.4378, 0.4137, 0.4381, 0.4442 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -1031,8 +1003,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     Preliminary PhiSS Model - PVNGS Local Normal Global Constant
 C     Models from Linda Al-Atik (3/2014)
@@ -1048,8 +1018,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.01, 0.1, 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.4975, 0.5069, 0.5248, 0.4579, 0.4871 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -1090,8 +1058,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     Preliminary PhiSP Model - PVNGS Region-North
 C     Models from Linda Al-Atik (3/2014)
@@ -1107,8 +1073,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.4704, 0.5221, 0.6250 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -1165,8 +1129,6 @@ C     Models from Linda Al-Atik (3/2014)
 
       data period  / 0.5, 1.0, 3.0 /
       data PhiSS1 / 0.3517, 0.4712, 0.4736 /
-
-
 C     First check for the PGA
       if (specT .le. 0.0) then
         if ( specT .eq. 0.0 ) i1=1
@@ -1207,10 +1169,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end
-
-
-
-
 
 C--------------------------------------------------------------------------------------
 C     PhiSS Model - DCPP California Constant
@@ -1369,8 +1327,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     PhiSS Model - DCPP California Magnitude Dependent
 C     July 2014
@@ -1475,8 +1431,6 @@ C     Set coefficients based on selected model.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     PhiSS Model - PVNGS Outside Zones 1,2,3: European Data
 C     July 2014
@@ -1808,12 +1762,12 @@ C     Scalc = 13001
 
       data Period  /  0, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4,
      1          0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 7.5, 10  /
-      data sig1 / 0.576, 0.576, 0.577, 0.577, 0.578, 0.578, 0.579, 0.58, 0.581,
-     1            0.581, 0.581, 0.582, 0.582, 0.583, 0.583, 0.584, 0.584, 0.585,
-     2            0.585, 0.585, 0.585, 0.586 /
-      data sig2 / 0.495, 0.495, 0.498, 0.499, 0.504, 0.507, 0.51, 0.514, 0.517,
-     1            0.519, 0.52, 0.522, 0.524, 0.527, 0.529, 0.531, 0.532, 0.534,
-     2            0.534, 0.535, 0.535, 0.536 /
+      data sig1 / 0.557, 0.557, 0.559, 0.560, 0.562, 0.564, 0.566, 0.568, 0.569, 0.571,
+     1            0.572, 0.573, 0.574, 0.575, 0.576, 0.578, 0.578, 0.579, 0.580, 0.581,
+     1            0.581, 0.582  /
+      data sig2 / 0.491, 0.491, 0.494, 0.496, 0.500, 0.505, 0.508, 0.512, 0.515, 0.517,
+     1            0.519, 0.522, 0.524, 0.527, 0.529, 0.532, 0.533, 0.535, 0.536, 0.537,
+     1            0.537, 0.538  /
 
 C     First check for the PGA
       if (specT .eq. 0.0) then
@@ -1879,12 +1833,12 @@ C     Scalc = 13002
 
       data Period  /  0, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4,
      1          0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 7.5, 10  /
-      data sig1 / 0.456, 0.456, 0.457, 0.458, 0.46, 0.461, 0.462, 0.464, 0.465, 0.465,
-     1            0.466, 0.466, 0.467, 0.468, 0.468, 0.469, 0.469, 0.47, 0.47, 0.47,
-     2            0.471, 0.471 /
-      data sig2 / 0.39, 0.39, 0.394, 0.396, 0.402, 0.407, 0.411, 0.416, 0.419, 0.422,
-     1            0.424, 0.427, 0.429, 0.432, 0.434, 0.437, 0.439, 0.441, 0.441,
-     2            0.441, 0.442, 0.442 /
+      data sig1 / 0.428, 0.428, 0.431, 0.432, 0.436, 0.440, 0.443, 0.446, 0.449, 0.450,
+     1            0.452, 0.454, 0.455, 0.457, 0.459, 0.461, 0.462, 0.463, 0.464, 0.464,
+     1            0.465, 0.466 /
+      data sig2 / 0.389, 0.389, 0.393, 0.395, 0.401, 0.406, 0.410, 0.416, 0.419, 0.422,
+     1            0.424, 0.427, 0.429, 0.432, 0.435, 0.437, 0.439, 0.441, 0.442, 0.442,
+     1            0.443, 0.443 /
 
 C     First check for the PGA
       if (specT .eq. 0.0) then
@@ -1934,8 +1888,6 @@ C     Now compute the magnitude-dependent total sigma value.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     SWUS Total Sigma Model - DCPP High
 C     Scalc = 13003
@@ -1951,12 +1903,12 @@ C     Scalc = 13003
 
       data Period  /  0, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4,
      1          0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 7.5, 10  /
-      data sig1 / 0.699, 0.699, 0.699, 0.7, 0.7, 0.701, 0.702, 0.703, 0.703, 0.704,
-     1            0.704, 0.704, 0.705, 0.705, 0.706, 0.706, 0.707, 0.707, 0.707,
-     2            0.707, 0.708, 0.708 /
-      data sig2 / 0.614, 0.614, 0.614, 0.615, 0.616, 0.617, 0.618, 0.62, 0.621,
-     1            0.622, 0.623, 0.625, 0.626, 0.628, 0.629, 0.631, 0.632, 0.633,
-     2            0.634, 0.634, 0.635, 0.635 /
+      data sig1 / 0.694, 0.694, 0.695, 0.695, 0.696, 0.697, 0.697, 0.698, 0.699, 0.700,
+     1            0.700, 0.701, 0.701, 0.702, 0.703, 0.703, 0.704, 0.705, 0.705, 0.705,
+     1            0.706, 0.706 /
+      data sig2 / 0.600, 0.600, 0.602, 0.604, 0.607, 0.61, 0.613, 0.616, 0.618, 0.620,
+     1            0.622, 0.624, 0.625, 0.628, 0.63, 0.632, 0.633, 0.635, 0.636, 0.637,
+     1            0.638, 0.638 /
 
 C     First check for the PGA
       if (specT .eq. 0.0) then
@@ -2219,8 +2171,6 @@ C     Now compute the magnitude-dependent total sigma value.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     SWUS Total Sigma Model - PVNGS California Sources with Path Central
 C     Scalc = 13007
@@ -2340,8 +2290,6 @@ C     Interpolate the coefficients for the requested spectral period.
 
       return
       end
-
-
 C--------------------------------------------------------------------------------------
 C     SWUS Total Sigma Model - PVNGS California Sources with Path High
 C     Scalc = 13009
@@ -2578,600 +2526,6 @@ C     Interpolate the coefficients for the requested spectral period.
 5     period1 = specT
 
       sigma = sig1T
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompErgSig_Low ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite ergodic sigma, CENA, low
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-24 for coefficients
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=24)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.4826, 0.4871, 0.4983, 0.5076, 0.5229, 0.5497, 0.5703, 0.5977, 0.6145,
-     1           0.6323, 0.6392, 0.6452, 0.6476, 0.6496, 0.6521, 0.6645, 0.6820,
-     2           0.6874, 0.6758, 0.6610, 0.6533, 0.6539, 0.6539, 0.6034 /
-
-      data sig2 / 0.4583, 0.4630, 0.4747, 0.4844, 0.5004, 0.5282, 0.5496, 0.5780, 0.5954,
-     1           0.6138, 0.6210, 0.6271, 0.6296, 0.6317, 0.6343, 0.6471, 0.6650,
-     2           0.6705, 0.6586, 0.6434, 0.6355, 0.6361, 0.6361, 0.5980 /
-
-      data sig3 / 0.4207, 0.4256, 0.4379, 0.4480, 0.4648, 0.4945, 0.5156, 0.5430, 0.5586,
-     1           0.5723, 0.5760, 0.5767, 0.5761, 0.5750, 0.5743, 0.5867, 0.6060,
-     2           0.6118, 0.5987, 0.5819, 0.5731, 0.5736, 0.5736, 0.5587 /
-
-      data sig4 / 0.4153, 0.4205, 0.4337, 0.4446, 0.4624, 0.4926, 0.5080, 0.5227, 0.5299,
-     1           0.5293, 0.5244, 0.5119, 0.5040, 0.4958, 0.4876, 0.4982, 0.5200,
-     2           0.5264, 0.5113, 0.4913, 0.4805, 0.4807, 0.4807, 0.4936 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(23)
-        sig1F = sig1(23)
-        sig2F = sig2(23)
-        sig3F = sig3(23)
-        sig4F = sig4(23)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
-1020  call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompErgSig_Cen ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite ergodic sigma, CENA, central
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-24 for coefficients
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=24)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.6016, 0.6053, 0.6139, 0.6212, 0.6337, 0.6562, 0.6742, 0.6992, 0.7151,
-     1           0.7335, 0.7412, 0.7488, 0.7523, 0.7556, 0.7597, 0.7726, 0.7881,
-     2           0.7920, 0.7810, 0.7676, 0.7610, 0.7618, 0.7618, 0.7045 /
-
-      data sig2 / 0.5829, 0.5867, 0.5956, 0.6032, 0.6160, 0.6392, 0.6576, 0.6832, 0.6995,
-     1           0.7182, 0.7261, 0.7338, 0.7374, 0.7408, 0.7450, 0.7581, 0.7739,
-     2           0.7779, 0.7667, 0.7530, 0.7463, 0.7471, 0.7471, 0.6995 /
-
-      data sig3 / 0.5535, 0.5576, 0.5670, 0.5749, 0.5885, 0.6127, 0.6299, 0.6528, 0.6661,
-     1           0.6786, 0.6825, 0.6842, 0.6844, 0.6844, 0.6850, 0.6969, 0.7133,
-     2           0.7169, 0.7044, 0.6891, 0.6814, 0.6819, 0.6819, 0.6569 /
-
-      data sig4 / 0.5285, 0.5327, 0.5426, 0.5509, 0.5651, 0.5907, 0.6050, 0.6215, 0.6283,
-     1           0.6274, 0.6231, 0.6129, 0.6065, 0.6001, 0.5941, 0.6039, 0.6214,
-     2           0.6239, 0.6090, 0.5905, 0.5808, 0.5809, 0.5809, 0.5825 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(23)
-        sig1F = sig1(23)
-        sig2F = sig2(23)
-        sig3F = sig3(23)
-        sig4F = sig4(23)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
-1020  call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompErgSig_High ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite ergodic sigma, CENA, high
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-24 for coefficients
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=24)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.7519, 0.7545, 0.7591, 0.7627, 0.7687, 0.7807, 0.7916, 0.8096, 0.8228,
-     1           0.8402, 0.8485, 0.8575, 0.8621, 0.8668, 0.8725, 0.8858, 0.8990,
-     2           0.9011, 0.8909, 0.8791, 0.8737, 0.8747, 0.8747, 0.8134 /
-
-      data sig2 / 0.7386, 0.7412, 0.7460, 0.7496, 0.7558, 0.7681, 0.7792, 0.7976, 0.8110,
-     1           0.8286, 0.8370, 0.8461, 0.8508, 0.8555, 0.8613, 0.8747, 0.8880,
-     2           0.8902, 0.8799, 0.8679, 0.8625, 0.8635, 0.8635, 0.8090 /
-
-      data sig3 / 0.7160, 0.7188, 0.7238, 0.7276, 0.7343, 0.7471, 0.7568, 0.7717, 0.7814,
-     1           0.7918, 0.7956, 0.7983, 0.7994, 0.8004, 0.8023, 0.8137, 0.8267,
-     2           0.8275, 0.8158, 0.8022, 0.7958, 0.7963, 0.7963, 0.7661 /
-
-      data sig4 / 0.6855, 0.6883, 0.6932, 0.6967, 0.7025, 0.7139, 0.7203, 0.7314, 0.7361,
-     1           0.7360, 0.7340, 0.7295, 0.7270, 0.7246, 0.7233, 0.7328, 0.7457,
-     2           0.7452, 0.7315, 0.7157, 0.7078, 0.7076, 0.7076, 0.7163 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(23)
-        sig1F = sig1(23)
-        sig2F = sig2(23)
-        sig3F = sig3(23)
-        sig4F = sig4(23)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
-1020  call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompSSSig_Low ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite single-station sigma, CENA, low
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-18 for coefficients (also provided in Appendix H)
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=25)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 40.000, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.4695, 0.4702, 0.4740, 0.4784, 0.4870, 0.5037, 0.5171, 0.5354, 0.5467,
-     1            0.5595, 0.5650, 0.5707, 0.5736, 0.5765, 0.5795, 0.5825, 0.5840,
-     2            0.5855, 0.5860, 0.5867, 0.5870, 0.5873, 0.5879, 0.5879, 0.5220 /
-
-      data sig2 / 0.4444, 0.4451, 0.4491, 0.4538, 0.4628, 0.4803, 0.4944, 0.5135, 0.5253,
-     1            0.5387, 0.5444, 0.5503, 0.5533, 0.5564, 0.5595, 0.5626, 0.5641,
-     2            0.5657, 0.5662, 0.5669, 0.5672, 0.5676, 0.5682, 0.5682, 0.5159 /
-
-      data sig3 / 0.4053, 0.4061, 0.4101, 0.4148, 0.4243, 0.4433, 0.4566, 0.4741, 0.4837,
-     1            0.4913, 0.4931, 0.4928, 0.4924, 0.4921, 0.4917, 0.4933, 0.4946,
-     2            0.4960, 0.4964, 0.4970, 0.4973, 0.4976, 0.4981, 0.4981, 0.4703 /
-
-      data sig4 / 0.4017, 0.4025, 0.4071, 0.4124, 0.4226, 0.4416, 0.4482, 0.4508, 0.4504,
-     1            0.4411, 0.4326, 0.4168, 0.4079, 0.3994, 0.3904, 0.3882, 0.3887,
-     2            0.3893, 0.3895, 0.3897, 0.3898, 0.3899, 0.3901, 0.3901, 0.3928 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(25)
-        sig1F = sig1(25)
-        sig2F = sig2(25)
-        sig3F = sig3(25)
-        sig4F = sig4(25)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
- 1020 call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompSSSig_Cen ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite single-station sigma, CENA, central
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-18 for coefficients (also provided in Appendix H)
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=25)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 40.000, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.5853, 0.5858, 0.5889, 0.5925, 0.5998, 0.6143, 0.6262, 0.6432, 0.6541,
-     1            0.6671, 0.6730, 0.6794, 0.6827, 0.6862, 0.6898, 0.6935, 0.6955,
-     2            0.6974, 0.6981, 0.6990, 0.6994, 0.6998, 0.7006, 0.7006, 0.6303 /
-
-      data sig2 / 0.5661, 0.5666, 0.5698, 0.5736, 0.5811, 0.5959, 0.6082, 0.6256, 0.6369,
-     1            0.6502, 0.6563, 0.6628, 0.6662, 0.6698, 0.6735, 0.6773, 0.6793,
-     2            0.6813, 0.6820, 0.6829, 0.6833, 0.6838, 0.6846, 0.6846, 0.6247 /
-
-      data sig3 / 0.5357, 0.5364, 0.5397, 0.5438, 0.5517, 0.5674, 0.5781, 0.5921, 0.5999,
-     1            0.6060, 0.6075, 0.6072, 0.6068, 0.6066, 0.6063, 0.6079, 0.6092,
-     2            0.6105, 0.6110, 0.6116, 0.6119, 0.6122, 0.6127, 0.6127, 0.5765 /
-
-      data sig4 / 0.5095, 0.5102, 0.5138, 0.5181, 0.5267, 0.5436, 0.5510, 0.5576, 0.5577,
-     1           0.5482, 0.5399, 0.5254, 0.5171, 0.5092, 0.5007, 0.4978, 0.4977,
-     2           0.4975, 0.4975, 0.4974, 0.4974, 0.4974, 0.4973, 0.4973, 0.4896 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(25)
-        sig1F = sig1(25)
-        sig2F = sig2(25)
-        sig3F = sig3(25)
-        sig4F = sig4(25)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
-1020  call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
-
-      return
-      end
-
-c ---------------------------------------------------------------------
-      subroutine S32_NGAEast_CompSSSig_High ( m, specT, sigma, iflag )
-
-c     model: NGA-East composite single-station sigma, CENA, high
-c     ref: Goulet et al., 2018 (PEER Report 2018/08), equation 11-14 for functional form,
-c          Table 11-18 for coefficients (also provided in Appendix H)
-
-      implicit none
-
-      integer MAX_FREQ
-      parameter (MAX_FREQ=25)
-      integer iflag, ifreq, c1, c2
-      real m, specT, specF, freq(MAX_FREQ), sig1(MAX_FREQ), sig2(MAX_FREQ),
-     1     sig3(MAX_FREQ), sig4(MAX_FREQ), sig1F, sig2F, sig3F, sig4F, sigma
-
-      data freq / 0.100, 0.133, 0.200, 0.250, 0.333, 0.500, 0.667, 1.000, 1.333,
-     1           2.000, 2.500, 3.333, 4.000, 5.000, 6.667, 10.000, 13.333,
-     2           20.000, 25.000, 33.333, 40.000, 50.000, 100.000, 100.000, -1.0 /
-
-      data sig1 / 0.7357, 0.7358, 0.7364, 0.7372, 0.7391, 0.7444, 0.7502, 0.7611, 0.7697,
-     1            0.7816, 0.7876, 0.7943, 0.7980, 0.8019, 0.8061, 0.8106, 0.8129,
-     2            0.8153, 0.8162, 0.8173, 0.8178, 0.8183, 0.8193, 0.8193, 0.7480 /
-
-      data sig2 / 0.7221, 0.7222, 0.7228, 0.7237, 0.7258, 0.7313, 0.7373, 0.7484, 0.7572,
-     1            0.7693, 0.7753, 0.7822, 0.7859, 0.7899, 0.7941, 0.7986, 0.8010,
-     2            0.8034, 0.8043, 0.8054, 0.8059, 0.8064, 0.8075, 0.8075, 0.7431 /
-
-      data sig3 / 0.6989, 0.6990, 0.6999, 0.7009, 0.7033, 0.7093, 0.7137, 0.7209, 0.7256,
-     1            0.7295, 0.7305, 0.7300, 0.7297, 0.7295, 0.7292, 0.7306, 0.7317,
-     2            0.7329, 0.7333, 0.7338, 0.7340, 0.7343, 0.7348, 0.7348, 0.6960 /
-
-      data sig4 / 0.6679, 0.6679, 0.6682, 0.6687, 0.6698, 0.6738, 0.6743, 0.6772, 0.6762,
-     1            0.6681, 0.6623, 0.6537, 0.6492, 0.6453, 0.6413, 0.6395, 0.6390,
-     2            0.6385, 0.6384, 0.6382, 0.6381, 0.6379, 0.6377, 0.6377, 0.6419 /
-
-c     Check for PGA, PGV
-      if (specT .eq. 0.0) then
-        specF = freq(24)
-        sig1F = sig1(24)
-        sig2F = sig2(24)
-        sig3F = sig3(24)
-        sig4F = sig4(24)
-        goto 1021
-      elseif (specT .eq. -1.0) then
-        specF = freq(25)
-        sig1F = sig1(25)
-        sig2F = sig2(25)
-        sig3F = sig3(25)
-        sig4F = sig4(25)
-        goto 1021
-      endif
-
-c     find frequencies for interpolation
-      if (specT .gt. 0.0) then
-        specF = 1./specT
-        c1 = 0
-        c2 = 0
-        do ifreq=1,MAX_FREQ
-          if (specF .ge. freq(ifreq) .and. specF .le. freq(ifreq+1) ) then
-            c1 = ifreq
-            c2 = ifreq+1
-            goto 1020
-          endif
-        enddo
-      endif
-
-c     specified spectral period is outside range defined by ground motion model
-      write (*,*)
-      write (*,*) 'The NGA-East ground motion models'
-      write (*,*) '(Goulet et al., 2018) are not defined'
-      write (*,'(a26,f10.5,a2)') ' for a spectral period of: ', specT, ' s'
-      write (*,*) 'This spectral period is outside the defined'
-      write (*,*) 'period range in the code or beyond the range'
-      write (*,*) 'of spectral periods for interpolation.'
-      write (*,*) 'Please check the input file.'
-      write (*,*)
-      stop 99
-
-c     interpolate between frequencies
-1020  call S24_interp1 ( freq(c1), freq(c2), sig1(c1), sig1(c2), specF, sig1F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig2(c1), sig2(c2), specF, sig2F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig3(c1), sig3(c2), specF, sig3F, iflag )
-      call S24_interp1 ( freq(c1), freq(c2), sig4(c1), sig4(c2), specF, sig4F, iflag )
-
-1021  if (m .le. 4.5) then
-        sigma = sig1F
-      elseif (m .gt. 4.5 .and. m .le. 5.0) then
-        sigma = sig1F + (sig2F - sig1F) * ((m - 4.5)/0.5)
-      elseif (m .gt. 5.0 .and. m .le. 5.5) then
-        sigma = sig2F + (sig3F - sig2F) * ((m - 5.0)/0.5)
-      elseif (m .gt. 5.5 .and. m .le. 6.5) then
-        sigma = sig3F + (sig4F - sig3F) * ((m - 5.5)/1.0)
-      else
-        sigma = sig4F
-      endif
 
       return
       end

@@ -11,7 +11,7 @@ c --------------------------------------------------------------
       real MinRrup_temp, MinRjb_temp, MinSeismo_temp,
      1     SourceDist(MAX_FLT,MAX_WIDTH,3)
 
-        MinRrup_temp = 99999
+        MinRrup_temp = 1.e10
         MinRjb_temp = 1.e10
         MinSeismo_temp = 1.e10
         do iWidth=1,nWidth
@@ -113,8 +113,8 @@ c --------------------------------------------------------------
 
       implicit none
 
-      real sigma(*), step, sigmaMax
-      integer nValue(*), iFlt
+      real sigma(1), step, sigmaMax
+      integer nValue(1), iFlt
 
 c     For Small Sigma, only one rupture length is needed
       IF ( sigma(iFlt) .LE. 0.02 ) nValue(iFlt) = 1
@@ -134,7 +134,7 @@ c --------------------------------------------------------------
       implicit none
 
       integer nBins, iBin, i
-      real bins(*), x
+      real bins(1), x
 
       ibin = 0
 
@@ -168,7 +168,7 @@ c --------------------------------------------------------------
       implicit none
 
       integer nBins, iBin, i
-      real bins(*), x
+      real bins(1), x
 
       ibin = 0
 

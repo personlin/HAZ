@@ -13,10 +13,10 @@ c     Reference: http://www.movable-type.co.uk/scripts/latlong.html
       include 'pfrisk.h'
 
       integer nfp, iFlt, iCoor, grid_n, sourceType, nDD, nPts1
-      real siteX, siteY, fLat(MAX_FLT,MAX_DD,MAX_COOR), fLong(MAX_FLT,MAX_DD,MAX_COOR),
-     1     fZ(MAX_FLT,MAX_DD,MAX_COOR), grid_lat(MAX_FLT,MAX_GRID),
+      real siteX, siteY, fLat(MAX_FLT,MAX_DD,MAX_SEG), fLong(MAX_FLT,MAX_DD,MAX_SEG),
+     1     fZ(MAX_FLT,MAX_DD,MAX_SEG), grid_lat(MAX_FLT,MAX_GRID),
      2     grid_long(MAX_FLT,MAX_GRID), grid_dlat(MAX_FLT), grid_dlong(MAX_FLT),
-     3     xFlt(MAX_DD,MAX_COOR), yFlt(MAX_DD,MAX_COOR), zFlt(MAX_DD,MAX_COOR), grid_x(MAX_GRID),
+     3     xFlt(MAX_DD,MAX_SEG), yFlt(MAX_DD,MAX_SEG), zFlt(MAX_DD,MAX_SEG), grid_x(MAX_GRID),
      4     grid_y(MAX_GRID), grid_dx, grid_dy, x0, y0, z0
 
       integer i, iz, iPt
@@ -130,24 +130,25 @@ c     Adjust sources so that site is at 0,0
 
 c ---------------------------------------------------------------------
 
-      subroutine S20_calcFltGrid ( xFlt, yFlt, zFlt, npts, nDD, fltGrid_x, fltGrid_y,
+      subroutine S20_calcFltGrid ( xFlt, yFlt, zFlt, npts, nDD0, fltGrid_x, fltGrid_y,
      1               fltGrid_z, nfltGrid, fltGrid_a, fltGrid_w, x0, y0, z0,
      2               fltGrid_Rrup, fltGrid_Rjb, faultArea, faultLen, faultW,
      3               step, fltGrid_fLen, fltGrid_x1, fltGrid_y1,
      4               fltGrid_z1, fltGrid_x2, fltGrid_y2, fltGrid_z2, fltGrid_x3,
-     5               fltGrid_y3, fltGrid_z3, fltGrid_x4, fltGrid_y4, fltGrid_z4 )
+     5               fltGrid_y3, fltGrid_z3, fltGrid_x4, fltGrid_y4, fltGrid_z4,
+     6               dip_top, iST5_flag, CrustWidth )
 
       implicit none
       include 'pfrisk.h'
 
-      integer nDD, n2(MAXFLT_DD), nfltGrid(2), n1(MAXFLT_AS), nPts, j, j1,
+      integer nDD0, n2(MAXFLT_DD), nfltGrid(2), n1(MAXFLT_AS), nPts, j, j1,
      1        j2, k, k1, i, i1, i2, ii, i0, j0, insideFlag, nx1, ny1, nn
       real fltGrid_x(MAXFLT_DD,MAXFLT_AS), fltGrid_y(MAXFLT_DD,MAXFLT_AS),
      1     fltGrid_z(MAXFLT_DD,MAXFLT_AS), fltGrid_fLen(MAXFLT_DD,MAXFLT_AS),
      2     fltGrid_w(MAXFLT_DD,MAXFLT_AS), fltGrid_a(MAXFLT_DD,MAXFLT_AS),
      3     fltGrid_Rrup(MAXFLT_DD,MAXFLT_AS), fltGrid_Rjb(MAXFLT_DD,MAXFLT_AS),
-     4     faultArea, xFlt(MAX_DD,MAX_COOR), yFlt(MAX_DD,MAX_COOR)
-      real zFlt(MAX_DD,MAX_COOR), x1n1, x2n1, y1n1, y2n1, z1n1, z2n1, x1n2,
+     4     faultArea, xFlt(MAX_DD,MAX_SEG), yFlt(MAX_DD,MAX_SEG)
+      real zFlt(MAX_DD,MAX_SEG), x1n1, x2n1, y1n1, y2n1, z1n1, z2n1, x1n2,
      1     x2n2, y1n2, y2n2, z1n2, z2n2, dxn1, dyn1, dzn1, dxn2, dyn2,
      2     dzn2, x(5), y(5), z(5), x0, y0, z0, faultLen, dx, dy, dz, width1,
      3     dist, dist1, dist2, x1, y1, z1, x2, y2, z2, xLtop, yLtop, zLtop,
@@ -158,8 +159,39 @@ c ---------------------------------------------------------------------
      3     fltGrid_x3(MAXFLT_DD,MAXFLT_AS), fltGrid_y3(MAXFLT_DD,MAXFLT_AS),
      4     fltGrid_z3(MAXFLT_DD,MAXFLT_AS), fltGrid_x4(MAXFLT_DD,MAXFLT_AS),
      5     fltGrid_y4(MAXFLT_DD,MAXFLT_AS), fltGrid_z4(MAXFLT_DD,MAXFLT_AS)
+      real sum, dip_top, dW, dip1, crustWidth, zFrac
+      integer iST5_flag, iTrunc, NDD1, nDD
 
       real*8 dfaultArea
+      nDD = nDD0
+
+c     Check for truncation of depth for Source type 5
+      if ( iST5_flag .eq. 1 .and. zFlt(nDD,npts) .gt. crustWidth ) then
+       iTrunc = 0
+       do j=1,npts
+        do i=2,nDD
+          if (zFlt(i,j) .gt. crustWidth ) then
+            zFrac = (crustWidth - zFlt(i-1,j)) / (zFlt(i,j) - zFlt(i-1,j))
+            zFlt(i,j) = crustWidth
+            xFlt(i,j) = xFlt(i-1,j) + (xFlt(i,j)-xFlt(i-1,j)) * zFrac
+            yFlt(i,j) = yFlt(i-1,j) + (yFlt(i,j)-yFlt(i-1,j)) * zFrac
+            nDD1 = i
+            goto 11
+          endif
+        enddo
+  11     continue
+       enddo
+       nDD = nDD1
+       write (18,'( 2x,''truncation of source type 5'')')
+       do j=1,npts
+         write (18,'( 30f10.3)') (xFlt(i,j), yFlt(i,j), zFlt(i,j),i=1,nDD)
+       enddo
+	   else
+       write (18,'( 2x,''truncation of source type 5'')')
+       do j=1,npts
+         write (18,'( 30f10.3)') (xFlt(i,j), yFlt(i,j), zFlt(i,j),i=1,nDD)
+       enddo
+      endif
 
 c     Find the widest part of the fault and set the number of grid points down dip
       sum1 = 0.
@@ -362,7 +394,21 @@ C     Compute the fault lengths for each cell relative to start of fault.
         enddo
       enddo
 
+c     St the fault area
       faultArea = real(dfaultArea)
+
+C     Set the dip at the top of the fault (top most cells)
+c     COmpute the average dip from the top two cells along strike
+      sum = 0.
+      do j=1,nx1
+        dz = (fltgrid_z(2,j) - fltgrid_z(1,j))
+        dW = sqrt( (fltgrid_x(2,j) - fltgrid_x(1,j))**2
+     1              + (fltgrid_y(2,j) - fltgrid_y(1,j))**2
+     2              + (fltgrid_z(2,j) - fltgrid_z(1,j))**2 )
+        dip1 = asin(dz/Dw)
+        sum = sum + dip1
+      enddo
+      dip_top = (sum / nx1)
 
       return
       end
@@ -383,8 +429,8 @@ c      declarations passed out
        integer nDD(MAX_FLT)
 
 c      declarations passed in and out (changed)
-       real fZ(MAX_FLT,MAX_DD,MAX_COOR), fLat(MAX_FLT,MAX_DD,MAX_COOR),
-     1      fLong(MAX_FLT,MAX_DD,MAX_COOR)
+       real fZ(MAX_FLT,MAX_DD,MAX_SEG), fLat(MAX_FLT,MAX_DD,MAX_SEG),
+     1      fLong(MAX_FLT,MAX_DD,MAX_SEG)
 
 c      declarations only used within subroutine S20_
        integer ipt

@@ -5,7 +5,9 @@
      3             fltgrid_x2, fltgrid_y2, fltgrid_z2, fltgrid_x3, fltgrid_y3, fltgrid_z3,
      4             fltgrid_x4, fltgrid_y4, fltgrid_z4, fltgrid_Rrup, fltgrid_Rjb, dip, dipS7,
      5             distS7, HWFlag, n1, n2, icellRupstrike, icellRupdip, hypoDepth, distJB,
-     6             distRup, ZTOR, distSeismo, distepi, disthypo, dipavgd, Rx, Ry, Ry0)
+     6             distRup, ZTOR, distSeismo, distepi, disthypo, dipavgd, Rx, Ry, Ry0,
+     7             h_listric, dMag1_listric, logA_shal, logA_deep,
+     9             iDD_shal_min, iDD_shal_max, iDD_deep_min, iDD_deep_max)
 
 c     This subroutine computes the distance parameters for the GMPEs
 c     (e.g. Rjb, Rrup, ZTOR, Rx, Ry, Ry0)
@@ -25,8 +27,11 @@ c     declarations passed in
      6     fltgrid_y3(MAXFLT_DD,MAXFLT_AS), fltgrid_z3(MAXFLT_DD,MAXFLT_AS),
      6     fltgrid_x4(MAXFLT_DD,MAXFLT_AS), fltgrid_y4(MAXFLT_DD,MAXFLT_AS),
      7     fltgrid_z4(MAXFLT_DD,MAXFLT_AS), fltgrid_Rrup(MAXFLT_DD,MAXFLT_AS),
-     8     fltgrid_Rjb(MAXFLT_DD,MAXFLT_AS), dip(MAX_FLT,MAX_WIDTH),
+     8     fltgrid_Rjb(MAXFLT_DD,MAXFLT_AS), dip(MAX_FLT,MAX_WIDTH,MAX_SEG),
      9     distS7(MAX_FLT,MAX_S7), dipS7(MAX_FLT,MAX_S7)
+      real h_listric, dMag1_listric
+      real logA_shal, logA_deep
+      integer iDD_shal_min, iDD_shal_max, iDD_deep_min, iDD_deep_max
 
 c     declarations passed out
       integer HWFlag, n1, n2, icellRupstrike, icellRupdip
@@ -35,7 +40,8 @@ c     declarations passed out
 
 c     declarations only used within subroutine
       integer i, j, celly, cellx
-      real top_grid, hypo1, rupLength2, r_horiz1, testy, testx, hypox, hypoy, rupz
+      real top_grid, hypo1, rupLength2, r_horiz1, testy, testx, hypox, hypoy
+      real magUpper, magLower, h_dist, v_dist
 
 c     Initialize closest distance
       distRup = 1.0e30
@@ -45,77 +51,78 @@ c     Initialize closest distance
       distepi = 1.0e30
 
 c     Set top_grid for sourceTypes 2/3 and 4 (different)
-        if (sourceType .eq. 2 .or. sourceType .eq. 3) then
-          top_grid = grid_top(iFlt,1)
-        else if (sourceType .eq. 4) then
-          top_grid = grid_top(iFlt,iLocX)
-        endif
+      if (sourceType .eq. 2 .or. sourceType .eq. 3) then
+        top_grid = grid_top(iFlt,1)
+      else if (sourceType .eq. 4) then
+        top_grid = grid_top(iFlt,iLocX)
+      endif
 
 c     Compute distances for areal sources
-        if ( sourceType .eq. 2 .or. sourceType .eq. 3 .or. sourceType .eq. 4 ) then
+      if ( sourceType .eq. 2 .or. sourceType .eq. 3 .or. sourceType .eq. 4 ) then
 
-c         Set hypoDepth for areal sources
-          hypoDepth = (iLocY-0.5)*ystep + top_grid
+c      Set hypoDepth for areal sources
+       hypoDepth = (iLocY-0.5)*ystep + top_grid
 
-c         Approximate correction for using point source with extended source model
-C         added limit on only shallow areal sources (Hypo>30.0km)
-          if ( psCorFlag .eq. 1  .and. hypoDepth .le. 30.0) then
-            rupz = sin(abs(dip(iFlt,iFltWidth)*3.1415926/180.))*rupWidth
-            hypo1=hypoDepth-rupz/2.
-          if (hypo1 .lt. 0.0) hypo1=0.0
-          rupLength2 = rupLen/2.
-          if ( r_horiz .gt. rupLength2 ) then
-            r_horiz1 = r_horiz - 0.625*rupLength2*(1.-1./(1.5*(r_horiz/rupLength2)**(1.5)+1))
-          else
-            r_horiz1 = r_horiz/1.57
-          endif
-          else
-            r_horiz1 = r_horiz
-            hypo1 = hypoDepth
-          endif
-          distJB = r_horiz1
-          distRup = sqrt( r_horiz1**2 + hypo1**2 )
-          ZTOR = hypo1
-          if ( hypo1 .lt. seismoDepth) then
-            distSeismo = sqrt(distJB**2 + seismoDepth**2)
-          else
-            distSeismo = distRup
-          endif
+c      Approximate correction for using point source with extended source model
+C      added limit on only shallow areal sources (Hypo>30.0km)
+       if ( psCorFlag .eq. 1  .and. hypoDepth .le. 30.0) then
+         hypo1=hypoDepth-rupWidth/2.
+         if (hypo1 .lt. 0.0) hypo1=0.0
+         rupLength2 = rupLen/2.
+         if ( r_horiz .gt. rupLength2 ) then
+           r_horiz1 = r_horiz - 0.625*rupLength2*(1.-1./(1.5*(r_horiz/rupLength2)**(1.5)+1))
+         else
+           r_horiz1 = r_horiz/1.57
+         endif
+       else
+         r_horiz1 = r_horiz
+         hypo1 = hypoDepth
+       endif
+       distJB = r_horiz1
+       distRup = sqrt( r_horiz1**2 + hypo1**2 )
+       ZTOR = hypo1
+       if ( hypo1 .lt. seismoDepth) then
+         distSeismo = sqrt(distJB**2 + seismoDepth**2)
+       else
+         distSeismo = distRup
+       endif
 
-c         Set other distance values equal to corresponding distance measures.
-          distepi = distJB
-          disthypo = distRup
-          Rx = distJB
-          Ry = 0.0
-          Ry0 = 0.0
-C         Set HWflag = 0 for areal or grid sources.
-          HWFlag = 0
-          dipavgd = dip(iFlt,ifltWidth)
-          return
+c      Set other distance values equal to corresponding distance measures.
+       distepi = distJB
+       disthypo = distRup
+       Rx = distJB
+       Ry = 0.0
+       Ry0 = 0.0
+
+C      Set HWflag = 0 for areal or grid sources.
+       HWFlag = 0
+       dipavgd = dip(iFlt,ifltWidth,1)
+       return
 
 c     Compute distances for SourceType 7
-        elseif (sourceType .eq. 7) then
-          distrup = distS7(iFlt,iMag)
-          distJB  = distS7(iFlt,iMag)
-          distseismo = distS7(iFlt,iMag)
-          dipavgd = dipS7(iFlt,iMag)
-          disthypo = distS7(iFlt,iMag)
-c         Fixed Parameters
-          ZTOR = 0.0
-          HWFlag = 0
-          hypoDepth = 8.0
-          Rx = distrup
+      elseif (sourceType .eq. 7) then
+        distrup = distS7(iFlt,iMag)
+        distJB  = distS7(iFlt,iMag)
+        distseismo = distS7(iFlt,iMag)
+        dipavgd = dipS7(iFlt,iMag)
+        disthypo = distS7(iFlt,iMag)
+
+c       Fixed Parameters
+        ZTOR = 0.0
+        HWFlag = 0
+        hypoDepth = 8.0
+        Rx = distrup
 
 c     Otherwise use fault sources (i.e., Sourcetype = 1, 5, or 6)
-        else
+      else
 
-c         n1 is the last cell that makes up the rupture plane down dip
-c         n2 is the last cell that makes up the rupture plane along strike
-          n1 = nfltgrid(1)-n1AS(iLocX)+iLocY
-          n2 = n2AS(iLocX)
+c       n1 is the last cell that makes up the rupture plane down dip
+c       n2 is the last cell that makes up the rupture plane along strike
+        n1 = nfltgrid(1)-n1AS(iLocX)+iLocY
+        n2 = n2AS(iLocX)
 
-c        Calculate hypoDepth (assumes hypocenter is in center of rupture plane)
-         if (sourceType .eq. 1 .or. sourceType .eq. 5 .or. sourceType .eq. 6) then
+c       Calculate hypoDepth (assumes hypocenter is in center of rupture plane)
+        if (sourceType .eq. 1 .or. sourceType .eq. 5 .or. sourceType .eq. 6) then
            testy = ((n1-iLocY)+1.)/2.
            celly = int(iLocY+testy)
            testx = ((n2-iLocX)+1.)/2.
@@ -137,48 +144,75 @@ c        Calculate hypoDepth (assumes hypocenter is in center of rupture plane)
              hypox = fltgrid_x(celly,cellx)
              hypoy = fltgrid_y(celly,cellx)
            endif
-         endif
+        endif
 
-c         Calculate Rx, Ry, Ry0, dipavgd, and HWFlag
-c         Global Coordinate System 2 method
-          call S22_GC2 (iLocX, iLocY, n2, n1, fltgrid_x1, fltgrid_y1, fltgrid_z1,
+c       Calculate Rx, Ry, Ry0, dipavgd, and HWFlag
+c       Global Coordinate System 2 method
+        call S22_GC2 (iLocX, iLocY, n2, n1, fltgrid_x1, fltgrid_y1, fltgrid_z1,
      1              fltgrid_x2, fltgrid_y2, fltgrid_z2, fltgrid_x3, fltgrid_y3,
      2              fltgrid_z3, fltgrid_x4, fltgrid_y4, fltgrid_z4, Rx, Ry, Ry0,
      3              HWFlag, dipavgd)
 
-c         Calculate ZTOR
-          ZTOR = fltgrid_z1(iLocY,iLocX)
+c       NAA, added for listric for source type 5
+c       apply the Taiwan model for setting the aveerage dip for listric faults
+        if (sourceType .eq. 5 .and. h_listric .gt. 0. ) then
+          magUpper = logA_shal + 4.0
+          magLower = logA_deep + 4.0
 
-c         Calculate Rrup and Rjb
-C         Keep track of the fault grid cell for the closest rupture distance
-C         for this rupture area since it is needed for the NGA directivity models.
+c         logArea1 is the log10 of the area of the rupture shallower than h_listic
+c         logArea1 is the log10 of the area of the rupture deepter than h_listic
+          if ( magUpper - MagLower .gt. dMag1_listric ) then
+c           compute dip of the shallow part
+            h_dist = sqrt( (fltgrid_x4(iDD_shal_max,iLocY) - fltgrid_x1(iDD_shal_min,iLocY))**2 +
+     1               (fltgrid_y4(iDD_shal_max,iLocY) - fltgrid_y1(iDD_shal_min,iLocY))**2 )
+            v_dist = abs( fltgrid_z4(iDD_shal_max,iLocY) - fltgrid_z1(iDD_shal_min,iLocY) )
+            dipavgd = atan2(v_dist,h_dist)*180/3.1415926
+c            write (*,'( 2x,''shallow'',f10.3)') dipavgd
 
-          do j=iLocX,n2
-            do i=iLocY,n1
-              if (distRup .gt. fltgrid_Rrup(i,j)) then
-                distRup = fltgrid_rRup(i,j)
-                icellRupstrike = j
-                icellRupdip = i
-              endif
+          elseif ( magUpper - MagLower .lt. 0. ) then
 
-              if (distJB .gt. fltgrid_Rjb(i,j)) then
-                distJB = fltgrid_Rjb(i,j)
-              endif
-
-C         Compute the DistSeismo value based on min depth being equal to seismoDepth parameter.
-              if (fltgrid_z(i,j) .gt. seismoDepth) then
-                if (distSeismo .gt. fltgrid_Rrup(i,j)) then
-                  distSeismo = fltgrid_Rrup(i,j)
-                endif
-              endif
-            enddo
-          enddo
-
-C         Set the Epi and Hypo distances for faults.
-          distepi = sqrt(hypox**2.+hypoy**2.)
-          disthypo = sqrt(hypox**2.+hypoy**2.+hypoDepth**2.)
-
+c           compute dip of the deep part
+            h_dist = sqrt( (fltgrid_x4(iDD_deep_max,iLocY) - fltgrid_x1(iDD_deep_min,iLocY))**2 +
+     1               (fltgrid_y4(iDD_deep_max,iLocY) - fltgrid_y1(iDD_deep_min,iLocY))**2 )
+            v_dist = abs( fltgrid_z4(iDD_deep_max,iLocY) - fltgrid_z1(iDD_deep_min,iLocY) )
+            dipavgd = atan2(v_dist,h_dist)*180/3.1415926
+c            write (*,'( 2x,''deep'',f10.3)') dipavgd
+          endif
         endif
+
+c       Calculate ZTOR
+        ZTOR = fltgrid_z1(iLocY,iLocX)
+
+c       Calculate Rrup and Rjb
+C       Keep track of the fault grid cell for the closest rupture distance
+C       for this rupture area since it is needed for the NGA directivity models.
+
+        do j=iLocX,n2
+          do i=iLocY,n1
+            if (distRup .gt. fltgrid_Rrup(i,j)) then
+              distRup = fltgrid_rRup(i,j)
+              icellRupstrike = j
+              icellRupdip = i
+            endif
+
+            if (distJB .gt. fltgrid_Rjb(i,j)) then
+              distJB = fltgrid_Rjb(i,j)
+            endif
+
+C           Compute the DistSeismo value based on min depth being equal to seismoDepth parameter.
+            if (fltgrid_z(i,j) .gt. seismoDepth) then
+              if (distSeismo .gt. fltgrid_Rrup(i,j)) then
+                distSeismo = fltgrid_Rrup(i,j)
+              endif
+            endif
+          enddo
+        enddo
+
+C       Set the Epi and Hypo distances for faults.
+        distepi = sqrt(hypox**2.+hypoy**2.)
+        disthypo = sqrt(hypox**2.+hypoy**2.+hypoDepth**2.)
+
+      endif
 
       return
       end
@@ -308,8 +342,6 @@ C     Compute azimuth between closest point and site.
       dx = x0 - fltGrid_x(iCellRupdip,iCellRupstrike)
       dy = y0 - fltGrid_y(iCellRupdip,iCellRupstrike)
       s2site =  atan2(dx,dy)*(180.0/3.14159) - astrike*180/3.14159
-
-
 C     Check to see if the slit value is greater than the limited c1 value. If so recompute values.
 C     Case where hypocenter is further down strike than closest point cell.
       c1temp = 0.0
@@ -339,10 +371,9 @@ c -------------------------------------------------------------------
       subroutine S14_Get_plane_dist (x, y, z, x0, y0, z0, insideFlag, dist)
 
       implicit none
-      include 'pfrisk.h'
 
 c     declarations passed in
-      real x(*), y(*), z(*), x0, y0, z0
+      real x(5), y(5), z(5), x0, y0, z0
 
 c     declarations passed out
       integer insideFlag
@@ -428,7 +459,7 @@ c -----------------------------
 
 c     declarations passed in
       integer nSeg
-      real xSeg(*), ySeg(*), x0, y0
+      real xSeg(MAX_SEG), ySeg(MAX_SEG), x0, y0
 
 c     declarations passed out
       integer insideFlag
@@ -480,18 +511,82 @@ c     If sumTheta = +-2 pi , then point is inside
       return
       end
 
+c -------------------------------------------------------------
+
+      subroutine S14_CalcPlaneDist ( x0, y0, z0, x, y, z, dist )
+
+      implicit none
+
+      integer MAXPTS, MAXTERM, arow, acol, i, nterm, npts
+      parameter (MAXPTS=3, MAXTERM=3)
+      real*8 A(MAXPTS,MAXTERM), b(MAXPTS,1)
+      real*8 xhat(MAXPTS,1), eps, deter, work(1000)
+      real x(5), y(5), z(5), x0, y0, z0, dist, cx, cy, cz, c
+
+      eps = 1.0e-11
+      arow = MAXPTS
+      acol = MAXTERM
+
+c     Compute the equation for the plane
+      if ( y(1) .eq. y(2) .and. z(1) .eq. z(2) ) then
+         if ( z(1) .eq. z(2) .and. z(2) .eq. z(3) ) then
+             cx = 0.
+             cy = 0.
+             cz = 1.
+             c = -z(1)
+         else
+             do i=1,3
+                A(i,1) = x(i)
+                A(i,2) = z(i)
+                A(i,3) = 1.
+                b(i,1) = -y(i)
+            enddo
+            nTerm = 3
+            nPts = 3
+            call S26_simul ( nterm, A, work, eps, -1, acol, deter )
+            call S26_mult ( A, acol, nterm, npts, b, arow, npts, 1, xhat,
+     1         acol )
+            cy = 1.
+            cx = xhat(1,1)
+            cz = xhat(2,1)
+            c = xhat(3,1)
+         endif
+      else
+         do i=1,3
+            A(i,1) = y(i)
+            A(i,2) = z(i)
+            A(i,3) = 1.
+            b(i,1) = -x(i)
+         enddo
+      nTerm = 3
+      nPts = 3
+      call S26_simul ( nterm, A, work, eps, -1, acol, deter )
+      call S26_mult ( A, acol, nterm, npts, b, arow, npts, 1, xhat,
+     1       acol )
+      cx = 1.
+      cy = xhat(1,1)
+      cz = xhat(2,1)
+      c = xhat(3,1)
+      endif
+
+c     Compute distance from point to plane
+      dist = abs( cx*x0 + cy*y0 + cz*z0 + c) /
+     1       sqrt( cx**2 + cy**2 + cz**2 )
+
+      return
+      end
+
 c --------------------------------------------------------------------
 
       subroutine S14_CalcDistDensity (nPts, xFlt2, yFlt2, distDensity,
-     1                            dr, nr, x0, y0, step, VarXstepFlag)
+     1                            dr, nr, x0, y0, step)
 
       implicit none
       include 'pfrisk.h'
 
       integer i, ix, iy, nx, ny, nPts, nr, insideFlag, iBin, iz, iBinMax
-      integer VarXstepFlag
-      real xFlt2(MAX_DD,MAX_COOR), yFlt2(MAX_DD,MAX_COOR), maxdist
-      real xFlt(MAX_COOR), yFlt(MAX_COOR), xMin, xMax, yMin, yMax, sum
+      real xFlt2(MAX_DD,MAX_SEG), yFlt2(MAX_DD,MAX_SEG), maxdist
+      real xFlt(MAX_SEG), yFlt(MAX_SEG), xMin, xMax, yMin, yMax, sum
       real distDensity(MAX_DIST1), dr, step, x, y, x0, y0, horDist
 
 c     Copy to 1-D array
@@ -532,27 +627,7 @@ c     Loop over bounding rectangle to estimate density function
           call S14_Inside_OutSide ( nPts-1, xFlt, yFlt, x, y, insideFlag)
           if ( insideFlag .eq. 1 ) then
              horDist = sqrt( (x-x0)**2 + (y-y0)**2 )
-c            variable horizontal discretization
-             if (VarXstepFlag .eq. 1) then
-               if (horDist .lt. 10.) then
-                 dr = 1
-                 iBin = int(horDist/dr) + 1
-               else if (horDist .lt. 26.) then
-                 dr = 2
-                 iBin = int((horDist-10.)/dr) + 11
-               else if (horDist .lt. 59.) then
-                 dr = 3
-                 iBin = int((horDist-26.)/dr) + 19
-               else if (horDist .lt. 151.) then
-                 dr = 4
-                 iBin = int((horDist-59.)/dr) + 30
-               else
-                 dr = 5
-                 iBin = int((horDist-151.)/dr) + 53
-               endif
-             else
-               iBin = int( horDist / dr ) + 1
-             endif
+             iBin = int( horDist / dr ) + 1
              call S21_CheckDim ( iBin, MAX_DIST1, 'MAX_DIST1  ' )
 
 C     Reset Max and Min distances if needed
@@ -583,12 +658,12 @@ c --------------------------------------------------------------------
 
       subroutine S14_CalcDistDensity1 ( iFlt, grid_a, grid_x, grid_y,
      1           grid_dx, grid_dy, grid_n, distDensity, dr, nr,
-     2           x0, y0, step, VarXstepFlag)
+     2           x0, y0, step)
 
       implicit none
       include 'pfrisk.h'
 
-      integer grid_n(MAX_FLT), iFlt, nr, i, nx, ny, ix, iy, iBin, VarXstepFlag
+      integer grid_n(MAX_FLT), iFlt, nr, i, nx, ny, ix, iy, iBin
       real grid_a(MAX_FLT,MAX_GRID), grid_x(MAX_GRID), grid_y(MAX_GRID),
      1     grid_dx, grid_dy, distDensity(MAX_DIST1), dr, x0, y0,
      2     step, x, y, horDist, sum, rate1
@@ -611,27 +686,7 @@ C     Reset distdensity array.
           y = step/2. + grid_y(i)
           do iy=1,ny
              horDist = sqrt( (x-x0)**2 + (y-y0)**2 )
-c            variable horizontal discretization
-             if (VarXstepFlag .eq. 1) then
-               if (horDist .lt. 10.) then
-                 dr = 1
-                 iBin = int(horDist/dr) + 1
-               else if (horDist .lt. 26.) then
-                 dr = 2
-                 iBin = int((horDist-10.)/dr) + 11
-               else if (horDist .lt. 59.) then
-                 dr = 3
-                 iBin = int((horDist-26.)/dr) + 19
-               else if (horDist .lt. 151.) then
-                 dr = 4
-                 iBin = int((horDist-59.)/dr) + 30
-               else
-                 dr = 5
-                 iBin = int((horDist-151.)/dr) + 53
-               endif
-             else
-               iBin = int( horDist / dr ) + 1
-             endif
+             iBin = int( horDist / dr ) + 1
              call S21_CheckDim ( iBin, MAX_DIST1, 'MAX_DIST1  ' )
              distDensity(iBin) = distDensity(iBin) + rate1
              y = y + step
@@ -641,21 +696,16 @@ c            variable horizontal discretization
       enddo
 
 c     Normalize density function
-      if (sum .ne. 0) then
-        do iBin=1,max_dist1
-          distDensity(iBin) = distDensity(iBin) / sum
-          if ( distDensity(iBin) .ne. 0 ) nr = iBin
-        enddo
-      endif
-
+      do iBin=1,max_dist1
+        distDensity(iBin) = distDensity(iBin) / sum
+        if ( distDensity(iBin) .ne. 0 ) nr = iBin
+      enddo
       return
       end
 
 c --------------------------------------------------------------------
 
       subroutine S14_CalcDistDensity2 ( iFlt, grid_a, grid_n, distDensity2 )
-
-
       implicit none
       include 'pfrisk.h'
 
@@ -675,6 +725,86 @@ c     Normalize density function
       end
 
 c -------------------------------------------------------------------
+
+      subroutine S14_Get_plane_dist2 ( xRup, yRup, zRup, iSeg,
+     1           x0, y0, z0, dip0, dist, xclp, yclp, zclp )
+
+      implicit none
+
+      integer i, i1, nSeg, insideFlag, iSeg
+      real xRup(4,1), yRup(4,1), zRup(4,1), x(4), y(4), z(4), xSeg(5),
+     1     ySeg(5), dist, dip0, x0, y0, z0, dist1, pi, dip, theta,
+     2     theta1, sin1, cos1, tan1, d1, d2, xclp, yclp, zclp, xclp2,
+     3     yclp2, zclp2
+
+      pi = 3.1415926
+
+      do i=1,4
+         x(i) = xRup(i,iSeg)
+         y(i) = yRup(i,iSeg)
+         z(i) = zRup(i,iSeg)
+      enddo
+
+c     Set angles
+      dip = dip0/180 * pi
+      theta = atan2 ( y(2)-y(1), x(2)-x(1) )
+      theta1 = theta + pi/2.
+      if ( dip .lt. 0 ) then
+         theta1 = theta1 + pi
+      endif
+      cos1 = cos(theta1)
+      sin1 = sin(theta1)
+      tan1 = tan(dip)
+
+c     Set boundary for points for which the closest point is to
+C     the plane
+
+C Note: Reorders points in clockwise rotation.
+      d1 = z(1) * abs(tan1)
+      d2 = z(3) * abs(tan1)
+      xSeg(1) = x(1) + d1*cos1
+      xSeg(2) = x(2) + d1*cos1
+      xSeg(3) = x(4) + d2*cos1
+      xSeg(4) = x(3) + d2*cos1
+      xSeg(5) = xSeg(1)
+      ySeg(1) = y(1) + d1*sin1
+      ySeg(2) = y(2) + d1*sin1
+      ySeg(3) = y(4) + d2*sin1
+      ySeg(4) = y(3) + d2*sin1
+      ySeg(5) = ySeg(1)
+
+c     Determine if the site is inside this boundary
+      nSeg = 4
+      call S14_Inside_OutSide ( nSeg, xSeg, ySeg, x0, y0, insideFlag )
+
+c     Compute closest distance for inside
+      if ( insideFlag .eq. 1 ) then
+         call S14_CalcPlaneDist2 ( x0, y0, z0, x, y, z, dist, xclp, yclp, zclp )
+         return
+      endif
+
+c     Compute the shortest dist to each edge
+      dist = 1.0e30
+      xclp = 1.0e30
+      yclp = 1.0e30
+      zclp = 1.0e30
+      do i=1,4
+         i1 = i+1
+         if ( i1 .gt. 4 ) i1=1
+         call S14_Calc_LineSeg_dist2 ( x(i), y(i), z(i), x(i1),
+     1       y(i1), z(i1), x0, y0, z0, dist1, xclp2, yclp2, zclp2 )
+
+         if ( dist1 .lt. dist ) then
+            dist = dist1
+            xclp = xclp2
+            yclp = yclp2
+            zclp = zclp2
+         endif
+      enddo
+      return
+      end
+
+c ---------------------------------------------------------------
 
       subroutine S14_Calc_LineSeg_dist2 ( x1, y1, z1, x2, y2, z2, x0, y0,
      1           z0, dist, x, y, z )
@@ -717,6 +847,71 @@ c     Intersection does not hit segment
       d1 = sqrt( (x0-x1)**2 + (y0-y1)**2 + (z0-z1)**2 )
       d2 = sqrt( (x0-x2)**2 + (y0-y2)**2 + (z0-z2)**2 )
       dist = min ( d1, d2 )
+
+      return
+      end
+
+c -------------------------------------------------------------
+
+      subroutine S14_CalcPlaneDist2 ( x0, y0, z0, x, y, z, dist, cx, cy, cz )
+
+      implicit none
+
+      integer MAXPTS, MAXTERM, arow, acol, i, nterm, npts
+      parameter (MAXPTS=3, MAXTERM=3)
+      real x(4), y(4), z(4), x0, y0, z0, dist, cx, cy, cz, c
+      real*8 A(MAXPTS,MAXTERM), b(MAXPTS,1), xhat(MAXPTS,1), eps,
+     1       deter, work(1000)
+
+      eps = 1.0e-11
+      arow = MAXPTS
+      acol = MAXTERM
+
+c     Compute the equation for the plane
+      if ( y(1) .eq. y(2) .and. z(1) .eq. z(2) ) then
+         if ( z(1) .eq. z(2) .and. z(2) .eq. z(3) ) then
+             cx = 0.
+             cy = 0.
+             cz = 1.
+             c = -z(1)
+         else
+             do i=1,3
+                A(i,1) = x(i)
+                A(i,2) = z(i)
+                A(i,3) = 1.
+                b(i,1) = -y(i)
+            enddo
+            nTerm = 3
+            nPts = 3
+            call S26_simul ( nterm, A, work, eps, -1, acol, deter )
+            call S26_mult ( A, acol, nterm, npts, b, arow, npts, 1, xhat,
+     1         acol )
+            cy = 1.
+            cx = xhat(1,1)
+            cz = xhat(2,1)
+            c = xhat(3,1)
+         endif
+      else
+         do i=1,3
+            A(i,1) = y(i)
+            A(i,2) = z(i)
+            A(i,3) = 1.
+            b(i,1) = -x(i)
+         enddo
+      nTerm = 3
+      nPts = 3
+      call S26_simul ( nterm, A, work, eps, -1, acol, deter )
+      call S26_mult ( A, acol, nterm, npts, b, arow, npts, 1, xhat,
+     1       acol )
+      cx = 1.
+      cy = xhat(1,1)
+      cz = xhat(2,1)
+      c = xhat(3,1)
+      endif
+
+c     Compute distance from point to plane
+      dist = abs( cx*x0 + cy*y0 + cz*z0 + c) /
+     1       sqrt( cx**2 + cy**2 + cz**2 )
 
       return
       end

@@ -2822,8 +2822,6 @@ c      lnY = lnY + 6.89
 
       return
       end
-
-
 c ------------------------------------------------------------------
 C *** Atkinson and Boore (2006) Horizontal for CEUS Hard Rock ****
 C        **** Alternative Stress Drop Scale Factors ****
@@ -3115,8 +3113,6 @@ c     Compute the ground motions adjustment factor.
 
       return
       end
-
-
 c ------------------------------------------------------------------
 C *** Atkinson (2008) Horizontal for CEUS-NGA BA08 Vs=760m/sec   ****
 C      *** Alternative C0 values                                 ****
@@ -3214,8 +3210,6 @@ C     Average sigma from NGA models for M5.5.
       data sig / 0.684, 0.684, 0.684, 0.684, 0.684, 0.684 ,0.684,
      1           0.684, 0.684, 0.684, 0.684, 0.682, 0.686, 0.701,
      2           0.712, 0.721, 0.727, 0.732, 0.755, 0.758, 0.809 /
-
-
 C Find the requested spectral period and corresponding coefficients
       nPer = 21
 
@@ -3326,8 +3320,6 @@ c     Compute the ground motions adjustment factor.
 
       return
       end
-
-
 c -----------------------------------------------------------------------------------------
 C *** EPRI Update (2013) Cluster01-Low: Mid-Continent, Functional Model1&3, Horizontal ***
 C -----------------------------------------------------------------------------------------
@@ -3664,8 +3656,6 @@ C ------------------------------------------------------------------------------
       real sigM5(MAXPER), sigM6(MAXPER), sigM7(MAXPER)
 
       Data Period / 0.0, 0.01, 0.04, 0.1, 0.2, 0.4, 1.0, 2.0 /
-
-
       Data C1 / -1.741, -1.741, -2.065, -1.502, -3.787, -8.305, -17.05, -22.98 /
       Data C2 / 0.9078, 0.9078, 1.094, 0.947, 1.183, 2.132, 4.106, 5.659 /
       Data C3 / -0.03331, -0.03331, -0.03549, -0.03383, -0.03079, -0.08381, -0.2037, -0.315 /
@@ -3800,8 +3790,6 @@ c     Convert to spectral acceleration in gal
 
       return
       end
-
-
 c -----------------------------------------------------------------------------------------
 C *** EPRI Update (2013) Cluster02-Low: Mid-Continent, Functional Model2, Horizontal ***
 C -----------------------------------------------------------------------------------------
@@ -4731,8 +4719,6 @@ c     Convert to spectral acceleration in gal
 
       return
       end
-
-
 c ---------------------------------------------------------------------------------------------
 C *** EPRI Update (2013) Cluster04-Low (Rift): Mid-Continent, Functional Model4, Horizontal ***
 C ---------------------------------------------------------------------------------------------
@@ -4862,8 +4848,6 @@ c     Convert to spectral acceleration in gal
 
       return
       end
-
-
 
 c ---------------------------------------------------------------------------------------------
 C *** EPRI Update (2013) Cluster04-Med (Rift): Mid-Continent, Functional Model4, Horizontal ***
@@ -5124,8 +5108,6 @@ c     Convert to spectral acceleration in gal
 
       return
       end
-
-
 c ------------------------------------------------------------------------------------------------
 C *** EPRI Update (2013) Cluster04-Low (NonRift): Mid-Continent, Functional Model4, Horizontal ***
 C ------------------------------------------------------------------------------------------------
@@ -5139,7 +5121,6 @@ C ------------------------------------------------------------------------------
       real sigM5T, sigM6T, sigM7T, sig
       character*80 attenName
 
-      integer MAXPER
       parameter (MAXPER=8)
       real c1(MAXPER), c2(MAXPER), c3(MAXPER), c4(MAXPER), c5(MAXPER)
       real c6(MAXPER), c7(MAXPER), h(MAXPER), period(MAXPER)

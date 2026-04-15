@@ -9,11 +9,10 @@
       include 'pfrisk.h'
 
       real mag, lnY, siga, ftype, period1(4,MAX_PROB), mag1, period2, lnSa, m
-      integer jcalc, soilflag, softrock, hardRock, hwflag, imod
+      integer jcalc, soilflag, softrock, hardRock, hwflag
       real jbdist, rupdist, seismodist, baseDepth, depth, specT, factor, a, b, faddmag
-      character*80 attenName
-      character*10 number
-      integer intflag, iflag, vs30_class, iBranch
+      character*80 attenName(4,MAX_ATTEN), attenname1, attenname0
+      integer intflag(4,MAX_PROB), iflag, vs30_class, iBranch
       integer iflag01, iflag02, iflag04, iflag10, foreArc, regionflag, basinflag, msasflag
       integer coefcountRrup, coefcountRjb, iAtten, iProb, jType, region
 
@@ -25,11 +24,9 @@
       real sigma01, sigma02, sigma04, sigma10
       real specT01, specT02, specT04, specT10, period02, Rx, SF2, Ry0
       real phi, tau, lnYH, sourceclass, sigmac, fth, frv, vs, sigma
-      real cfcoefrrup(MAX_Atten,11), cfcoefrjb(MAX_Atten,11), c1
+      real cfcoefrrup(MAX_Atten,14), cfcoefrjb(MAX_Atten,11), c1
       real depthTop1, s03vfs, s03sr, s03fr, soil, GB, GC, pga4nl
-      real sigmaH, phiH, tauH, sclass, pgaref, sjb, ACadjfac, mbinter
-      real mbslab, mohodepth, rockpga, spectpga, vsrock, x, z25ag, z25p
-      integer CasBas, iRegion, epiflag, pnwbflag
+      real sigmaH, phiH, tauH, sclass, pgaref, sjb, edge
 
 C LNY IS EXPECTED INTENSITY FOR THIS MAGNITUDE AND CLOSEST DISTANCE
       lnY = 1.e30
@@ -78,8 +75,8 @@ c  *** Turkey adjusted NGA1 models
      3                     hwflag, Rx )
       endif
 
-C     Kale, Ö., Akkar, S., Ansari, A., & Hamzehloo, H. (2015).
-C     -A Ground‐Motion Predictive Model for Iran and Turkey for Horizontal PGA,
+C     Kale, O., Akkar, S., Ansari, A., & Hamzehloo, H. (2015).
+C     -A Ground-Motion Predictive Model for Iran and Turkey for Horizontal PGA,
 C     PGV, and 5% Damped Response Spectrum: Investigation of Possible Regional Effects
 C     BSSA: Vol. 105, No.2A, pp. 963-980.
 C     Model Number = 2150
@@ -89,7 +86,7 @@ C     For Turkey
 
          call S02_KAAH_2015 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, vs, ftype, pgaref,region )
-         attenname = 'Kale et AL. (2015)_Hor_Turkey'
+         attenname1 = 'Kale et AL. (2015)_Hor_Turkey'
        endif
 
       if ( jcalc .eq. 3150 ) then
@@ -98,7 +95,7 @@ C     For Iran
 
          call S02_KAAH_2015 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, vs, ftype, pgaref,region )
-         attenname = 'Kale et AL. (2015)_Hor_Iran'
+         attenname1 = 'Kale et AL. (2015)_Hor_Iran'
       endif
 
 c    Taiwan GMPEs
@@ -109,28 +106,28 @@ c-----------------------------------------------------------------------------
 c     New Lin et al. (2011) Taiwan crustal model SOIL ************
 C     Model Number = 316
       if ( jcalc .eq. 316 ) then
-      	if (hwflag .eq. 1 ) then
+        if (hwflag .eq. 1 ) then
          call S04_Lin_hw_soil
      1    ( mag, rupDist, specT, period2, lnY, sigma, iflag)
         else
          call S04_Lin_fw_soil
      1    ( mag, rupDist, specT, period2, lnY, sigma, iflag)
         endif
-         attenname = 'Lin et al. (2011) , Crustal soil'
+         attenname1 = 'Lin et al. (2011) , Crustal soil'
       endif
 
 c-----------------------------------------------------------------------------
 c     New Lin et al. (2011) Taiwan crustal model ROCK ************
 C     Model Number = 317
       if ( jcalc .eq. 317 ) then
-      	if (hwflag .eq. 1 ) then
+        if (hwflag .eq. 1 ) then
          call S04_Lin_hw_rock
      1    ( mag, rupDist, specT, period2, lnY, sigma, iflag)
         else
          call S04_Lin_fw_rock
      1    ( mag, rupDist, specT, period2, lnY, sigma, iflag)
         endif
-         attenname = 'Lin et al. (2011) , Crustal rock'
+         attenname1 = 'Lin et al. (2011) , Crustal rock'
       endif
 
 c-----------------------------------------------------------------------------
@@ -139,7 +136,7 @@ C     Model Number = 315
       if ( jcalc .eq. 315) then
          call S04_Lin2009
      1( mag, rupDist, specT, period2, lnY, sigma, vs, iflag, ftype)
-         attenname = 'Lin 2009 Doctoral thesis, Crustal, VS30'
+         attenname1 = 'Lin 2009 Doctoral thesis, Crustal, VS30'
       endif
 c-----------------------------------------------------------------------------
 c     TG09221 2012 project
@@ -147,7 +144,7 @@ C     Model Number = 441
       if ( jcalc .eq. 441) then
          call S04_TG09221_2012
      1( mag, rupDist, specT, period2, lnY, sigma, vs, iflag, ftype)
-         attenname = 'TG09221 Report 2012/06, Crustal, VS30'
+         attenname1 = 'TG09221 Report 2012/06, Crustal, VS30'
       endif
 
 c-----------------------------------------------------------------------------
@@ -156,7 +153,7 @@ C     Model Number = 451
       if ( jcalc .eq. 451) then
          call S04_NCREE_2011
      1    ( mag, rupDist, specT, period2, lnY, sigma)
-         attenname = 'NCREE Report 2011/01, Vs30°Ÿ360m/sec'
+         attenname1 = 'NCREE Report 2011/01, Vs30�X?360m/sec'
       endif
 
 C     **** End of Taiwan TNGA attenuation models  ****
@@ -172,7 +169,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S07_AS_NGA_2008 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, phi, tau )
-         attenname = 'A&S_NGA_2008-Hor,Estimated Vs30m'
+         attenname1 = 'A&S_NGA_2008-Hor,Estimated Vs30m'
       endif
 
 C     Abrahamson&Silva 2008 - horizontal, Measured Vs30m
@@ -184,7 +181,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S07_AS_NGA_2008 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, phi, tau )
-         attenname = 'A&S_NGA_2008-Hor,Measured Vs30m'
+         attenname1 = 'A&S_NGA_2008-Hor,Measured Vs30m'
       endif
 
 c ******* Chiou and Youngs Model *********
@@ -197,7 +194,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, phi, tau )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m'
        endif
 
 C     Chiou and Youngs 2008 - Horizontal, measured Vs30m
@@ -209,7 +206,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, phi, tau )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m'
        endif
 
 c ******* Chiou and Youngs Model - Small Magnitude Models *********
@@ -223,7 +220,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m,SCal SMM'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m,SCal SMM'
        endif
 
 C     Chiou and Youngs 2008 - Horizontal, measured Vs30m
@@ -236,7 +233,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m,SCal SMM'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m,SCal SMM'
        endif
 
 C     Chiou and Youngs 2008 - Horizontal, estimated Vs30m
@@ -249,7 +246,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m,CCal SMM'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Estimated Vs30m,CCal SMM'
        endif
 
 C     Chiou and Youngs 2008 - Horizontal, measured Vs30m
@@ -262,7 +259,7 @@ c
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m,CCal SMM'
+         attenname1 = 'Chiou&Youngs_NGA_2008-Hor,Measured Vs30m,CCal SMM'
        endif
 
 c ******* Campbell and Bozorgnia Model *********
@@ -272,7 +269,7 @@ C     Model Number = 836
          call S07_CB_NGA_2008 ( mag, rupdist, jbdist, ftype, specT,
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, phi, tau )
-         attenname = 'Campbell&Bozorgnia_NGA_2008-Hor'
+         attenname1 = 'Campbell&Bozorgnia_NGA_2008-Hor'
        endif
 
 c ******* Idriss Model *********
@@ -282,11 +279,11 @@ C     Model Number = 910
          if (vs .ge. 900.0) then
             call S07_I_NGA_2008vsgt900 ( mag, rupDist, ftype, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGA_2008_Hor,Vs>900m/s'
+            attenname1 = 'Idriss_NGA_2008_Hor,Vs>900m/s'
          else
             call S07_I_NGA_2008 ( mag, rupDist, ftype, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGA_2008_Hor,Vs=450-900m/s'
+            attenname1 = 'Idriss_NGA_2008_Hor,Vs=450-900m/s'
          endif
        endif
 
@@ -296,7 +293,7 @@ C     Model Number = 922
       if ( jcalc .eq. 922 ) then
          call S07_BA_NGA_2008 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, vs, ftype, pga4nl, phi, tau )
-         attenname = 'Boore&Atkinson_NGA_2008_Hor'
+         attenname1 = 'Boore&Atkinson_NGA_2008_Hor'
        endif
 
 c ******* Boore and Atkinson Model *********
@@ -312,7 +309,7 @@ C     Apply small magnitude adjustment is Mag<=5.75.
             factor = a - b*log10(jbdist+10.0)
             factor = factor*alog(10.0)
          endif
-         attenname = 'Boore&Atkinson_NGA_2008_Hor with small mag adj Atkinson (2010)'
+         attenname1 = 'Boore&Atkinson_NGA_2008_Hor with small mag adj Atkinson (2010)'
          lnY = lnY + factor
        endif
 
@@ -333,7 +330,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -348,7 +345,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -363,7 +360,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -378,7 +375,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs'
       endif
 
 
@@ -394,7 +391,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -409,7 +406,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -424,7 +421,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -439,7 +436,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs'
       endif
 
 C     Note: These calls are for Aftershocks cases but it not currently implemented.
@@ -456,7 +453,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-AS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-AS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -471,7 +468,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-AS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-AS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -486,7 +483,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-AS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-AS-EstVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -501,7 +498,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-AS-EstVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-AS-EstVs'
       endif
 
 
@@ -517,7 +514,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-AS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-AS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -532,7 +529,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-AS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-AS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -547,7 +544,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-AS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-AS-MesVs'
       endif
 
 c ******* Abrahamson, Silva, and Kamai Model *********
@@ -562,7 +559,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-AS-MesVs'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-AS-MesVs'
       endif
 
 c ******* Chiou and Youngs Model *********
@@ -576,7 +573,7 @@ C     Model Number = 2797
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Estimated Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Estimated Vs30m'
        endif
 
 c ******* Chiou and Youngs Model *********
@@ -590,7 +587,7 @@ C     Model Number = 2798
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Measured Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Measured Vs30m'
        endif
 
 c ******* Chiou and Youngs Model *********
@@ -605,7 +602,7 @@ C     Model Number = 2799
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m'
        endif
 
 c ******* Chiou and Youngs Model *********
@@ -620,7 +617,7 @@ C     Model Number = 2800
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m'
        endif
 
 c ******* Chiou and Youngs Model *********
@@ -635,7 +632,7 @@ C     Model Number = 2801
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m'
        endif
 
 c ******* Chiou and Youngs Model *********
@@ -650,7 +647,7 @@ C     Model Number = 2802
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m'
        endif
 
 c ******* Campbell and Bozorgnia Model *********
@@ -662,7 +659,7 @@ C     Model Number = 2836
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Calif'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Calif'
        endif
 
 c ******* Campbell and Bozorgnia Model *********
@@ -674,7 +671,7 @@ C     Model Number = 2837
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Japan'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Japan'
        endif
 
 c ******* Campbell and Bozorgnia Model *********
@@ -686,7 +683,7 @@ C     Model Number = 2838
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,China'
+         attenname1 = 'CB_NGAWest2_2013-Hor,China'
        endif
 
 c ******* Campbell and Bozorgnia Model *********
@@ -698,7 +695,7 @@ C     Model Number = 2839
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Italy'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Italy'
        endif
 
 
@@ -706,14 +703,14 @@ c ******* Idriss Model *********
 C     Idriss 2013 - Horizontal
 C     Model Number = 2910
       if ( jcalc .eq. 2910 ) then
-         if (vs .gt. 1200) then
-            call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
-     1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor'
-         elseif (vs .ge. 450.0) then
+         if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor'
+            attenname1 = 'Idriss_NGAWest2_2013_Hor'
+         elseif (vs .gt. 1200) then
+            call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
+     1                     period2, lnY, sigma, iflag )
+            attenname1 = 'Idriss_NGAWest2_2013_Hor'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -731,7 +728,7 @@ C     Model Number = 2922
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin'
        endif
 
 c ******* Boore and Atkinson Model *********
@@ -744,7 +741,7 @@ C     Model Number = 2923
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin'
        endif
 c ******* Boore and Atkinson Model *********
 C     Boore, Stewart, Seyhan and Atkinson 2013 - horizontal
@@ -756,7 +753,7 @@ C     Model Number = 2924
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin'
        endif
 c ******* Boore and Atkinson Model *********
 C     Boore, Stewart, Seyhan and Atkinson 2013 - horizontal
@@ -768,7 +765,7 @@ C     Model Number = 2925
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin'
        endif
 
 c ******* Boore and Atkinson Model *********
@@ -781,7 +778,7 @@ C     Model Number = 2926
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin'
        endif
 c ******* Boore and Atkinson Model *********
 C     Boore, Stewart, Seyhan and Atkinson 2013 - horizontal
@@ -793,7 +790,7 @@ C     Model Number = 2927
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin'
        endif
 
 C ******* Implementation of Al-Atik and Youngs 2014 NGA West2 Epistemic Model.
@@ -813,7 +810,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs, LowEps'
 
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
@@ -860,7 +857,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -906,7 +903,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -952,7 +949,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -999,7 +996,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1045,7 +1042,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1091,7 +1088,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1137,7 +1134,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs, LowEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1183,7 +1180,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Estimated Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Estimated Vs30m, LowEps'
 C     Compute the low bramch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1229,7 +1226,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Measured Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Measured Vs30m, LowEps'
 C     Compute the low bramch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1276,7 +1273,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m, LowEps'
 C     Compute the low bramch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1323,7 +1320,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1370,7 +1367,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1417,7 +1414,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m, LowEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1460,7 +1457,7 @@ C     Model Number = 5836
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Calif, LowEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Calif, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1503,7 +1500,7 @@ C     Model Number = 5837
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Japan, LowEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Japan, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1546,7 +1543,7 @@ C     Model Number = 5838
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,China, LowEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,China, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1589,7 +1586,7 @@ C     Model Number = 5839
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Italy, LowEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Italy, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1631,11 +1628,11 @@ C     Model Number = 5910
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor, LowEps'
+            attenname1 = 'Idriss_NGAWest2_2013_Hor, LowEps'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor, LowEps'
+            attenname1 = 'Idriss_NGAWest2_2013_Hor, LowEps'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -1684,7 +1681,7 @@ C     Model Number = 5922
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1728,7 +1725,7 @@ C     Model Number = 5923
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1771,7 +1768,7 @@ C     Model Number = 5924
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1814,7 +1811,7 @@ C     Model Number = 5925
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1858,7 +1855,7 @@ C     Model Number = 5926
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1901,7 +1898,7 @@ C     Model Number = 5927
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin, LowEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin, LowEps'
 C     Compute the low branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -1952,7 +1949,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-EstVs, HighEps'
 
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
@@ -1999,7 +1996,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-EstVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2045,7 +2042,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-EstVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2091,7 +2088,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-EstVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2138,7 +2135,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Glob-MS-MesVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2184,7 +2181,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Taiw-MS-MesVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2230,7 +2227,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-China-MS-MesVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2276,7 +2273,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau )
-         attenname = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs, HighEps'
+         attenname1 = 'ASK_NGAWest2_2013-Hor-Japan-MS-MesVs, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2322,7 +2319,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Estimated Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Estimated Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2368,7 +2365,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor,Measured Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor,Measured Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2415,7 +2412,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Estimated Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2462,7 +2459,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Jap/Ity,Measured Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2509,7 +2506,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchuan,Estimated Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2556,7 +2553,7 @@ c     Current model set for measured Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m, HighEps'
+         attenname1 = 'CY_NGAWest2_2013-Hor-Wenchaun,Measured Vs30m, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2599,7 +2596,7 @@ C     Model Number = 7836
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Calif, HighEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Calif, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2642,7 +2639,7 @@ C     Model Number = 7837
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Japan, HighEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Japan, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2685,7 +2682,7 @@ C     Model Number = 7838
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,China, HighEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,China, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2728,7 +2725,7 @@ C     Model Number = 7839
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2013-Hor,Italy, HighEps'
+         attenname1 = 'CB_NGAWest2_2013-Hor,Italy, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2770,11 +2767,11 @@ C     Model Number = 7910
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor, HighEps'
+            attenname1 = 'Idriss_NGAWest2_2013_Hor, HighEps'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2013_Hor, HighEps'
+            attenname1 = 'Idriss_NGAWest2_2013_Hor, HighEps'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -2823,7 +2820,7 @@ C     Model Number = 7922
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, No Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2867,7 +2864,7 @@ C     Model Number = 7923
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, No Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2910,7 +2907,7 @@ C     Model Number = 7924
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, No Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2953,7 +2950,7 @@ C     Model Number = 7925
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3Global, Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -2997,7 +2994,7 @@ C     Model Number = 7926
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ChinaTurkey, Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -3040,7 +3037,7 @@ C     Model Number = 7927
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, Basinflag,
      1               phi, tau  )
-         attenname = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin, HighEps'
+         attenname1 = 'BSSA_NGAWest2_2013_Hor, DC3ItalyJapan, Basin, HighEps'
 C     Compute the high branch epistemic adjustment for the median motions
          if (ftype .ge. 0.0) then
             if (specT .le. 1.0) then
@@ -3084,7 +3081,7 @@ C     Model Number = 4922
          basinflag = 0
          call S10_SSBA_NGAWest2_2013_Vert ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag, phi, tau )
-         attenname = 'SSBA_NGAWest2_2013_Ver, DC3Global, No Basin'
+         attenname1 = 'SSBA_NGAWest2_2013_Ver, DC3Global, No Basin'
        endif
 
 C     Stewart, Seyhan, Boore, and Atkinson 2013 - V/H Ratio
@@ -3098,7 +3095,7 @@ C     Model Number = 6922
 
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnYH, sigmaH, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag, phiH, tauH )
-         attenname = 'SSBA_NGAWest2_2013_V/H, DC3Global, No Basin'
+         attenname1 = 'SSBA_NGAWest2_2013_V/H, DC3Global, No Basin'
 C     Divide Vertical by horizontal to get V/H ratio
          lnY = lnY - lnYH + 6.89
        endif
@@ -3116,7 +3113,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S10_GKAS_NGAWest2_2013_Vert ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'GKAS_NGAWest2_2013-Ver-Glob-MS-EstVs'
+         attenname1 = 'GKAS_NGAWest2_2013-Ver-Glob-MS-EstVs'
       endif
 
 C     Gulerce, Abrahamson, Silva, and Kamai 2013 - Vertical, Global, Mainshock, Measured Vs30m
@@ -3131,7 +3128,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S10_GKAS_NGAWest2_2013_Vert ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'GKAS_NGAWest2_2013-Ver-Glob-MS-MsrVs'
+         attenname1 = 'GKAS_NGAWest2_2013-Ver-Glob-MS-MsrVs'
       endif
 
 c ******* Gulerce, Abrahamson, Silva, and Kamai Model *********
@@ -3153,7 +3150,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
 
 C     Divide Vertical by Horizontal to get V/H Ratio
          lnY = lnY - lnYH + 6.89
-         attenname = 'GKAS_NGAWest2_2013-V/H-Glob-MS-EstVs'
+         attenname1 = 'GKAS_NGAWest2_2013-V/H-Glob-MS-EstVs'
       endif
 
 c ******* Gulerce, Abrahamson, Silva, and Kamai Model *********
@@ -3176,7 +3173,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
 
 C     Divide Vertical by Horizontal to get V/H Ratio
          lnY = lnY - lnYH + 6.89
-         attenname = 'GKAS_NGAWest2_2013-V/H-Glob-MS-MsrVs'
+         attenname1 = 'GKAS_NGAWest2_2013-V/H-Glob-MS-MsrVs'
       endif
 
 c ******* Chiou and Youngs Model *********
@@ -3189,7 +3186,7 @@ C     Model Number = 4797
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag, phi, tau )
-         attenname = 'CY_NGAWest2_2013-Ver,Estimated Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Ver,Estimated Vs30m'
        endif
 
 C     Chiou and Youngs 2013 - Vertical, measured Vs30
@@ -3201,7 +3198,7 @@ C     Model Number = 4798
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag, phi, tau )
-         attenname = 'CY_NGAWest2_2013-Ver,Measured Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-Ver,Measured Vs30m'
        endif
 
 C     V/H Model, estimated Vs30
@@ -3219,7 +3216,7 @@ C     Call the horizontal model
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag, phiH, tauH )
 
-         attenname = 'CY_NGAWest2_2013-V/H,Estimated Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-V/H,Estimated Vs30m'
 
 C     Divide vertical by horizontal to get V/H Ratio.
          lnY = lnY - lnYH + 6.89
@@ -3240,7 +3237,7 @@ C     Call the horizontal model
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag, phiH, tauH )
 
-         attenname = 'CY_NGAWest2_2013-V/H,Measured Vs30m'
+         attenname1 = 'CY_NGAWest2_2013-V/H,Measured Vs30m'
 
 C     Divide vertical by horizontal to get V/H Ratio.
          lnY = lnY - lnYH + 6.89
@@ -3254,7 +3251,7 @@ C     Model Number = 4836
          call S10_BC_NGAWest2_2013_Vert ( mag, rupdist, jbdist, ftype, specT,
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag, phi, tau )
-         attenname = 'BC_NGAWest2_2013-Ver,Calif'
+         attenname1 = 'BC_NGAWest2_2013-Ver,Calif'
        endif
 
 C     Bozorgnia and Campbell 2013 - Vertical, Japan
@@ -3264,7 +3261,7 @@ C     Model Number = 4837
          call S10_BC_NGAWest2_2013_Vert ( mag, rupdist, jbdist, ftype, specT,
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag, phi, tau )
-         attenname = 'BC_NGAWest2_2013-Ver,Japan'
+         attenname1 = 'BC_NGAWest2_2013-Ver,Japan'
        endif
 
 C     Bozorgnia and Campbell 2013 - Implied Vertical/Horizontal Ratio, California
@@ -3281,7 +3278,7 @@ C     Model Number = 6836
 
 C     Divide vertical by horizontal to get V/H Ratio.
          lnY = lnY - lnYH + 6.89
-         attenname = 'BC_NGAWest2_2013-V/H,Calif'
+         attenname1 = 'BC_NGAWest2_2013-V/H,Calif'
        endif
 C     Bozorgnia and Campbell 2013 - Implied Vertical/Horizontal Ratio, Japan
 C     Model Number = 6837
@@ -3297,7 +3294,7 @@ C     Model Number = 6837
 
 C     Divide vertical by horizontal to get V/H Ratio.
          lnY = lnY - lnYH + 6.89
-         attenname = 'BC_NGAWest2_2013-V/H,Japan'
+         attenname1 = 'BC_NGAWest2_2013-V/H,Japan'
        endif
 
 C ******* End of vertical NGA West2 GMPEs.*******
@@ -3346,7 +3343,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,Firm Soil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,Firm Soil'
       endif
 
 C     Campbell and Bozorgnia (2003), Horizontal, Very Firm Soil, SS and Reverse
@@ -3368,7 +3365,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,Very Firm Soil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,Very Firm Soil'
       endif
 
 C     Campbell and Bozorgnia (2003), Horizontal, Soft Rock, SS and Reverse
@@ -3390,7 +3387,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,Soft Rock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,Soft Rock'
       endif
 
 C     Campbell and Bozorgnia (2003), Horizontal, Firm Rock, SS and Reverse
@@ -3412,7 +3409,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,Firm Rock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,Firm Rock'
       endif
 
 C     Campbell and Bozorgnia (2003), Horizontal, Generic Rock, SS and Reverse
@@ -3434,7 +3431,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,GenericRock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,GenericRock'
       endif
 
 C     Campbell and Bozorgnia (2003), Horizontal, Generic Soil, SS and Reverse
@@ -3456,7 +3453,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_H ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Hor,GenericSoil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Hor,GenericSoil'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Firm Soil, SS and Reverse
@@ -3478,7 +3475,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,Firm Soil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,Firm Soil'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Very Firm Soil, SS and Reverse
@@ -3500,7 +3497,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,Very Firm Soil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,Very Firm Soil'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Soft Rock, SS and Reverse
@@ -3522,7 +3519,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,Soft Rock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,Soft Rock'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Firm Rock, SS and Reverse
@@ -3544,7 +3541,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,Firm Rock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,Firm Rock'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Generic Rock, SS and Reverse
@@ -3566,7 +3563,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,GenericRock'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,GenericRock'
       endif
 
 C     Campbell and Bozorgnia (2003), Vertical, Generic Soil, SS and Reverse
@@ -3588,7 +3585,7 @@ C     Set mechanism term for Reverse/Thrust events.
          call S02_Camp03_V ( mag, seismoDist, jbDist, lnY, sigma,
      1        specT, period2, s03vfs, s03sr, s03fr, frv, fth, hwflag,
      2        iflag)
-         attenname = 'Campbell&Bozorgnia(2003)-Ver,GenericSoil'
+         attenname1 = 'Campbell&Bozorgnia(2003)-Ver,GenericSoil'
       endif
 
 
@@ -3599,7 +3596,7 @@ C     Model Number = 001
          soil = 0.
          call S02_AS_97_H ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,rock'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,rock'
        endif
 
 C     Abrahamson&Silva 1997 (Rock) - vertical
@@ -3608,7 +3605,7 @@ C     Model Number = 002
          soil = 0.
          call S02_AS_97_V ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Ver,rock'
+         attenname1 = 'Abrahamson/Silva(97)-Ver,rock'
        endif
 
 C     Abrahamson&Silva 1997 (Soil) - horizontal
@@ -3617,7 +3614,7 @@ C     Model Number = 003
          soil = 1.
          call S02_AS_97_H ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,soil'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,soil'
        endif
 
 C     Abrahamson&Silva 1995 (Soil) - vertical
@@ -3626,7 +3623,7 @@ C     Model Number = 004
          soil = 1.
          call S02_AS_97_V ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Ver,soil'
+         attenname1 = 'Abrahamson/Silva(97)-Ver,soil'
        endif
 
 C     Abrahamson&Silva 1997 (Rock) - horizontal with Normal Faulting factors.
@@ -3635,7 +3632,7 @@ C     Model Number = 005
          soil = 0.
          call S02_AS_97_H_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,rock,NF'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,rock,NF'
        endif
 
 C     Abrahamson&Silva 1997 (Rock) - vertical
@@ -3644,7 +3641,7 @@ C     Model Number = 006
          soil = 0.
          call S02_AS_97_V_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Ver,rock,NF'
+         attenname1 = 'Abrahamson/Silva(97)-Ver,rock,NF'
        endif
 
 C     Abrahamson&Silva 1997 (Soil) - horizontal with Normal faulting factors.
@@ -3653,7 +3650,7 @@ C     Model Number = 007
          soil = 1.
          call S02_AS_97_H_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,soil,NF'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,soil,NF'
        endif
 
 C     Abrahamson&Silva 1997 (Soil) - vertical with Normal faulting factors
@@ -3662,7 +3659,7 @@ C     Model Number = 008
          soil = 1.
          call S02_AS_97_V_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Ver,soil,NF'
+         attenname1 = 'Abrahamson/Silva(97)-Ver,soil,NF'
        endif
 
 C     Abrahamson&Silva 1997 (Rock) - horizontal with Normal Faulting factors scaled
@@ -3672,7 +3669,7 @@ C     Model Number = 2005
          soil = 0.
          call S02_AS_97_H_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,rock,NF(1/1.67)'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,rock,NF(1/1.67)'
 C      Scale the computed ground motion by 1.0/1.67
          lnY = lnY + alog(1.0/1.67)
        endif
@@ -3684,7 +3681,7 @@ C     Model Number = 3005
          soil = 0.
          call S02_AS_97_H_NF ( mag, rupDist, ftype, soil, hwflag, specT,
      1                     period2, lnY, sigma,iflag )
-         attenname = 'Abrahamson/Silva(97)-Hor,rock,NF(1.67)'
+         attenname1 = 'Abrahamson/Silva(97)-Hor,rock,NF(1.67)'
 C      Scale the computed ground motion by 1.67
          lnY = lnY + alog(1.67)
        endif
@@ -3697,48 +3694,48 @@ C     Model Number = 010
          GB = 0
          GC = 0
          call S02_bjf94 ( mag, jbDist, ftype, lnY, sigma, GB, GC, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
 c     BJF94, Horizontal, Class B
 C     Model Number = 011
       elseif ( jcalc .eq. 11 ) then
          GB = 1
          GC = 0
          call S02_bjf94 ( mag, jbDist, ftype, lnY, sigma, GB, GC, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
 c     BJF94, Horizontal, Class c
 C     Model Number = 012
       elseif ( jcalc .eq. 12 ) then
          GB = 0
          GC = 1
          call S02_bjf94 ( mag, jbDist, ftype, lnY, sigma, GB, GC, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
       endif
 
 c     BJF97, Horizontal, Vs top 30 meters
 C     Model Number = 013
       if ( jcalc .eq. 13 ) then
          call S02_bjf97 ( mag, jbDist, ftype, lnY, sigma, specT,
-     1            attenname, period2, vs,iflag )
+     1            attenName1, period2, vs,iflag )
       endif
 
 c     BJF97, Horizontal, Vs top 30 meters scaled by factor 1.0/1.67
 C     Model Number = 2013
       if ( jcalc .eq. 2013 ) then
          call S02_bjf97 ( mag, jbDist, ftype, lnY, sigma, specT,
-     1            attenname, period2, vs,iflag )
+     1            attenName1, period2, vs,iflag )
 c     Scale ground motion by factor 1.0/1.67
          lnY = lnY + alog(1.0/1.67)
-         attenname='Boore, Joyner, Fumal (1997) (1.0/1.67)'
+         attenName1='Boore, Joyner, Fumal (1997) (1.0/1.67)'
       endif
 
 c     BJF97, Horizontal, Vs top 30 meters scaled by factor 1.67
 C     Model Number = 3013
       if ( jcalc .eq. 3013 ) then
          call S02_bjf97 ( mag, jbDist, ftype, lnY, sigma, specT,
-     1            attenname, period2, vs,iflag )
+     1            attenName1, period2, vs,iflag )
 c     Scale ground motion by factor 1.67
          lnY = lnY + alog(1.67)
-         attenname='Boore, Joyner, Fumal (1997) (1.67)'
+         attenName1='Boore, Joyner, Fumal (1997) (1.67)'
       endif
 
 c ******** Campbell Models ******
@@ -3747,7 +3744,7 @@ C     Model Number = 020
       if ( jcalc .eq. 20 ) then
          baseDepth = 2.0
          call S02_Camp90 ( mag, seismoDist, ftype, lnY, sigma, baseDepth,
-     1            specT, attenname, period2,iflag )
+     1            specT, attenName1, period2,iflag )
       endif
 
 c     Campbell (1990) - vertical, Rock
@@ -3755,7 +3752,7 @@ C     Model Number = 021
       if ( jcalc .eq. 21 ) then
          baseDepth = 2.0
          call S02_Camp90v ( mag, seismoDist, ftype, lnY, sigma, baseDepth,
-     1            specT, attenname, period2,iflag )
+     1            specT, attenName1, period2,iflag )
       endif
 
 c     Campbell (1990/1994), Horizontal, Rock
@@ -3764,7 +3761,7 @@ C     Model Number = 022
          baseDepth = 2.0
          soilflag = 0
          call S02_Camp90_94 ( mag, seismoDist, ftype, lnY, sigma, baseDepth,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
       endif
 
 c     Campbell (1993-1994), Horizontal Soil
@@ -3776,7 +3773,7 @@ C     Model Number = 023
          hardRock = 0
          call S02_Campbell_94 ( mag, seismoDist, ftype, lnY, sigma, specT,
      1                soilFlag, softRock, hardRock, baseDepth,
-     1                attenname, period2,iflag )
+     1                attenName1, period2,iflag )
 c     Campbell (1993-1994), Horizontal Soft Rock
 C     Model Number = 024
       elseif ( jcalc .eq. 24 ) then
@@ -3786,7 +3783,7 @@ C     Model Number = 024
          hardRock = 0
          call S02_Campbell_94 ( mag, seismoDist, ftype, lnY, sigma, specT,
      1                soilFlag, softRock, hardRock, baseDepth,
-     1                attenname, period2,iflag )
+     1                attenName1, period2,iflag )
 c     Campbell (1993-1994), Horizontal Hard Rock
 C     Model Number = 025
       elseif ( jcalc .eq. 25 ) then
@@ -3796,7 +3793,7 @@ C     Model Number = 025
          hardRock = 1
          call S02_Campbell_94 ( mag, seismoDist, ftype, lnY, sigma, specT,
      1                soilFlag, softRock, hardRock, baseDepth,
-     1                attenname, period2,iflag )
+     1                attenName1, period2,iflag )
       endif
 
 c     Campbell (1997), Horizontal, Soil
@@ -3808,7 +3805,7 @@ C     Model Number = 026
          hardRock = 0
          call S02_Camp97_H ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
 c     Campbell (1997), Horizontal, Soft Rock
 C     Model Number = 027
       elseif ( jcalc .eq. 27 ) then
@@ -3818,7 +3815,7 @@ C     Model Number = 027
          hardRock = 0
          call S02_Camp97_H ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
 c     Campbell (1997), Horizontal, Hard Rock
 C     Model Number = 028
       elseif ( jcalc .eq. 28 ) then
@@ -3828,7 +3825,7 @@ C     Model Number = 028
          hardRock = 1
          call S02_Camp97_H ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
       endif
 
 c     Campbell (1997)  vertical, Soil
@@ -3840,7 +3837,7 @@ C     Model Number = 029
          hardRock = 0
          call S02_Camp97_Z ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
 c     Campbell (1997)  vertical, Soft Rock
 C     Model Number = 030
       elseif ( jcalc .eq. 30 ) then
@@ -3850,7 +3847,7 @@ C     Model Number = 030
          hardRock = 0
          call S02_Camp97_Z ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
 c     Campbell (1997)  vertical, Hard Rock
 C     Model Number = 031
       elseif ( jcalc .eq. 31 ) then
@@ -3860,7 +3857,7 @@ C     Model Number = 031
          hardRock = 1
          call S02_Camp97_Z ( mag, seismoDist, ftype, lnY, sigma,
      1                baseDepth, specT,
-     1                attenname, period2, softrock, hardRock,iflag )
+     1                attenName1, period2, softrock, hardRock,iflag )
       endif
 
 c ******** Idriss Models *******
@@ -3868,7 +3865,7 @@ c     Idriss (1991), Horizontal, Rock
 C     Model Number = 040
       if ( jcalc .eq. 40 ) then
          call S02_Idriss91_rock (mag, rupDist, ftype, lnY, sigma, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
       endif
 
 C     Idriss (1991), Horizontal, Soft-soil, PGA
@@ -3876,7 +3873,7 @@ C     Model Number = 041
 c     soft-soil
       if ( jcalc .eq. 41 .and. specT .eq. 0.0 ) then
          call S02_Idriss91_soft (mag, rupDist, ftype, lnY, sigma,
-     1            attenname, period2 )
+     1            attenName1, period2 )
          iflag = 0
       elseif (jcalc .eq. 41 .and. specT .ne. 0.0) then
         write (*,*) 'Idriss (1991), Horizontal, Soft Soil'
@@ -3889,7 +3886,7 @@ c     Idriss 1997 Horizontal, soft-soil, PGA
 C     Model Number = 042
       if ( jcalc .eq. 42 .and. specT .eq. 0.0 ) then
          call S02_Idriss97_soft (mag, rupDist, ftype, lnY, sigma,
-     1            attenname, period2 )
+     1            attenName1, period2 )
          iflag = 0
       elseif (jcalc .eq. 42 .and. specT .ne. 0.0) then
          write (*,*) 'Idriss (1997), Horizontal, Soft Soil'
@@ -3902,27 +3899,27 @@ c     Idriss (1991:1995), Horizontal, Rock
 C     Model Number = 043
       if ( jcalc .eq. 43 ) then
          call S02_Idriss91_95_rock (mag, rupDist, ftype, lnY, sigma, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
       endif
 
 c     Idriss (1991:1995), Horizontal, Rock scaled by factor 1.0/1.67
 C     Model Number = 2043
       if ( jcalc .eq. 2043 ) then
          call S02_Idriss91_95_rock (mag, rupDist, ftype, lnY, sigma, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
 c     Scaled ground motion by factor 1.0/1.67
          lnY = lnY + alog (1.0/1.67)
-         attenname = 'Idriss (1991;1995), Rock (1.0/1.67)'
+         attenName1 = 'Idriss (1991;1995), Rock (1.0/1.67)'
       endif
 
 c     Idriss (1991:1995), Horizontal, Rock scaled by factor 1.67
 C     Model Number = 3043
       if ( jcalc .eq. 3043 ) then
          call S02_Idriss91_95_rock (mag, rupDist, ftype, lnY, sigma, specT,
-     1            attenname, period2,iflag )
+     1            attenName1, period2,iflag )
 c     Scaled ground motion by factor 1.67
          lnY = lnY + alog (1.67)
-         attenname = 'Idriss (1991;1995), Rock (1.67)'
+         attenName1 = 'Idriss (1991;1995), Rock (1.67)'
       endif
 
 c  ******* Sadigh/Geomatrix Models *******
@@ -3930,51 +3927,51 @@ c     Geomatrix 93 (rock) vertical
 C     Model Number = 050
       if ( jcalc .eq. 50 ) then
          call S02_Geomatrix93_V_rock ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
       endif
 
 c     Sadigh et al. 97 (rock) Horizontal
 C     Model Number = 051
       if ( jcalc .eq. 51 ) then
          call S02_Geomatrix93_H_rock ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
       endif
 
 c     Sadigh et al. 97 (rock) Horizontal scaled by factor 1.0/1.67
 C     Model Number = 2051
       if ( jcalc .eq. 2051 ) then
          call S02_Geomatrix93_H_rock ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
 c     Scale ground motion by factor 1.0/1.67
          lnY = lnY + alog(1.0/1.67)
-         attenname = 'Sadigh et al. (1997), Horizontal, rock (1.0/1.67)'
+         attenName1 = 'Sadigh et al. (1997), Horizontal, rock (1.0/1.67)'
       endif
 
 c     Sadigh et al. 97 (rock) Horizontal scaled by factor 1.67
 C     Model Number = 3051
       if ( jcalc .eq. 3051 ) then
          call S02_Geomatrix93_H_rock ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
 c     Scale ground motion by factor 1.67
          lnY = lnY + alog(1.67)
-         attenname = 'Sadigh et al. (1997), Horizontal, rock (1.67)'
+         attenName1 = 'Sadigh et al. (1997), Horizontal, rock (1.67)'
       endif
 
 c     Sadigh et al. 97 (soil) horizontal
 C     Model Number = 052
       if ( jcalc .eq. 52 ) then
          call S02_Sadigh97_H_soil ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
       endif
 
 c     Sadigh et al. 97 (rock) Horizontal - Sigma = 0.0
 C     Model Number = 053
       if ( jcalc .eq. 53 ) then
          call S02_Geomatrix93_H_rock ( mag, rupDist, ftype, lnY, sigma,
-     1             specT, attenname, period2,iflag )
+     1             specT, attenName1, period2,iflag )
 c     Now set sigma = 0.0
          sigma = 1.0e-10
-         attenname = 'Sadigh et al. (1997),Hor.,rock,Sigma=0.0'
+         attenName1 = 'Sadigh et al. (1997),Hor.,rock,Sigma=0.0'
       endif
 
 c ******** Spudich et al. (1997) Models *******
@@ -3982,41 +3979,41 @@ C     Spudich et al. (1997), Horizontal, Rock, Extensional Regimes
 C     Model Number = 060
       if (jcalc .eq. 60) then
          call S02_Spudich96 ( mag, JBdist, lnY, sigma, 0, specT,
-     1                   attenname, period2,iflag )
-         attenname = 'Spudich et al. (1997), Horizontal, Rock'
+     1                   attenName1, period2,iflag )
+         attenname1 = 'Spudich et al. (1997), Horizontal, Rock'
       endif
 
 C     Spudich et al. (1997), Horizontal, Soil, Extensional Regimes
 C     Model Number = 061
       if (jcalc .eq. 61) then
          call S02_Spudich96 ( mag, JBdist, lnY, sigma, 1, specT,
-     1                   attenname, period2,iflag )
-         attenname = 'Spudich et al. (1997), Horizontal, Soil'
+     1                   attenName1, period2,iflag )
+         attenname1 = 'Spudich et al. (1997), Horizontal, Soil'
       endif
 
 c ******** Youngs Models *******
 c     Youngs et al (1993) Horizontal, subduction, Rock
 C     Model Number = 200
       if ( jcalc .eq. 200 ) then
-         call S02_youngs93 ( mag, rupDist, lnY, sigma, attenname,
+         call S02_youngs93 ( mag, rupDist, lnY, sigma, attenName1,
      1       period2, specT, ftype,iflag )
-         attenname ='Youngs (1993) Rock, Subduction'
+         attenName1 ='Youngs (1993) Rock, Subduction'
       endif
 
 c     Youngs et al (1997) Horizontal, subduction, rock
 C     Model Number = 201
       if ( jcalc .eq. 201 ) then
-         call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+         call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1       period2, specT, ftype, depth,iflag )
-         attenname ='Youngs (1997) Rock, Subduction'
+         attenName1 ='Youngs (1997) Rock, Subduction'
       endif
 
 c     Youngs et al (1997) Horizontal, subduction, soil
 C     Model Number = 202
       if ( jcalc .eq. 202 ) then
-         call S02_youngs97_soil ( mag, rupDist, lnY, sigma, attenname,
+         call S02_youngs97_soil ( mag, rupDist, lnY, sigma, attenName1,
      1       period2, specT, ftype, depth,iflag )
-         attenname ='Youngs (1997) Soil, Subduction'
+         attenName1 ='Youngs (1997) Soil, Subduction'
       endif
 
 c ***** Synchronous Rupture Ground Motion Models for HBIP *****
@@ -4041,31 +4038,31 @@ c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Abrahamson&Silva (1997) Horizontal Crustal
 C     Model Number = 7201001
          if (jcalc .eq. 7201001) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             soil = 0.
             hwflag = 1
             call S02_AS_97_H ( magc, rupDistc, ftypec, soil, hwflag, specT,
      1                     period2, lnYc, sigmac,iflag )
-            attenname = 'Syn. Rupture: Youngs+AS (M7.4)-Rock'
+            attenname1 = 'Syn. Rupture: Youngs+AS (M7.4)-Rock'
 c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Idriss (1991:1995) Horizontal Crustal
 C     Model Number = 7201043
          elseif ( jcalc .eq. 7201043 ) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             call S02_Idriss91_95_rock (magc, rupDistc, ftypec, lnYc, sigmac, specT,
-     1            attenname, period2,iflag )
-            attenname = 'Synchronous Rupture: Youngs+Idriss (M7.4)-Rock'
+     1            attenName1, period2,iflag )
+            attenname1 = 'Synchronous Rupture: Youngs+Idriss (M7.4)-Rock'
 c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Sadigh et al. (1997) Horizontal Crustal
 C     Model Number = 7201051
          elseif ( jcalc .eq. 7201051 ) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             call S02_Geomatrix93_H_rock ( magc, rupDistc, ftypec, lnYc, sigmac,
-     1             specT, attenname, period2,iflag )
-            attenname = 'Syn. Rupture: Youngs+Sadigh (M7.4)-Rock'
+     1             specT, attenName1, period2,iflag )
+            attenname1 = 'Syn. Rupture: Youngs+Sadigh (M7.4)-Rock'
          endif
 
 c     First Combine the Sigma values.
@@ -4095,31 +4092,31 @@ c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Abrahamson&Silva (1997) Horizontal Crustal
 C     Model Number = 8201001
          if (jcalc .eq. 8201001) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             soil = 0.
             hwflag = 1
             call S02_AS_97_H ( magc, rupDistc, ftypec, soil, hwflag, specT,
      1                     period2, lnYc, sigmac,iflag )
-            attenname = 'Syn. Rupture: Youngs+AS (M7.7)-Rock'
+            attenname1 = 'Syn. Rupture: Youngs+AS (M7.7)-Rock'
 c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Idriss (1991:1995) Horizontal Crustal
 C     Model Number = 8201043
          elseif ( jcalc .eq. 8201043 ) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             call S02_Idriss91_95_rock (magc, rupDistc, ftypec, lnYc, sigmac, specT,
-     1            attenname, period2,iflag )
-            attenname = 'Synchronous Rupture: Youngs+Idriss (M7.7)-Rock'
+     1            attenName1, period2,iflag )
+            attenname1 = 'Synchronous Rupture: Youngs+Idriss (M7.7)-Rock'
 c     Youngs et al (1997) Horizontal, subduction, Rock
 c     with Sadigh et al. (1997) Horizontal Crustal
 C     Model Number = 8201051
          elseif ( jcalc .eq. 8201051 ) then
-            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenname,
+            call S02_youngs97_rock ( mag, rupDist, lnY, sigma, attenName1,
      1          period2, specT, ftype, depth,iflag )
             call S02_Geomatrix93_H_rock ( magc, rupDistc, ftypec, lnYc, sigmac,
-     1             specT, attenname, period2,iflag )
-            attenname = 'Syn. Rupture: Youngs+Sadigh (M7.7)-Rock'
+     1             specT, attenName1, period2,iflag )
+            attenname1 = 'Syn. Rupture: Youngs+Sadigh (M7.7)-Rock'
          endif
 
 c     First Combine the Sigma values.
@@ -4140,8 +4137,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Subduction, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Subduction, NEHRP-B'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-C, Subduction
@@ -4152,8 +4149,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Subduction, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Subduction, NEHRP-C'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-D, Subduction
@@ -4164,8 +4161,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Subduction, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Subduction, NEHRP-D'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-E, Subduction
@@ -4176,8 +4173,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Subduction, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Subduction, NEHRP-E'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-B, Subduction
@@ -4188,8 +4185,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-B'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-C, Subduction
@@ -4200,8 +4197,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-C'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-D, Subduction
@@ -4212,8 +4209,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-D'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-E, Subduction
@@ -4224,8 +4221,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Cascadia, NEHRP-E'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-B, Subduction
@@ -4236,8 +4233,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-B'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-C, Subduction
@@ -4248,8 +4245,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-C'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-D, Subduction
@@ -4260,8 +4257,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-D'
       endif
 
 c     Atkinson and Boore (2003) - Horizontal, NEHRP-E, Subduction
@@ -4272,8 +4269,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003, Sub-Japan, NEHRP-E'
       endif
 
 C Atkinson and Boore (2008) Subduction Erratum Corrected for Interface Events ****
@@ -4285,8 +4282,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Subduction, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Subduction, NEHRP-B'
 
 c     Erratum correction only for interface events.
 C     Need to check ground motions between 0.1-1.0sec because of the
@@ -4296,16 +4293,16 @@ c         interpolation for periods between these end points.
 c     Call the attenuation model with needed spectral periods
                specT01 = 0.1
                call S02_AB03 ( mag, rupdist, lnY01, sigma01, specT01,
-     1              attenname, period02,iflag01, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag01, ftype, depth, Sc, Sd, Se)
                specT02 = 0.2
                call S02_AB03 ( mag, rupdist, lnY02, sigma02, specT02,
-     1              attenname, period02,iflag02, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag02, ftype, depth, Sc, Sd, Se)
                specT04 = 0.4
                call S02_AB03 ( mag, rupdist, lnY04, sigma04, specT04,
-     1              attenname, period02,iflag04, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag04, ftype, depth, Sc, Sd, Se)
                specT10 = 1.0
                call S02_AB03 ( mag, rupdist, lnY10, sigma10, specT10,
-     1              attenname, period02,iflag10, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag10, ftype, depth, Sc, Sd, Se)
                period2 = specT
 
 C     SpecT falls between 0.1 and 0.2sec
@@ -4330,7 +4327,7 @@ c     Interpolate to given SpecT value with new 1.0sec ground motion value.
                  lnY = lnY04p + (lnY04p-lnY10)*(alog(specT)-alog(0.4))/(alog(0.4)-alog(1.0))
                endif
             endif
-	   endif
+           endif
       endif
 
 c     Atkinson and Boore (2003/08) - Horizontal, NEHRP-C, Subduction
@@ -4341,8 +4338,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Subduction, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Subduction, NEHRP-C'
 
 c     Erratum correction only for interface events.
 C     Need to check ground motions between 0.1-1.0sec because of the
@@ -4352,16 +4349,16 @@ c         interpolation for periods between these end points.
 c     Call the attenuation model with needed spectral periods
                specT01 = 0.1
                call S02_AB03 ( mag, rupdist, lnY01, sigma01, specT01,
-     1              attenname, period02,iflag01, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag01, ftype, depth, Sc, Sd, Se)
                specT02 = 0.2
                call S02_AB03 ( mag, rupdist, lnY02, sigma02, specT02,
-     1              attenname, period02,iflag02, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag02, ftype, depth, Sc, Sd, Se)
                specT04 = 0.4
                call S02_AB03 ( mag, rupdist, lnY04, sigma04, specT04,
-     1              attenname, period02,iflag04, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag04, ftype, depth, Sc, Sd, Se)
                specT10 = 1.0
                call S02_AB03 ( mag, rupdist, lnY10, sigma10, specT10,
-     1              attenname, period02,iflag10, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag10, ftype, depth, Sc, Sd, Se)
                period2 = specT
 
 C     SpecT falls between 0.1 and 0.2sec
@@ -4386,7 +4383,7 @@ c     Interpolate to given SpecT value with new 1.0sec ground motion value.
                  lnY = lnY04p + (lnY04p-lnY10)*(alog(specT)-alog(0.4))/(alog(0.4)-alog(1.0))
                endif
             endif
-	   endif
+           endif
       endif
 
 c     Atkinson and Boore (2003/08) - Horizontal, NEHRP-D, Subduction
@@ -4397,8 +4394,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Subduction, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Subduction, NEHRP-D'
 
 c     Erratum correction only for interface events.
 C     Need to check ground motions between 0.1-1.0sec because of the
@@ -4408,16 +4405,16 @@ c         interpolation for periods between these end points.
 c     Call the attenuation model with needed spectral periods
                specT01 = 0.1
                call S02_AB03 ( mag, rupdist, lnY01, sigma01, specT01,
-     1              attenname, period02,iflag01, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag01, ftype, depth, Sc, Sd, Se)
                specT02 = 0.2
                call S02_AB03 ( mag, rupdist, lnY02, sigma02, specT02,
-     1              attenname, period02,iflag02, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag02, ftype, depth, Sc, Sd, Se)
                specT04 = 0.4
                call S02_AB03 ( mag, rupdist, lnY04, sigma04, specT04,
-     1              attenname, period02,iflag04, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag04, ftype, depth, Sc, Sd, Se)
                specT10 = 1.0
                call S02_AB03 ( mag, rupdist, lnY10, sigma10, specT10,
-     1              attenname, period02,iflag10, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag10, ftype, depth, Sc, Sd, Se)
                period2 = specT
 C     SpecT falls between 0.1 and 0.2sec
                if (specT .gt. 0.1 .and. specT .le. 0.2) then
@@ -4441,7 +4438,7 @@ c     Interpolate to given SpecT value with new 1.0sec ground motion value.
                  lnY = lnY04p + (lnY04p-lnY10)*(alog(specT)-alog(0.4))/(alog(0.4)-alog(1.0))
                endif
             endif
-	   endif
+           endif
       endif
 
 c     Atkinson and Boore (2003/08) - Horizontal, NEHRP-E, Subduction
@@ -4452,8 +4449,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Subduction, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Subduction, NEHRP-E'
 
 c     Erratum correction only for interface events.
 C     Need to check ground motions between 0.1-1.0sec because of the
@@ -4463,16 +4460,16 @@ c         interpolation for periods between these end points.
 c     Call the attenuation model with needed spectral periods
                specT01 = 0.1
                call S02_AB03 ( mag, rupdist, lnY01, sigma01, specT01,
-     1              attenname, period02,iflag01, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag01, ftype, depth, Sc, Sd, Se)
                specT02 = 0.2
                call S02_AB03 ( mag, rupdist, lnY02, sigma02, specT02,
-     1              attenname, period02,iflag02, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag02, ftype, depth, Sc, Sd, Se)
                specT04 = 0.4
                call S02_AB03 ( mag, rupdist, lnY04, sigma04, specT04,
-     1              attenname, period02,iflag04, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag04, ftype, depth, Sc, Sd, Se)
                specT10 = 1.0
                call S02_AB03 ( mag, rupdist, lnY10, sigma10, specT10,
-     1              attenname, period02,iflag10, ftype, depth, Sc, Sd, Se)
+     1              attenName0, period02,iflag10, ftype, depth, Sc, Sd, Se)
                period2 = specT
 C     SpecT falls between 0.1 and 0.2sec
                if (specT .gt. 0.1 .and. specT .le. 0.2) then
@@ -4496,7 +4493,7 @@ c     Interpolate to given SpecT value with new 1.0sec ground motion value.
                  lnY = lnY04p + (lnY04p-lnY10)*(alog(specT)-alog(0.4))/(alog(0.4)-alog(1.0))
                endif
             endif
-	   endif
+           endif
       endif
 
 c     Atkinson and Boore (2003/08) - Horizontal, NEHRP-B, Subduction
@@ -4507,8 +4504,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-B'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4523,8 +4520,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-C'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4539,8 +4536,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-D'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4555,8 +4552,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Cascadia, NEHRP-E'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4571,8 +4568,8 @@ C        Set NEHRP-B site class by setting Sc=Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-B'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-B'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4587,8 +4584,8 @@ C        Set NEHRP-C site class by setting Sc=1, Sd=Se=0
          Sd = 0
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-C'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-C'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4603,8 +4600,8 @@ C        Set NEHRP-D site class by setting Sc=Se=0, Sd=1
          Sd = 1
          Se = 0
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-D'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-D'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4619,8 +4616,8 @@ C        Set NEHRP-E site class by setting Sc=Sd=0, Se=1
          Sd = 0
          Se = 1
          call S02_AB03Jap ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag, ftype, depth, Sc, Sd, Se)
-         attenname = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-E'
+     1            attenName1, period2,iflag, ftype, depth, Sc, Sd, Se)
+         attenname1 = 'Atkinson&Boore 2003/08, Sub-Japan, NEHRP-E'
 
 c     Erratum correction only for world-wide model case interface events.
 c     Note that this model is the same as the 2003 model.
@@ -4646,8 +4643,8 @@ c            write (*,*) 'Check your input fault parameter file.'
 c            stop 99
 c         endif
          call S02_Gregor02CasR ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag)
-         attenname = 'Gregor et al.(2002),Rock,Cascadia Subduction'
+     1            attenName1, period2,iflag)
+         attenname1 = 'Gregor et al.(2002),Rock,Cascadia Subduction'
       endif
 
 c     Gregor et al. (2002) - Horizontal, Soil, Cascadia Subduction
@@ -4668,8 +4665,8 @@ c            write (*,*) 'Check your input fault parameter file.'
 c            stop 99
 c         endif
          call S02_Gregor02CasS ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag)
-         attenname = 'Gregor et al.(2002),Soil,Cascadia Subduction'
+     1            attenName1, period2,iflag)
+         attenname1 = 'Gregor et al.(2002),Soil,Cascadia Subduction'
       endif
 
 c ***** Gregor et al. Cascadia Subduction Model *****
@@ -4678,8 +4675,8 @@ C     Model Number = 242
 
       if (jcalc .eq. 242) then
          call S02_Gregor06Cas ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, vs, period2, iflag)
-         attenname = 'Gregor et al.(2006), Cascadia Subduction'
+     1            attenName1, vs, period2, iflag)
+         attenname1 = 'Gregor et al.(2006), Cascadia Subduction'
       endif
 
 c ***** Zhao et al. (2006) Crustal/Subduction Models *****
@@ -4695,9 +4692,9 @@ c        Set Site Class = Hard Rock and Source Type
          endif
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Sub., Hard Rock'
+         attenname1 = 'Zhao etal(2006)-Sub., Hard Rock'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Rock, Subduction
@@ -4712,9 +4709,9 @@ c        Set Site Class = Rock and Source Type
             sourceclass = 1.0
          endif
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Sub., Rock (SC I)'
+         attenname1 = 'Zhao etal(2006)-Sub., Rock (SC I)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Hard Soil, Subduction
@@ -4729,9 +4726,9 @@ c        Set Site Class = Hard Soil and Source Type
          endif
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Sub., Hard Soil (SC II)'
+         attenname1 = 'Zhao etal(2006)-Sub., Hard Soil (SC II)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Medium Soil, Subduction
@@ -4746,9 +4743,9 @@ c        Set Site Class = Medium Soil and Source Type
          endif
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Sub., Medium Soil (SC III)'
+         attenname1 = 'Zhao etal(2006)-Sub., Medium Soil (SC III)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Soft Soil, Subduction
@@ -4763,9 +4760,9 @@ c        Set Site Class = Soft Soil and Source Type
          endif
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Sub., Soft Soil (SC IV)'
+         attenname1 = 'Zhao etal(2006)-Sub., Soft Soil (SC IV)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Hard Rock, Crustal
@@ -4776,9 +4773,9 @@ c        Set Site Class = Hard Rock and Source Type
          sourceclass = 0
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Crust, Hard Rock'
+         attenname1 = 'Zhao etal(2006)-Crust, Hard Rock'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Rock, Crustal
@@ -4789,9 +4786,9 @@ c        Set Site Class = Rock and Source Type
          sourceclass = 0
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Crust, Rock (SC I)'
+         attenname1 = 'Zhao etal(2006)-Crust, Rock (SC I)'
       endif
 
 c     Zhao-Lu (2011) - Horizontal, Rock, Crustal
@@ -4807,8 +4804,8 @@ c        Set Site Class = Rock and Source Type
             m = mag
          endif
          call S02_Zhaoetal2006 ( m, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
-         attenname = 'ZhaoLu(2011)-Crust, Rock (SC I)'
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
+         attenname1 = 'ZhaoLu(2011)-Crust, Rock (SC I)'
       endif
 
 
@@ -4821,9 +4818,9 @@ c        Set Site Class = Hard Soil and Source Type
          sourceclass = 0
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Crust, Hard Soil (SC II)'
+         attenname1 = 'Zhao etal(2006)-Crust, Hard Soil (SC II)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Medium Soil, Crustal
@@ -4834,9 +4831,9 @@ c        Set Site Class = Medium Soil and Source Type
          sourceclass = 0
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Crust, Medium Soil (SC III)'
+         attenname1 = 'Zhao etal(2006)-Crust, Medium Soil (SC III)'
       endif
 
 c     Zhao et al. (2006) - Horizontal, Soft Soil, Crustal
@@ -4847,9 +4844,9 @@ c        Set Site Class = Soft Soil and Source Type
          sourceclass = 0
 
          call S02_Zhaoetal2006 ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
-     1            attenname, period2,iflag, sourceclass, depth, phi, tau )
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
 
-         attenname = 'Zhao etal(2006)-Crust, Soft Soil (SC IV)'
+         attenname1 = 'Zhao etal(2006)-Crust, Soft Soil (SC IV)'
       endif
 
 c ***** Kanno Subduction Models *****
@@ -4860,7 +4857,7 @@ C     Model Number = 260
          call S02_kanno2006 ( mag, rupdist, specT,
      1                    period2, lnY, sigma, iflag, vs, depth )
 
-         attenname = 'Kanno Subduction (2006)'
+         attenname1 = 'Kanno Subduction (2006)'
       endif
 
 c ***** Garcia et al. (2005) Subduction Model-Inslab *****
@@ -4876,7 +4873,7 @@ C     Model Number = 270
          else
             call S02_GarciaH05 ( mag, rupdist, specT,
      1                    period2, lnY, sigma, iflag, depth )
-            attenname = 'Garcia et al. (2005), Hor-Inslab, Rock'
+            attenname1 = 'Garcia et al. (2005), Hor-Inslab, Rock'
          endif
        endif
 
@@ -4892,7 +4889,7 @@ c     Garcia et al. (2005) - Vertical, Subduction-Inslab
          else
             call S02_GarciaV05 ( mag, rupdist, specT,
      1                       period2, lnY, sigma, iflag, depth )
-            attenname = 'Garcia et al. (2005), Ver-Inslab, Rock'
+            attenname1 = 'Garcia et al. (2005), Ver-Inslab, Rock'
          endif
        endif
 
@@ -4902,7 +4899,7 @@ C     Model Number = 280
       if ( jcalc .eq. 280 ) then
          call S02_LinLee08rock ( mag, rupdist, specT,
      1                    period2, lnY, sigma, iflag, depth, ftype )
-         attenname = 'Lin and Lee (2008), Subduction, Rock'
+         attenname1 = 'Lin and Lee (2008), Subduction, Rock'
       endif
 
 c      Lin and Lee (2008) - Horizontal, Subduction, Soil
@@ -4910,7 +4907,7 @@ C     Model Number = 281
       if ( jcalc .eq. 281 ) then
          call S02_LinLee08soil ( mag, rupdist, specT,
      1                    period2, lnY, sigma, iflag, depth, ftype )
-         attenname = 'Lin and Lee (2008), Subduction, Soil'
+         attenname1 = 'Lin and Lee (2008), Subduction, Soil'
       endif
 
 C  **** BCSubduction Model *******
@@ -4920,7 +4917,7 @@ C     Model Number = 350
          deltaC1 = 0.0
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, DeltaC1=0'
+         attenname1 = 'BCHydroSub_V3, DeltaC1=0'
       endif
 
 C     Base Case Model, DeltaC1 = -0.5
@@ -4929,7 +4926,7 @@ C     Model Number = 351
          deltaC1 = -0.5
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, DeltaC1=-0.5'
+         attenname1 = 'BCHydroSub_V3, DeltaC1=-0.5'
       endif
 
 C     Base Case Model, DeltaC1 = 0.5
@@ -4938,7 +4935,7 @@ C     Model Number = 352
          deltaC1 = 0.5
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, DeltaC1=0.5'
+         attenname1 = 'BCHydroSub_V3, DeltaC1=0.5'
       endif
 
 C     Base Case Model, DeltaC1 = 0.0, Single Station Sigma=0.60
@@ -4948,7 +4945,7 @@ C     Model Number = 353
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3-SSS, DeltaC1=0'
+         attenname1 = 'BCHydroSub_V3-SSS, DeltaC1=0'
       endif
 
 C     Base Case Model, DeltaC1 = -0.5, Single Station Sigma=0.60
@@ -4958,7 +4955,7 @@ C     Model Number = 354
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3-SSS, DeltaC1=-0.5'
+         attenname1 = 'BCHydroSub_V3-SSS, DeltaC1=-0.5'
       endif
 
 C     Base Case Model, DeltaC1 = 0.5, Single Station Sigma=0.58
@@ -4968,7 +4965,7 @@ C     Model Number = 355
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3-SSS, DeltaC1=0.5'
+         attenname1 = 'BCHydroSub_V3-SSS, DeltaC1=0.5'
       endif
 
 C     Base Case Model, DeltaC1 = -0.2
@@ -4977,7 +4974,7 @@ C     Model Number = 356
          deltaC1 = -0.2
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, DeltaC1=-0.2'
+         attenname1 = 'BCHydroSub_V3, DeltaC1=-0.2'
       endif
 
 C     Base Case Model, DeltaC1 = 0.2
@@ -4986,7 +4983,7 @@ C     Model Number = 357
          deltaC1 = 0.2
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, DeltaC1=0.2'
+         attenname1 = 'BCHydroSub_V3, DeltaC1=0.2'
       endif
 
 C     Base Case Model, DeltaC1 = -0.2, Single Station Sigma=0.60
@@ -4996,7 +4993,7 @@ C     Model Number = 358
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3-SSS, DeltaC1=-0.2'
+         attenname1 = 'BCHydroSub_V3-SSS, DeltaC1=-0.2'
       endif
 
 C     Base Case Model, DeltaC1 = 0.2, Single Station Sigma=0.60
@@ -5006,7 +5003,7 @@ C     Model Number = 359
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3-SSS, DeltaC1=0.2'
+         attenname1 = 'BCHydroSub_V3-SSS, DeltaC1=0.2'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
@@ -5033,7 +5030,7 @@ C        Period dependent model for interface events and constant for intraslab
          endif
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, Var. Central DeltaC1'
+         attenname1 = 'BCHydroSub_V3, Var. Central DeltaC1'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Lower Values, Reg. Sigma
@@ -5060,7 +5057,7 @@ C        Period dependent model for interface events and constant for intraslab
          endif
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, Var. Lower DeltaC1'
+         attenname1 = 'BCHydroSub_V3, Var. Lower DeltaC1'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Upper Values, Reg. Sigma
@@ -5087,7 +5084,7 @@ C        Period dependent model for interface events and constant for intraslab
          endif
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
-         attenname = 'BCHydroSub_V3, Var. Upper DeltaC1'
+         attenname1 = 'BCHydroSub_V3, Var. Upper DeltaC1'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Single Station Sigma
@@ -5116,7 +5113,7 @@ C        Period dependent model for interface events and constant for intraslab
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
 C     Changed SSS to 0.60 (January 17, 2014)
          sigma = 0.60
-         attenname = 'BCHydroSub_V3, Var. Central DeltaC1, SSS'
+         attenname1 = 'BCHydroSub_V3, Var. Central DeltaC1, SSS'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Lower Values, Single Station Sigma
@@ -5144,7 +5141,7 @@ C        Period dependent model for interface events and constant for intraslab
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3, Var. Lower DeltaC1, SSS'
+         attenname1 = 'BCHydroSub_V3, Var. Lower DeltaC1, SSS'
       endif
 
 C     Base Case Model, Variable DeltaC1 Adjustment - Upper Values, Single Station Sigma
@@ -5172,7 +5169,7 @@ C        Period dependent model for interface events and constant for intraslab
          call S05_BCHydroSub_V3 ( mag, ftype, rupDist, vs, lnY,
      1            sigma, specT, period2, iflag, foreArc, depth, disthypo, deltaC1 )
          sigma = 0.60
-         attenname = 'BCHydroSub_V3, Var. Upper DeltaC1, SSS'
+         attenname1 = 'BCHydroSub_V3, Var. Upper DeltaC1, SSS'
       endif
 
 c ***** Atkinson and Macias (2009) Cascadia Model, NEHRP B/C *****
@@ -5180,8 +5177,65 @@ C     Model Number = 370
       if ( jcalc .eq. 370 ) then
          call S02_AM09_Cas ( mag, rupDist, lnY,
      1            sigma, specT, period2, iflag )
-         attenname = 'Atkinson&Macias, Cascadia, NEHRP B/C'
+         attenname1 = 'Atkinson&Macias, Cascadia, NEHRP B/C'
       endif
+
+C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
+C     Model Number = 381
+      if ( jcalc .eq. 381 ) then
+         call S05_BCHydroSub_V4a ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_v17, central model'
+      endif
+
+C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
+C     Model Number = 382
+      if ( jcalc .eq. 382 ) then
+c        Determine the DeltaC1 value based on recommended adjusted model and spectral period.
+C        Period dependent model for interface events and constant for intraslab
+
+         call S05_BCHydroSub_V4b ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_v17, high scaled-backbone model'
+      endif
+
+C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
+C     Model Number = 383
+      if ( jcalc .eq. 383 ) then
+c        Determine the DeltaC1 value based on recommended adjusted model and spectral period.
+C        Period dependent model for interface events and constant for intraslab
+
+         call S05_BCHydroSub_V4c ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_v17, high scaled-backbone model'
+      endif
+
+C     bch 2018 global
+C     Model Number = 384
+      if ( jcalc .eq. 384 ) then
+c        Determine the DeltaC1 value based on recommended adjusted model and spectral period.
+C        Period dependent model for interface events and constant for intraslab
+       call S05_BCHydroSub_global ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_global'
+      endif
+
+C     bch 2018 south am
+C     Model Number = 385
+      if ( jcalc .eq. 385 ) then
+         call S05_BCHydroSub_southAm ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_SouthAm (not smoothed)'
+      endif
+
+C     bch 2018 Taiwan
+C     Model Number = 386
+      if ( jcalc .eq. 386 ) then
+         call S05_BCHydroSub_Taiwan ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, foreArc, depthTop, disthypo, deltaC1 )
+         attenname1 = 'BCHydro2018_taiwan (not smoothed)'
+      endif
+
 
 C ******  CEUS Models *********
 C
@@ -5190,8 +5244,8 @@ c     Atkinson and Boore (1994) - Horizontal, EUS Hard Rock
 C     Model Number = 100
       if ( jcalc .eq. 100 ) then
          call S02_AB95 ( mag, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag )
-         attenname = 'Atkinson&Boore 1994, EUS, Rock'
+     1            attenName1, period2,iflag )
+         attenname1 = 'Atkinson&Boore 1994, EUS, Rock'
       endif
 
 c     Atkinson and Boore (1994), Horizontal, EUS Hard Rock, magnitude Nuttli
@@ -5204,8 +5258,8 @@ C         Convert Nuttli magnitude to Moment magnitude.
             mag1 = 2.715 - 0.277*mag + 0.127*mag*mag
           endif
           call S02_AB95Mn ( mag1, rupdist, lnY, sigma, specT,
-     1            attenname, period2,iflag )
-          attenname = 'Atkinson&Boore 1994, EUS, Rock, Nuttli Mag'
+     1            attenName1, period2,iflag )
+          attenname1 = 'Atkinson&Boore 1994, EUS, Rock, Nuttli Mag'
       endif
 
 c     Atkinson and Boore (2006) - Horizontal, EUS Hard Rock
@@ -5213,7 +5267,7 @@ C     Model Number = 102
       if ( jcalc .eq. 102 ) then
          call S06_AB06 ( mag, rupdist, lnY, sigma, specT,
      1            period2,iflag )
-         attenname = 'Atkinson&Boore 2006, EUS, Hard Rock'
+         attenname1 = 'Atkinson&Boore 2006, EUS, Hard Rock'
       endif
 
 c     Atkinson and Boore (2006) - Horizontal, EUS Vs=760m/sec
@@ -5221,7 +5275,7 @@ C     Model Number = 103
       if ( jcalc .eq. 103 ) then
          call S06_AB06vs760 ( mag, rupdist, lnY, sigma, specT,
      1            period2,iflag )
-         attenname = 'Atkinson&Boore 2006, EUS, Vs=760m/sec'
+         attenname1 = 'Atkinson&Boore 2006, EUS, Vs=760m/sec'
       endif
 
 c     Atkinson (2008, weighted C0) - Horizontal, CEUS-NGA nga Vs=760m/sec
@@ -5235,7 +5289,7 @@ c     First call BA08 to get ground motion values which will be adjusted.
 C     Now call S06_A08vs760 to adjust BA08 NGA value to CEUS Vs=760 value.
          call S06_A08vs760 ( mag, jbdist, specT, BA08lnY,
      1                    period2, lnY, sigma, iflag )
-         attenname = 'Atkinson 2008 wt C0, EUS-NGA BA08, Vs=760m/sec'
+         attenname1 = 'Atkinson 2008 wt C0, EUS-NGA BA08, Vs=760m/sec'
       endif
 
 c     Atkinson and Boore (2006) with Atikinson (2010) stress drop adjustment - Horizontal, EUS Hard Rock
@@ -5248,7 +5302,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 10**(3.45 - 0.2*mag)
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006/Atkinson2010, EUS, Hard Rock'
+         attenname1 = 'Atkinson&Boore 2006/Atkinson2010, EUS, Hard Rock'
          LnY = lnY + sdscale*SF2*alog(10.0)
       endif
 
@@ -5262,7 +5316,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 10**(3.45 - 0.2*mag)
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006/Atkinson2010, EUS, Vs760m/s'
+         attenname1 = 'Atkinson&Boore 2006/Atkinson2010, EUS, Vs760m/s'
          LnY = lnY + sdscale*SF2*alog(10.0)
       endif
 
@@ -5282,7 +5336,7 @@ C     Apply small magnitude adjustment is Mag<=5.75.
          endif
 C     Now apply Fena adjustment as given in Atkinson (2010).
          call S06_Fena ( jbdist, specT, facFena )
-         attenname = 'Atkinson 2010, EUS-NGA BA08 based'
+         attenname1 = 'Atkinson 2010, EUS-NGA BA08 based'
          lnY =  BA08lnY + factor + FacFena
       endif
 
@@ -5297,7 +5351,7 @@ c     First call BA08 to get ground motion values which will be adjusted.
 C     Now Call A08vs760 to adjust BA08 NGA value to CEUS Vs=760 value.
          call S06_A08vs760C0 ( mag, jbdist, specT, BA08lnY,
      1                    period2, lnY, sigma, iflag )
-         attenname = 'Atkinson 2008 avg C0, EUS-NGA BA08, Vs=760m/sec'
+         attenname1 = 'Atkinson 2008 avg C0, EUS-NGA BA08, Vs=760m/sec'
       endif
 
 c     Atkinson and Boore (2006) with 2x stress drop adjustment (280bars) - Horizontal, EUS Hard Rock
@@ -5310,7 +5364,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 280.0
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006 (2x) StressDrop, EUS, Hard Rock'
+         attenname1 = 'Atkinson&Boore 2006 (2x) StressDrop, EUS, Hard Rock'
          LnY = lnY + sdscale*SF2*alog(10.0)
       endif
 
@@ -5324,7 +5378,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 70.0
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006 (0.5x) StressDrop, EUS, Hard Rock'
+         attenname1 = 'Atkinson&Boore 2006 (0.5x) StressDrop, EUS, Hard Rock'
          LnY = lnY + sdscale*SF2*alog(10.0)
       endif
 
@@ -5333,32 +5387,32 @@ C Toro et al. (1997) MidCon., Horizontal, Rock
 C     Model Number = 110
       if (jcalc .eq. 110) then
          call S02_TAS96 ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Toro et al. (1997), Horizontal, MidCon.'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Toro et al. (1997), Horizontal, MidCon.'
       endif
 
 C Toro et al. (1997) MidCon., Horizontal, Rock, MLg magnitude
 C     Model Number = 111
       if (jcalc .eq. 111) then
          call S02_TAS96MLg ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag)
-         attenname = 'Toro et al. (1997), Horizontal, MidCon., MLg'
+     1                  attenName1, period2,iflag)
+         attenname1 = 'Toro et al. (1997), Horizontal, MidCon., MLg'
       endif
 
 C Toro et al. (1997) Gulf, Horizontal, Rock
 C     Model Number = 112
       if (jcalc .eq. 112) then
          call S02_TAS96Gulf ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Toro et al. (1997), Horizontal, Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Toro et al. (1997), Horizontal, Gulf'
       endif
 
 C Toro et al. (1997) Gulf, Horizontal, Rock, MLg magnitude
 C     Model Number = 113
       if (jcalc .eq. 113) then
          call S02_TAS96GulfMLg ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Toro et al. (1997), Horizontal, Gulf, MLg'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Toro et al. (1997), Horizontal, Gulf, MLg'
       endif
 
 c ******* Campbell Hybrid CEUS Models *******
@@ -5367,7 +5421,7 @@ C     Model Number = 120
       if (jcalc .eq. 120) then
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
-         attenname = 'Campbell (2003), Hor., CEUS-Hybrid, Hard Rock'
+         attenname1 = 'Campbell (2003), Hor., CEUS-Hybrid, Hard Rock'
       endif
 
 c ******* Campbell Hybrid CEUS Models *******
@@ -5377,7 +5431,7 @@ C     Model Number = 121
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
          call S06_CHY03Eps ( mag, rupdist, sigmaeps, specT, period2, iflag )
-         attenname = 'Campbell (2003), Hor - SigmaEps, CEUS-Hybrid, Hard Rock'
+         attenname1 = 'Campbell (2003), Hor - SigmaEps, CEUS-Hybrid, Hard Rock'
          lnY = lnY - sigmaEps
       endif
 
@@ -5388,7 +5442,7 @@ C     Model Number = 122
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
          call S06_CHY03Eps ( mag, rupdist, sigmaeps, specT, period2, iflag )
-         attenname = 'Campbell (2003), Hor + SigmaEps, CEUS-Hybrid, Hard Rock'
+         attenname1 = 'Campbell (2003), Hor + SigmaEps, CEUS-Hybrid, Hard Rock'
          lnY = lnY + sigmaEps
       endif
 
@@ -5397,8 +5451,8 @@ C Silva et al. (2002) 2 Corner, Rock
 C     Model Number = 401
       if (jcalc .eq. 401) then
          call S06_PEA2C ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 2-Corner, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 2-Corner, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5406,8 +5460,8 @@ C Silva et al. (2002) 2 Corner-Saturation, Rock
 C     Model Number = 402
       if (jcalc .eq. 402) then
          call S06_PEA2CS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 2-Corner-Sat, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 2-Corner-Sat, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5415,8 +5469,8 @@ C Silva et al. (2002) 1 Corner Variable-High, Rock
 C     Model Number = 403
       if (jcalc .eq. 403) then
          call S06_PEA1CVH ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-High, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-High, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5424,8 +5478,8 @@ C Silva et al. (2002) 1 Corner Variable-Medium, Rock
 C     Model Number = 404
       if (jcalc .eq. 404) then
          call S06_PEA1CVM ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Med, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Med, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5433,8 +5487,8 @@ C Silva et al. (2002) 1 Corner Variable-Low, Rock
 C     Model Number = 405
       if (jcalc .eq. 405) then
          call S06_PEA1CVL ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Low, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Low, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5442,8 +5496,8 @@ C Silva et al. (2002) 1 Corner Constant-High, Rock
 C     Model Number = 406
       if (jcalc .eq. 406) then
          call S06_PEA1CCH ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-High, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-High, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5451,8 +5505,8 @@ C Silva et al. (2002) 1 Corner Constant-Medium, Rock
 C     Model Number = 407
       if (jcalc .eq. 407) then
          call S06_PEA1CCM ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Med, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Med, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5460,8 +5514,8 @@ C Silva et al. (2002) 1 Corner Constant-Low, Rock
 C     Model Number = 408
       if (jcalc .eq. 408) then
          call S06_PEA1CCL ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Low, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Low, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5469,8 +5523,8 @@ C Silva et al. (2002) 1 Corner Constant-High-Sat, Rock
 C     Model Number = 409
       if (jcalc .eq. 409) then
          call S06_PEA1CCHS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-High-Sat, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-High-Sat, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5478,8 +5532,8 @@ C Silva et al. (2002) 1 Corner Constant-Med-Sat, Rock
 C     Model Number = 410
       if (jcalc .eq. 410) then
          call S06_PEA1CCMS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Med-Sat, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Med-Sat, Horizontal'
       endif
 
 C New PE&A CEUS Models
@@ -5487,8 +5541,8 @@ C Silva et al. (2002) 1 Corner Constant-Low-Sat, Rock
 C     Model Number = 411
       if (jcalc .eq. 411) then
          call S06_PEA1CCLS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Low-Sat, Horizontal'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Low-Sat, Horizontal'
       endif
 
 C New PE&A CEUS Gulf Models
@@ -5496,8 +5550,8 @@ C Silva et al. (2002) 2 Corner, Rock, Gulf
 C     Model Number = 501
       if (jcalc .eq. 501) then
          call S06_PEAG2C ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 2-Corner, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 2-Corner, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5505,8 +5559,8 @@ C Silva et al. (2002) 2 Corner-Saturation, Rock, Gulf
 C     Model Number = 502
       if (jcalc .eq. 502) then
          call S06_PEAG2CS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 2-Corner-Sat, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 2-Corner-Sat, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5514,8 +5568,8 @@ C Silva et al. (2002) 1 Corner Variable-High, Rock, Gulf
 C     Model Number = 503
       if (jcalc .eq. 503) then
          call S06_PEAG1CVH ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-High, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-High, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5523,8 +5577,8 @@ C Silva et al. (2002) 1 Corner Variable-Medium, Rock, Gulf
 C     Model Number = 504
       if (jcalc .eq. 504) then
          call S06_PEAG1CVM ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Med, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Med, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5532,8 +5586,8 @@ C Silva et al. (2002) 1 Corner Variable-Low, Rock, Gulf
 C     Model Number = 505
       if (jcalc .eq. 505) then
          call S06_PEAG1CVL ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Low, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Low, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5541,8 +5595,8 @@ C Silva et al. (2002) 1 Corner Constant-High, Rock, Gulf
 C     Model Number = 506
       if (jcalc .eq. 506) then
          call S06_PEAG1CCH ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-High, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-High, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5550,8 +5604,8 @@ C Silva et al. (2002) 1 Corner Constant-Medium, Rock, Gulf
 C     Model Number = 507
       if (jcalc .eq. 507) then
          call S06_PEAG1CCM ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Med, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Med, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5559,8 +5613,8 @@ C Silva et al. (2002) 1 Corner Constant-Low, Rock, Gulf
 C     Model Number = 508
       if (jcalc .eq. 508) then
          call S06_PEAG1CCL ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Low, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Low, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5568,8 +5622,8 @@ C Silva et al. (2002) 1 Corner Constant-High-Sat, Rock, Gulf
 C     Model Number = 509
       if (jcalc .eq. 509) then
          call S06_PEAG1CCHS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-High-Sat, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-High-Sat, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5577,8 +5631,8 @@ C Silva et al. (2002) 1 Corner Constant-Med-Sat, Rock, Gulf
 C     Model Number = 510
       if (jcalc .eq. 510) then
          call S06_PEAG1CCMS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Med-Sat, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Med-Sat, Hor. Gulf'
       endif
 
 C New PE&A CEUS Models
@@ -5586,15 +5640,15 @@ C Silva et al. (2002) 1 Corner Constant-Low-Sat, Rock, Gulf
 C     Model Number = 511
       if (jcalc .eq. 511) then
          call S06_PEAG1CCLS ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
-         attenname = 'Silva et al. (2002), 1-Corner-Const-Low-Sat, Hor. Gulf'
+     1                  attenName1, period2,iflag )
+         attenname1 = 'Silva et al. (2002), 1-Corner-Const-Low-Sat, Hor. Gulf'
       endif
 
 C *****  Misc Models ******
 c     McVerry et al (1993) new zealand
 C     Model Number = 300
       if ( jcalc .eq. 300 .and. specT .eq. 0.0 ) then
-        call S02_mcverry93 ( mag, rupDist, lnY, sigma, attenname,
+        call S02_mcverry93 ( mag, rupDist, lnY, sigma, attenName1,
      1       ftype )
           period2 = 0.0
           iflag = 0
@@ -5608,7 +5662,7 @@ C     Model Number = 300
 c     fukushima (1990) rock
 C     Model Number = 301
       if ( jcalc .eq. 301 .and. specT .eq. 0.0 ) then
-          call S02_fukushima90 ( mag, rupDist, lnY, sigma, attenname)
+          call S02_fukushima90 ( mag, rupDist, lnY, sigma, attenName1)
           period2 = 0.0
           iflag = 0
       elseif (jcalc .eq. 301 .and. specT .ne. 0.0) then
@@ -5622,7 +5676,7 @@ c     Loh high speed rail (New Joyner-Boore form)
 C     Model Number = 302
       if ( jcalc .eq. 302 .and. specT .eq. 0.0 ) then
          call S02_HighSpeedRail ( mag, rupDist, lnY, sigma,
-     1                      attenname, period2 )
+     1                      attenName1, period2 )
          iflag = 0
       elseif (jcalc .eq. 302 .and. specT .ne. 0.0 ) then
          write (*,*) 'Loh High Speed Rail, Horizontal, Rock'
@@ -5634,7 +5688,7 @@ C     Model Number = 302
 c     New Loh (1996) model (unpublished)
 C     Model Number = 303
       if ( jcalc .eq. 303 .and. specT .eq. 0.0) then
-         call S02_Loh96 ( mag, rupDist, lnY, sigma, attenname, period2)
+         call S02_Loh96 ( mag, rupDist, lnY, sigma, attenName1, period2)
          iflag = 0
       elseif (jcalc .eq. 303 .and. specT .ne. 0.0 ) then
          write (*,*) 'Loh (1996), Horizontal, Rock'
@@ -5648,7 +5702,7 @@ C     Model Number = 601
       if ( jcalc .eq. 601 ) then
          call S03_Ambraseys_2005 ( mag, jbDist, ftype, specT,
      1                     period2, lnY, sigma, iflag )
-         attenname = 'Ambraseys_et_al_2005_Hor'
+         attenname1 = 'Ambraseys_et_al_2005_Hor'
       endif
 
 
@@ -5660,7 +5714,7 @@ C     Model Number = 1020
          call S06_AB06 ( mag, rupdist, lnY, sigma, specT,
      1            period2,iflag )
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
-         attenname = 'Atkinson&Boore 2006, EUS, BCH Amps for Vs760m/s'
+         attenname1 = 'Atkinson&Boore 2006, EUS, BCH Amps for Vs760m/s'
          lnY = lnSa
       endif
 
@@ -5674,7 +5728,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 10**(3.45 - 0.2*mag)
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006/Atkinson2010, EUS, BCH Amps for Vs760m/s'
+         attenname1 = 'Atkinson&Boore 2006/Atkinson2010, EUS, BCH Amps for Vs760m/s'
          LnY = lnY + sdscale*SF2*alog(10.0)
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
          LnY = LnSa
@@ -5690,7 +5744,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 280.0
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006 (2x) StressDrop, EUS, BCH Amps for Vs760'
+         attenname1 = 'Atkinson&Boore 2006 (2x) StressDrop, EUS, BCH Amps for Vs760'
          LnY = lnY + sdscale*SF2*alog(10.0)
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
          LnY = LnSa
@@ -5706,7 +5760,7 @@ C     Now apply compute the SF2 factor from the AB06 model.
 c     Now compute the scale factor for different magnitude dependent stress drops.
          sd = 70.0
          sdscale = log10(sd/140.0)/log10(2.0)
-         attenname = 'Atkinson&Boore 2006 (0.5x) StressDrop, EUS, BCH Amps for Vs760'
+         attenname1 = 'Atkinson&Boore 2006 (0.5x) StressDrop, EUS, BCH Amps for Vs760'
          LnY = lnY + sdscale*SF2*alog(10.0)
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
          LnY = LnSa
@@ -5719,7 +5773,7 @@ C     Model Number = 1200
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
-         attenname = 'Campbell (2003), Hor., CEUS-Hybrid, BCH Amps for Vs760m/s'
+         attenname1 = 'Campbell (2003), Hor., CEUS-Hybrid, BCH Amps for Vs760m/s'
          lnY = lnSa
       endif
 
@@ -5730,7 +5784,7 @@ C     Model Number = 1210s
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
          call S06_CHY03Eps ( mag, rupdist, sigmaeps, specT, period2, iflag )
-         attenname = 'Campbell (2003), Hor - SigmaEps, CEUS-Hybrid, BCH Amps for Vs760m/s'
+         attenname1 = 'Campbell (2003), Hor - SigmaEps, CEUS-Hybrid, BCH Amps for Vs760m/s'
          lnY = lnY - sigmaEps
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
          LnY = LnSa
@@ -5743,7 +5797,7 @@ C     Model Number = 1220
          call S06_CHY03 ( mag, rupdist, lnY, sigma, specT,
      1                  period2,iflag )
          call S06_CHY03Eps ( mag, rupdist, sigmaeps, specT, period2, iflag )
-         attenname = 'Campbell (2003), Hor + SigmaEps, CEUS-Hybrid, BCH Amps for Vs760m/s'
+         attenname1 = 'Campbell (2003), Hor + SigmaEps, CEUS-Hybrid, BCH Amps for Vs760m/s'
          lnY = lnY + sigmaEps
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
          LnY = LnSa
@@ -5754,9 +5808,9 @@ C Silva et al. (2002) 1 Corner Variable-High, BCH Amps for Vs760m/s
 C     Model Number = 4030
       if (jcalc .eq. 4030) then
          call S06_PEA1CVH ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
+     1                  attenName1, period2,iflag )
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-High, Hor,BCH Amps for Vs760m/s'
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-High, Hor,BCH Amps for Vs760m/s'
          lnY = lnSA
       endif
 
@@ -5765,9 +5819,9 @@ C Silva et al. (2002) 1 Corner Variable-Medium, BCH Amps for Vs760m/s
 C     Model Number = 4040
       if (jcalc .eq. 4040) then
          call S06_PEA1CVM ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
+     1                  attenName1, period2,iflag )
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Med, Hor,BCH Amps for Vs760m/s'
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Med, Hor,BCH Amps for Vs760m/s'
          lnY = lnSa
       endif
 
@@ -5776,9 +5830,9 @@ C Silva et al. (2002) 1 Corner Variable-Low, BCH Amps for Vs760m/s
 C     Model Number = 4050
       if (jcalc .eq. 4050) then
          call S06_PEA1CVL ( mag, jbdist, lnY, sigma, specT,
-     1                  attenname, period2,iflag )
+     1                  attenName1, period2,iflag )
          call S05_BCHHR2Vs760 ( lnY, specT, lnSa )
-         attenname = 'Silva et al. (2002), 1-Corner-Var-Low, Hor,BCH Amps for Vs760m/s'
+         attenname1 = 'Silva et al. (2002), 1-Corner-Var-Low, Hor,BCH Amps for Vs760m/s'
          lnY = lnSa
       endif
 
@@ -5791,7 +5845,7 @@ C     Model Number = 150
       if ( jcalc .eq. 150 ) then
          call S02_AC_2010 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, vs, ftype, pga4nl )
-         attenname = 'Akkar&Cagan_2010_Hor'
+         attenname1 = 'Akkar&Cagan_2010_Hor'
        endif
 
 C     Akkar and Bommer (2010) - Empirical Equations for the Prediction of PGA, PGV,
@@ -5805,7 +5859,7 @@ C     Model Number = 151
          Sa = 0.0
          call S02_AB_2010 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, ftype, Ss, Sa )
-         attenname = 'Akkar&Bommer_2010_Hor, Rock'
+         attenname1 = 'Akkar&Bommer_2010_Hor, Rock'
        endif
 
 C     Stiff Soils Site conditions 360<Vs<750m/s
@@ -5815,7 +5869,7 @@ C     Model Number = 152
          Sa = 1.0
          call S02_AB_2010 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, ftype, Ss, Sa )
-         attenname = 'Akkar&Bommer_2010_Hor, Stiff Soil'
+         attenname1 = 'Akkar&Bommer_2010_Hor, Stiff Soil'
        endif
 C     Soft Soil Site conditions Vs<360m/s
 C     Model Number = 153
@@ -5824,7 +5878,7 @@ C     Model Number = 153
          Sa = 0.0
          call S02_AB_2010 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, ftype, Ss, Sa )
-         attenname = 'Akkar&Bommer_2010_Hor, Soft Soil'
+         attenname1 = 'Akkar&Bommer_2010_Hor, Soft Soil'
        endif
 
 C     Akkar, Sandikkaya, and Bommer (2013) - Empirical ground-motion models for
@@ -5842,7 +5896,7 @@ C     Model Number = 154
       if ( jcalc .eq. 154 ) then
          call S02_ASB_2013 ( mag, jbdist, specT,
      1                    period2, lnY, sigma, iflag, ftype, Vs, phi, tau )
-         attenname = 'Akkar,Sandikkaya&Bommer_2013_Hor'
+         attenname1 = 'Akkar,Sandikkaya&Bommer_2013_Hor'
        endif
 
 
@@ -5861,7 +5915,7 @@ C     Model Number = 160
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Bradley-2010-Hor, Estimated Vs30'
+         attenname1 = 'Bradley-2010-Hor, Estimated Vs30'
        endif
 
 C     Bradley 2010 - Horizontal, measured Vs30
@@ -5872,7 +5926,7 @@ C     Model Number = 161
      1                     period2, lnY, sigma, iflag,
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx )
-         attenname = 'Bradley-2010-Hor, Measured Vs30'
+         attenname1 = 'Bradley-2010-Hor, Measured Vs30'
        endif
 
 c ******* McVerry et al. (2006) Crustal Events, Horizontal *********
@@ -5888,7 +5942,7 @@ C     Model Number = 140, Site Class A/B
          call S02_McVerry_Crustal_2006 ( mag, rupDist, specT,
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     hwflag, Sc, Sd)
-         attenname = 'McVerryetal-Crustal-2006, Hor, Site A/B'
+         attenname1 = 'McVerryetal-Crustal-2006, Hor, Site A/B'
        endif
 C     Model Number = 141, Site Class C
       if ( jcalc .eq. 141 ) then
@@ -5897,7 +5951,7 @@ C     Model Number = 141, Site Class C
          call S02_McVerry_Crustal_2006 ( mag, rupDist, specT,
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     hwflag, Sc, Sd)
-         attenname = 'McVerryetal-Crustal-2006, Hor, Site C'
+         attenname1 = 'McVerryetal-Crustal-2006, Hor, Site C'
        endif
 C     Model Number = 142, Site Class D
       if ( jcalc .eq. 142 ) then
@@ -5906,7 +5960,7 @@ C     Model Number = 142, Site Class D
          call S02_McVerry_Crustal_2006 ( mag, rupDist, specT,
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     hwflag, Sc, Sd)
-         attenname = 'McVerryetal-Crustal-2006, Hor, Site D'
+         attenname1 = 'McVerryetal-Crustal-2006, Hor, Site D'
        endif
 
 c ******* McVerry et al. (2006) Subduction Events, Horizontal *********
@@ -5923,7 +5977,7 @@ C     Model Number = 143, Site Class A/B
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     depthtop, dipavgd, rupwidth, depth, Sc, Sd )
 
-         attenname = 'McVerryetal-Subduction-2006, Hor, Site A/B'
+         attenname1 = 'McVerryetal-Subduction-2006, Hor, Site A/B'
        endif
 C     Model Number = 144, Site Class C
       if ( jcalc .eq. 144 ) then
@@ -5932,7 +5986,7 @@ C     Model Number = 144, Site Class C
          call S02_McVerry_Subduction_2006 ( mag, rupDist, specT,
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     depthtop, dipavgd, rupwidth, depth, Sc, Sd )
-         attenname = 'McVerryetal-Subduction-2006, Hor, Site C'
+         attenname1 = 'McVerryetal-Subduction-2006, Hor, Site C'
        endif
 C     Model Number = 145, Site Class D
       if ( jcalc .eq. 145 ) then
@@ -5941,7 +5995,7 @@ C     Model Number = 145, Site Class D
          call S02_McVerry_Subduction_2006 ( mag, rupDist, specT,
      1                     period2, lnY, sigma, iflag, Ftype,
      3                     depthtop, dipavgd, rupwidth, depth, Sc, Sd )
-         attenname = 'McVerryetal-Subduction-2006, Hor, Site D'
+         attenname1 = 'McVerryetal-Subduction-2006, Hor, Site D'
        endif
 
 c ******* Bindi et al. (2009) Crustal Events, Horizontal *********
@@ -5959,7 +6013,7 @@ C     Model Number = 95, Rock, Horizontal
          Sd = 0.0
          call S02_Bindi_Hor_2009 ( mag, jbdist, specT,
      1                     period2, lnY, sigma, iflag, Sr, Ss, Sd )
-         attenname = 'Bindietal-Hor-2009, Rock'
+         attenname1 = 'Bindietal-Hor-2009, Rock'
        endif
 C     Model Number = 96, Shallow Alluvium
       if ( jcalc .eq. 96 ) then
@@ -5968,7 +6022,7 @@ C     Model Number = 96, Shallow Alluvium
          Sd = 0.0
          call S02_Bindi_Hor_2009 ( mag, jbdist, specT,
      1                     period2, lnY, sigma, iflag, Sr, Ss, Sd )
-         attenname = 'Bindietal-Hor-2009, Shallow Alluvium'
+         attenname1 = 'Bindietal-Hor-2009, Shallow Alluvium'
        endif
 C     Model Number = 97, Deep Alluvium
       if ( jcalc .eq. 97 ) then
@@ -5977,7 +6031,7 @@ C     Model Number = 97, Deep Alluvium
          Sd = 1.0
          call S02_Bindi_Hor_2009 ( mag, jbdist, specT,
      1                     period2, lnY, sigma, iflag, Sr, Ss, Sd )
-         attenname = 'Bindietal-Hor-2009, Deep Alluvium'
+         attenname1 = 'Bindietal-Hor-2009, Deep Alluvium'
        endif
 
 c ******* Bindi et al. (2011) Crustal Events, Horizontal *********
@@ -6005,7 +6059,7 @@ C     Model Number = 195, Horizontal, Class A (Vs>800m/s)
          SCe = 0.0
          call S02_Bindi_Hor_2011 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, SCa, SCb, SCc, SCD, SCe, phi, tau )
-         attenname = 'Bindietal-Hor-2011, Class A(Vs>800m/s)'
+         attenname1 = 'Bindietal-Hor-2011, Class A(Vs>800m/s)'
        endif
 C     Model Number = 196, Class B (Vs=360-800m/s)
       if ( jcalc .eq. 196 ) then
@@ -6016,7 +6070,7 @@ C     Model Number = 196, Class B (Vs=360-800m/s)
          SCe = 0.0
          call S02_Bindi_Hor_2011 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, SCa, SCb, SCc, SCD, SCe, phi, tau )
-         attenname = 'Bindietal-Hor-2011, Class B(360<Vs<800m/s)'
+         attenname1 = 'Bindietal-Hor-2011, Class B(360<Vs<800m/s)'
        endif
 
 C     Model Number = 197, Class C (Vs=180-360m/s)
@@ -6028,7 +6082,7 @@ C     Model Number = 197, Class C (Vs=180-360m/s)
          SCe = 0.0
          call S02_Bindi_Hor_2011 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, SCa, SCb, SCc, SCD, SCe, phi, tau )
-         attenname = 'Bindietal-Hor-2011, Class C(180<Vs<360m/s)'
+         attenname1 = 'Bindietal-Hor-2011, Class C(180<Vs<360m/s)'
        endif
 
 C     Model Number = 198, Class D (Vs<180)
@@ -6040,7 +6094,7 @@ C     Model Number = 198, Class D (Vs<180)
          SCe = 0.0
          call S02_Bindi_Hor_2011 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, SCa, SCb, SCc, SCD, SCe, phi, tau )
-         attenname = 'Bindietal-Hor-2011, Class D(Vs<180)'
+         attenname1 = 'Bindietal-Hor-2011, Class D(Vs<180)'
        endif
 
 C     Model Number = 199, Class E (Vs=180-360m/s)
@@ -6052,7 +6106,7 @@ C     Model Number = 199, Class E (Vs=180-360m/s)
          SCe = 1.0
          call S02_Bindi_Hor_2011 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, SCa, SCb, SCc, SCD, SCe, phi, tau )
-         attenname = 'Bindietal-Hor-2011, Class E(5-20m Class D/E over ClassA)'
+         attenname1 = 'Bindietal-Hor-2011, Class E(5-20m Class D/E over ClassA)'
        endif
 
 c ******* Bindi et al. (2013) Crustal Events, Horizontal *********
@@ -6072,7 +6126,7 @@ C     Model Number = 295, Horizontal, Rjb, Vs
       if ( jcalc .eq. 295 ) then
          call S02_Bindi_Hor_2013 ( mag, jbdist, ftype, specT,
      1                     period2, lnY, sigma, iflag, vs, phi, tau )
-         attenname = 'Bindietal-Hor-2013, Rjb, Vs'
+         attenname1 = 'Bindietal-Hor-2013, Rjb, Vs'
        endif
 
 c ******* Graizer and Kalkan (Nov. 2012) *********
@@ -6086,19 +6140,19 @@ C     Model Number = 90
          Q0 = 150.0
          call S02_GK_Nov2012 ( mag, RupDist, specT, ftype,
      1                     period2, lnY, sigma, iflag, Vs, Q0, depthvs15 )
-         attenname = 'Graizer&Kalkan, Nov.2012'
+         attenname1 = 'Graizer&Kalkan, Nov.2012'
        endif
       if ( jcalc .eq. 91 ) then
          Q0 = 75.0
          call S02_GK_Nov2012 ( mag, RupDist, specT, ftype,
      1                     period2, lnY, sigma, iflag, Vs, Q0, depthvs15 )
-         attenname = 'Graizer&Kalkan, Nov.2012, Q0=75'
+         attenname1 = 'Graizer&Kalkan, Nov.2012, Q0=75'
        endif
       if ( jcalc .eq. 92 ) then
          Q0 = 300.0
          call S02_GK_Nov2012 ( mag, RupDist, specT, ftype,
      1                     period2, lnY, sigma, iflag, Vs, Q0, depthvs15 )
-         attenname = 'Graizer&Kalkan, Nov.2012, Q0=300'
+         attenname1 = 'Graizer&Kalkan, Nov.2012, Q0=300'
        endif
 
 
@@ -6107,57 +6161,57 @@ C     Preliminary Models for DCPP for Workshop 3, March 2014
 C     Model Numbers 8001, ASK form
       if ( jcalc .eq. 8001 ) then
          call S02_DCPP_CommonASK ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model, ASK'
+         attenname1 = 'DCPP Common Model, ASK'
        endif
 C     Model Numbers 8002, BSSA form
       if ( jcalc .eq. 8002 ) then
          call S02_DCPP_CommonBSSA ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model, BSSA'
+         attenname1 = 'DCPP Common Model, BSSA'
        endif
 C     Model Numbers 8003, Common Model 001
       if ( jcalc .eq. 8003 ) then
          call S02_DCPP_Common001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model001'
+         attenname1 = 'DCPP Common Model001'
        endif
 C     Model Numbers 8004, Common Model 002
       if ( jcalc .eq. 8004 ) then
          call S02_DCPP_Common002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model002'
+         attenname1 = 'DCPP Common Model002'
        endif
 C     Model Numbers 8005, Common Model 003
       if ( jcalc .eq. 8005 ) then
          call S02_DCPP_Common003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model003'
+         attenname1 = 'DCPP Common Model003'
        endif
 C     Model Numbers 8006, Common Model 004
       if ( jcalc .eq. 8006 ) then
          call S02_DCPP_Common004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model004'
+         attenname1 = 'DCPP Common Model004'
        endif
 C     Model Numbers 8007, Common Model 005
       if ( jcalc .eq. 8007 ) then
          call S02_DCPP_Common005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model005'
+         attenname1 = 'DCPP Common Model005'
        endif
 C     Model Numbers 8008, Common Model 006
       if ( jcalc .eq. 8008 ) then
          call S02_DCPP_Common006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model006'
+         attenname1 = 'DCPP Common Model006'
        endif
 C     Model Numbers 8009, Common Model 007
       if ( jcalc .eq. 8009 ) then
          call S02_DCPP_Common007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model007'
+         attenname1 = 'DCPP Common Model007'
        endif
 C     Model Numbers 8010, Common Model 008
       if ( jcalc .eq. 8010 ) then
          call S02_DCPP_Common008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model008'
+         attenname1 = 'DCPP Common Model008'
        endif
 C     Model Numbers 8011, Common Model 009
       if ( jcalc .eq. 8011 ) then
          call S02_DCPP_Common009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'DCPP Common Model009'
+         attenname1 = 'DCPP Common Model009'
        endif
 
 c ******* PVNGS Common Function Form Models *********
@@ -6166,57 +6220,57 @@ C     Preliminary Models for PVNGS for Workshop 3, March 2014
 C     Model Numbers 9001 Common Model ASK
       if ( jcalc .eq. 9001 ) then
          call S02_PVNGS_CommonASK ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model ASK'
+         attenname1 = 'PVNGS Common Model ASK'
       endif
 C     Model Numbers 9002 Common Model ASK
       if ( jcalc .eq. 9002 ) then
          call S02_PVNGS_CommonBindi ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model Bindi'
+         attenname1 = 'PVNGS Common Model Bindi'
       endif
 C     Model Numbers 9003 Common Model ASK
       if ( jcalc .eq. 9003 ) then
          call S02_PVNGS_Common001 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model001'
+         attenname1 = 'PVNGS Common Model001'
       endif
 C     Model Numbers 9004 Common Model ASK
       if ( jcalc .eq. 9004 ) then
          call S02_PVNGS_Common002 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model002'
+         attenname1 = 'PVNGS Common Model002'
       endif
 C     Model Numbers 9005 Common Model ASK
       if ( jcalc .eq. 9005 ) then
          call S02_PVNGS_Common003 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model003'
+         attenname1 = 'PVNGS Common Model003'
       endif
 C     Model Numbers 9006 Common Model ASK
       if ( jcalc .eq. 9006 ) then
          call S02_PVNGS_Common004 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model004'
+         attenname1 = 'PVNGS Common Model004'
       endif
 C     Model Numbers 9007 Common Model ASK
       if ( jcalc .eq. 9007 ) then
          call S02_PVNGS_Common005 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model005'
+         attenname1 = 'PVNGS Common Model005'
       endif
 C     Model Numbers 9008 Common Model ASK
       if ( jcalc .eq. 9008 ) then
          call S02_PVNGS_Common006 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model006'
+         attenname1 = 'PVNGS Common Model006'
       endif
 C     Model Numbers 9009 Common Model ASK
       if ( jcalc .eq. 9009 ) then
          call S02_PVNGS_Common007 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model007'
+         attenname1 = 'PVNGS Common Model007'
       endif
 C     Model Numbers 9010 Common Model ASK
       if ( jcalc .eq. 9010 ) then
          call S02_PVNGS_Common008 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model008'
+         attenname1 = 'PVNGS Common Model008'
       endif
 C     Model Numbers 9011 Common Model ASK
       if ( jcalc .eq. 9011 ) then
          call S02_PVNGS_Common009 ( mag, jbdist, depthtop, specT, lnY, sigma, iflag )
-         attenname = 'PVNGS Common Model009'
+         attenname1 = 'PVNGS Common Model009'
       endif
 
 
@@ -6233,7 +6287,7 @@ C         10,000 < jcalc < 11,000
          endif
          call S02_SWUS_CFRrup ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
      1           specT, lnY, sigma, iflag, cfcoefrrup, coefcountrrup, phi, tau )
-         attenname = 'SWUS Common Function Model-Rrup'
+         attenname1 = 'SWUS Common Function Model-Rrup'
       endif
 
 
@@ -6248,7 +6302,7 @@ C         11,000 < jcalc < 12,000
          endif
          call S02_SWUS_CFRjb ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
      1           specT, lnY, sigma, iflag, cfcoefrjb, coefcountrjb, phi, tau )
-         attenname = 'SWUS Common Function Model-Rjb'
+         attenname1 = 'SWUS Common Function Model-Rjb'
       endif
 
 C     SWUS Common Functional Form as a function of Rrup - for DCPP
@@ -6262,7 +6316,7 @@ C         12,000 < jcalc < 13,000
          endif
          call S02_SWUS_CFRrup_DCPP ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
      1           specT, lnY, sigma, iflag, cfcoefrrup, coefcountrrup, phi, tau )
-         attenname = 'SWUS DCPP Common Function Model-Rrup'
+         attenname1 = 'SWUS DCPP Common Function Model-Rrup'
       endif
 
 
@@ -6283,7 +6337,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-Cent-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-Cent-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6312,7 +6366,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-Low-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-Low-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6340,7 +6394,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-High-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-High-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6367,7 +6421,7 @@ C     Model Number = 8922
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-Cent, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-Cent, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6393,7 +6447,7 @@ C     Model Number = 8923
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-Low, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-Low, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6419,7 +6473,7 @@ C     Model Number = 8924
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-High, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-High, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6444,7 +6498,7 @@ C     Model Number = 8836
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-Cent'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-Cent'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6469,7 +6523,7 @@ C     Model Number = 8837
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-Low'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-Low'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6494,7 +6548,7 @@ C     Model Number = 8838
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-High'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-High'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6524,7 +6578,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-Cent,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-Cent,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6552,7 +6606,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-Low,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-Low,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6580,7 +6634,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-High,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-High,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6604,11 +6658,11 @@ C     Model Number = 8910
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -6636,11 +6690,11 @@ C     Model Number = 8911
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -6668,11 +6722,11 @@ C     Model Number = 8912
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -6709,7 +6763,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-Cent-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-Cent-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6732,7 +6786,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-Low-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-Low-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6754,7 +6808,7 @@ C     defined for the fault in the data file (i.e., Depthtop).
          call S09_ASK_NGAWest2_2013 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
      1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
      2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
-         attenname = 'ASK_NGAWest2_2014-Hor-Zone123-High-EstVs'
+         attenname1 = 'ASK_NGAWest2_2014-Hor-Zone123-High-EstVs'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6775,7 +6829,7 @@ C     Model Number = 9922
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-Cent, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-Cent, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6795,7 +6849,7 @@ C     Model Number = 9923
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-Low, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-Low, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6815,7 +6869,7 @@ C     Model Number = 9924
          call S09_BSSA_NGAWest2_2013 ( mag, jbdist, specT,
      1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
      1               phi, tau )
-         attenname = 'BSSA_NGAWest2_2014_Hor, Zone123-High, No Basin'
+         attenname1 = 'BSSA_NGAWest2_2014_Hor, Zone123-High, No Basin'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6834,7 +6888,7 @@ C     Model Number = 9836
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-Cent'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-Cent'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6853,7 +6907,7 @@ C     Model Number = 9837
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-Low'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-Low'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6872,7 +6926,7 @@ C     Model Number = 9838
      1                    period2, lnY, sigma, iflag, vs,
      2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
      1                    phi, tau )
-         attenname = 'CB_NGAWest2_2014-Hor,Zone123-High'
+         attenname1 = 'CB_NGAWest2_2014-Hor,Zone123-High'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6896,7 +6950,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-Cent,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-Cent,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = 0.0
@@ -6918,7 +6972,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-Low,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-Low,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = -1.6
@@ -6940,7 +6994,7 @@ c     Current model set for estimated Vs30 values (only impacts sigma)
      2                     vs, dipavgd, Depthtop, Ftype,
      3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
      1                     phi, tau )
-         attenname = 'CY_NGAWest2_2014-Hor,Zone123-High,Est Vs30m'
+         attenname1 = 'CY_NGAWest2_2014-Hor,Zone123-High,Est Vs30m'
 
 C     Apply Mag Uncertainty
          c1 = 1.6
@@ -6958,11 +7012,11 @@ C     Model Number = 9910
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Cent'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -6984,11 +7038,11 @@ C     Model Number = 9911
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-Low'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -7010,11 +7064,11 @@ C     Model Number = 9912
          if (vs .ge. 450.0) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, vs, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
          elseif (vs .gt. 1200) then
             call S09_I_NGAWest2_2013 ( mag, rupDist, ftype, 1200.0, specT,
      1                     period2, lnY, sigma, iflag )
-            attenname = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
+            attenname1 = 'Idriss_NGAWest2_2014_Hor, Zone123-High'
          else
             write (*,*) 'Idriss NGA West 2 GMPE not defined'
             write (*,*) 'for Vs<450m/s.'
@@ -7036,7 +7090,7 @@ C     at the large value of 1.0e10.
 C     SWUS Total Sigma: DCPP Central
 C     Model Number = 13001
       if ( jcalc .eq. 13001 ) then
-         attenname = 'SWUS Total Sigma DCPP-Central'
+         attenname1 = 'SWUS Total Sigma DCPP-Central'
          call S32_SWUS_Sigma_DCPP_Cen ( mag, specT, sigma, iflag )
 C     Kepp median ground motions large since this is only for sigma model
          lnY = 1.0e10
@@ -7045,7 +7099,7 @@ C     Kepp median ground motions large since this is only for sigma model
 C     SWUS Total Sigma: DCPP Low
 C     Model Number = 13002
       if ( jcalc .eq. 13002 ) then
-         attenname = 'SWUS Total Sigma DCPP-Low'
+         attenname1 = 'SWUS Total Sigma DCPP-Low'
          call S32_SWUS_Sigma_DCPP_Low ( mag, specT, sigma, iflag )
 C     Kepp median ground motions large since this is only for sigma model
          lnY = 1.0e10
@@ -7054,7 +7108,7 @@ C     Kepp median ground motions large since this is only for sigma model
 C     SWUS Total Sigma: DCPP High
 C     Model Number = 13003
       if ( jcalc .eq. 13003 ) then
-         attenname = 'SWUS Total Sigma DCPP-High'
+         attenname1 = 'SWUS Total Sigma DCPP-High'
          call S32_SWUS_Sigma_DCPP_High ( mag, specT, sigma, iflag )
 C     Kepp median ground motions large since this is only for sigma model
          lnY = 1.0e10
@@ -7063,7 +7117,7 @@ C     Kepp median ground motions large since this is only for sigma model
 C     SWUS PHISS Sigma: PhiSS_CA1 - Low
 C     Model Number = 13004
       if ( jcalc .eq. 13004 ) then
-         attenname = 'SWUS phiSS_CA1 Low'
+         attenname1 = 'SWUS phiSS_CA1 Low'
          iBranch = 1
          call S32_SWUS_PHISS_CA1 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7076,7 +7130,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_CA1 - central
 C     Model Number = 13005
       if ( jcalc .eq. 13005 ) then
-         attenname = 'SWUS phiSS_CA1 Central'
+         attenname1 = 'SWUS phiSS_CA1 Central'
          iBranch = 2
          call S32_SWUS_PHISS_CA1 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7089,7 +7143,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_CA1 - high
 C     Model Number = 13006
       if ( jcalc .eq. 13006 ) then
-         attenname = 'SWUS phiSS_CA1 HIgh'
+         attenname1 = 'SWUS phiSS_CA1 HIgh'
          iBranch = 3
          call S32_SWUS_PHISS_CA1 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7102,7 +7156,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_CA2 - Low
 C     Model Number = 13007
       if ( jcalc .eq. 13007 ) then
-         attenname = 'SWUS phiSS_CA2 Low'
+         attenname1 = 'SWUS phiSS_CA2 Low'
          iBranch = 1
          call S32_SWUS_PHISS_CA2 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7115,7 +7169,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_CA2 - central
 C     Model Number = 13008
       if ( jcalc .eq. 13008 ) then
-         attenname = 'SWUS phiSS_CA2 Central'
+         attenname1 = 'SWUS phiSS_CA2 Central'
          iBranch = 2
          call S32_SWUS_PHISS_CA2 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7128,7 +7182,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_CA2 - high
 C     Model Number = 13009
       if ( jcalc .eq. 13009 ) then
-         attenname = 'SWUS phiSS_CA2 HIgh'
+         attenname1 = 'SWUS phiSS_CA2 HIgh'
          iBranch = 3
          call S32_SWUS_PHISS_CA2 ( mag, specT, phiSS, iflag, iBranch )
 
@@ -7141,9 +7195,9 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_Global_R50 - Low
 C     Model Number = 13010
       if ( jcalc .eq. 13010 ) then
-         attenname = 'SWUS phiSS_Global_R50 Low'
+         attenname1 = 'SWUS phiSS_Global_R50 Low'
          iBranch = 1
-         call S32_SWUS_PHISS_Global_R50 ( phiSS, iflag, iBranch )
+         call S32_SWUS_PHISS_Global_R50 ( mag, specT, phiSS, iflag, iBranch )
 
 C        set dummy value for median (this is used only for sigma)
          lnY = 1.0e10
@@ -7154,9 +7208,9 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_Global_R50 - central
 C     Model Number = 13011
       if ( jcalc .eq. 13011 ) then
-         attenname = 'SWUS phiSS_Global_R50 Central'
+         attenname1 = 'SWUS phiSS_Global_R50 Central'
          iBranch = 2
-         call S32_SWUS_PHISS_Global_R50 ( phiSS, iflag, iBranch )
+         call S32_SWUS_PHISS_Global_R50 ( mag, specT, phiSS, iflag, iBranch )
 
 C        set dummy value for median (this is used only for sigma)
          lnY = 1.0e10
@@ -7167,7 +7221,7 @@ C        set dummy value for median (this is used only for sigma)
 C     SWUS PHISS Sigma: PhiSS_Global_R50 - high
 C     Model Number = 13012
       if ( jcalc .eq. 13012 ) then
-         attenname = 'SWUS phiSS_Global_R50 HIgh'
+         attenname1 = 'SWUS phiSS_Global_R50 HIgh'
          iBranch = 3
          call S32_SWUS_PHISS_Global_R50 ( phiSS, iflag, iBranch )
 
@@ -7207,96 +7261,96 @@ C *** Cluster 01-Low, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard
 C     Model Number = 201301
       if (jcalc .eq. 201301) then
          call S06_EPRI13C1Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-Low,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-Low,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 01-Med, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201302
       if (jcalc .eq. 201302) then
          call S06_EPRI13C1Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-Med,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-Med,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 01-High, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201303
       if (jcalc .eq. 201303) then
          call S06_EPRI13C1High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-High,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-High,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 02-Low, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201304
       if (jcalc .eq. 201304) then
          call S06_EPRI13C2Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-Low,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-Low,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 02-Med, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201305
       if (jcalc .eq. 201305) then
          call S06_EPRI13C2Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-Med,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-Med,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 02-High, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201306
       if (jcalc .eq. 201306) then
          call S06_EPRI13C2High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-High,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-High,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 03-Low, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201307
       if (jcalc .eq. 201307) then
          call S06_EPRI13C3Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-Low,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-Low,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 03-Med, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201308
       if (jcalc .eq. 201308) then
          call S06_EPRI13C3Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-Med,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-Med,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 03-High, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201309
       if (jcalc .eq. 201309) then
          call S06_EPRI13C3High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-High,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-High,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 04-Low (Rift), Mid-Continent: Functional Model 4, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201310
       if (jcalc .eq. 201310) then
          call S06_EPRI13C4RLow ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Low-Rift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Low-Rift,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 04-Med (Rift), Mid-Continent: Functional Model 4, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201311
       if (jcalc .eq. 201311) then
          call S06_EPRI13C4RMed ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Med-Rift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Med-Rift,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 04-High (Rift), Mid-Continent: Functional Model 4, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201312
       if (jcalc .eq. 201312) then
          call S06_EPRI13C4RHigh ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-High-Rift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-High-Rift,MidC, Hor, HardRock'
       endif
 
 
@@ -7304,24 +7358,24 @@ C *** Cluster 04-Low (NonRift), Mid-Continent: Functional Model 4, Horizontal, C
 C     Model Number = 201313
       if (jcalc .eq. 201313) then
          call S06_EPRI13C4NRLow ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Low-NonRift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Low-NonRift,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 04-Med (NonRift), Mid-Continent: Functional Model 4, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201314
       if (jcalc .eq. 201314) then
          call S06_EPRI13C4NRMed ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Med-NonRift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Med-NonRift,MidC, Hor, HardRock'
       endif
 
 C *** Cluster 04-High (NonRift), Mid-Continent: Functional Model 4, Horizontal, CEUS Hard Rock ***
 C     Model Number = 201315
       if (jcalc .eq. 201315) then
          call S06_EPRI13C4NRHigh ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-High-NonRift,MidC, Hor, HardRock'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-High-NonRift,MidC, Hor, HardRock'
       endif
 
 C********************************************************************
@@ -7351,8 +7405,8 @@ C *** Cluster 01-Low, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard
 C     Model Number = 201321
       if (jcalc .eq. 201321) then
          call S06_EPRI13C1Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-Low,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-Low,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7366,8 +7420,8 @@ C *** Cluster 01-Med, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard
 C     Model Number = 201322
       if (jcalc .eq. 201322) then
          call S06_EPRI13C1Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-Med,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-Med,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7381,8 +7435,8 @@ C *** Cluster 01-High, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Har
 C     Model Number = 201323
       if (jcalc .eq. 201323) then
          call S06_EPRI13C1High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster01-High,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster01-High,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7396,8 +7450,8 @@ C *** Cluster 02-Low, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard R
 C     Model Number = 201324
       if (jcalc .eq. 201324) then
          call S06_EPRI13C2Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-Low,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-Low,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7411,8 +7465,8 @@ C *** Cluster 02-Med, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard R
 C     Model Number = 201325
       if (jcalc .eq. 201325) then
          call S06_EPRI13C2Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-Med,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-Med,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7426,8 +7480,8 @@ C *** Cluster 02-High, Mid-Continent: Functional Model 2, Horizontal, CEUS Hard 
 C     Model Number = 201326
       if (jcalc .eq. 201326) then
          call S06_EPRI13C2High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster02-High,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster02-High,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7441,8 +7495,8 @@ C *** Cluster 03-Low, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard
 C     Model Number = 201327
       if (jcalc .eq. 201327) then
          call S06_EPRI13C3Low ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-Low,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-Low,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7456,8 +7510,8 @@ C *** Cluster 03-Med, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Hard
 C     Model Number = 201328
       if (jcalc .eq. 201328) then
          call S06_EPRI13C3Med ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-Med,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-Med,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7471,8 +7525,8 @@ C *** Cluster 03-High, Mid-Continent: Functional Model 1&3, Horizontal, CEUS Har
 C     Model Number = 201329
       if (jcalc .eq. 201329) then
          call S06_EPRI13C3High ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster03-High,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster03-High,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7486,8 +7540,8 @@ C *** Cluster 04-Low (Rift), Mid-Continent: Functional Model 4, Horizontal, CEUS
 C     Model Number = 201330
       if (jcalc .eq. 201330) then
          call S06_EPRI13C4RLow ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Low-Rift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Low-Rift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7501,8 +7555,8 @@ C *** Cluster 04-Med (Rift), Mid-Continent: Functional Model 4, Horizontal, CEUS
 C     Model Number = 201331
       if (jcalc .eq. 201331) then
          call S06_EPRI13C4RMed ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Med-Rift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Med-Rift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7516,8 +7570,8 @@ C *** Cluster 04-High (Rift), Mid-Continent: Functional Model 4, Horizontal, CEU
 C     Model Number = 201332
       if (jcalc .eq. 201332) then
          call S06_EPRI13C4RHigh ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-High-Rift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-High-Rift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7532,8 +7586,8 @@ C *** Cluster 04-Low (NonRift), Mid-Continent: Functional Model 4, Horizontal, C
 C     Model Number = 201333
       if (jcalc .eq. 201333) then
          call S06_EPRI13C4NRLow ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Low-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Low-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7547,8 +7601,8 @@ C *** Cluster 04-Med (NonRift), Mid-Continent: Functional Model 4, Horizontal, C
 C     Model Number = 201334
       if (jcalc .eq. 201334) then
          call S06_EPRI13C4NRMed ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-Med-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-Med-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7562,8 +7616,8 @@ C *** Cluster 04-High (NonRift), Mid-Continent: Functional Model 4, Horizontal, 
 C     Model Number = 201335
       if (jcalc .eq. 201335) then
          call S06_EPRI13C4NRHigh ( mag, jbdist, lnY, specT,
-     1                  attenname, period2, iflag, sigma )
-         attenname = 'EPRI(2013),Cluster04-High-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
+     1                  attenName1, period2, iflag, sigma )
+         attenname1 = 'EPRI(2013),Cluster04-High-NonRift,MidC, Hor, HardRock, Rjb Sigma model'
 C     Adjust the Rjb distance sigma model
          if (jbdist .le. 10.0) then
             sigma = sqrt (sigma*sigma + 0.16*0.16)
@@ -7573,797 +7627,3009 @@ C     Adjust the Rjb distance sigma model
          endif
       endif
 
-c ******* NGA-East 2018 Models *******
-c     Goulet et al., 2018 (PEER Report 2018/08) - Appendix H (17 median models)
-c     Model Numbers 7001 - 7017
-      if ( jcalc .ge. 7001 .and. jcalc .le. 7017 ) then
-        imod = jcalc - 7000
-        write(number, '(i0)') imod
-        call S34_NGAEast_Med ( mag, rupDist, specT, imod, period2, lnY, iflag )
-        attenname = 'NGAEast_2018_MedianModel_No'//trim(adjustl(number))
+c -------------------- Taiwan sensitivity models ------------------
+
+C-----Add adjusted model-- using Taiwan GM data---------------------------
+
+C     Adjusted Akkar, Sandikkaya, and Bommer (2013)
+
+C     Model Number = 14025
+      if ( jcalc .eq. 14025 ) then
+         call S04_ASB14_TW_C01 ( mag, jbdist, specT,
+     1                    period2, lnY, sigma, iflag, ftype, Vs, phi, tau )
+         attenname1 = 'Akkar,Sandikkaya&Bommer-TW_Adjusted, SSHAC'
+       endif
+
+c ******* Adjusted Bindi et al. (2013) Crustal Events, Horizontal *********
+
+C     Model Number = 14026
+      if ( jcalc .eq. 14026 ) then
+         call S04_Bindi14_TW_C01 ( mag, jbdist, ftype, specT,
+     1                     period2, lnY, sigma, iflag, vs, phi, tau )
+         attenname1 = 'Bindietal-TW_Adjusted, SSHAC'
+       endif
+
+C     Model Number = 14027 Adjusted
+C     Abrahamson, Silva, and Kamai 2014 - Horizontal, Global, Mainshock, Estimated Vs30m
+
+      if ( jcalc .eq. 14027 ) then
+        regionflag = 1
+        msasflag = 0
+        vs30_Class = 1
+        call S04_ASK14_TW_C01 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
+     1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
+     2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
+
+       attenname1 = 'ASK14-TW_Adjusted, SSHAC'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Ergodic Sigma, CENA, Low
-c     Model Number = 7101
-      if ( jcalc .eq. 7101 ) then
-        call S32_NGAEast_CompErgSig_Low ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_Ergodic_Sigma_CENA_Low'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+C     Model Number = 14028 Adjusted
+C     Chiou and Youngs 2013 - Horizontal Adjusted
+
+      if ( jcalc .eq. 14028 ) then
+        regionflag = 0
+        msasflag = 0
+        vs30_Class = 1
+         call S04_CY14_TW_C01 ( mag, rupDist, jbdist, specT,
+     1                     period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
+     1                     phi, tau )
+
+       attenname1 = 'CY14-TW_Adjusted, SSHAC'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Ergodic Sigma, CENA, Central
-c     Model Number = 7102
-      if ( jcalc .eq. 7102 ) then
-        call S32_NGAEast_CompErgSig_Cen ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_Ergodic_Sigma_CENA_Central'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+C     Model Number = 14029 Adjusted
+C     Boore, Stewart, Seyhan and Atkinson 2013 - horizontal Adjusted
+
+      if ( jcalc .eq. 14029 ) then
+        regionflag = 0
+        basinflag = 1
+        msasflag = 0
+
+         call S04_BSSA14_TW_C01 ( mag, jbdist, specT,
+     1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
+     1               phi, tau )
+
+       attenname1 = 'BSSA14-TW_Adjusted, SSHAC'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Ergodic Sigma, CENA, High
-c     Model Number = 7103
-      if ( jcalc .eq. 7103 ) then
-        call S32_NGAEast_CompErgSig_High ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_Ergodic_Sigma_CENA_High'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+C     Idriss 2013 - Horizontal Adjusted
+C     Model Number = 14030 Adjusted
+      if ( jcalc .eq. 14030 ) then
+            if (vs .gt. 1200) then
+                  vs = 1200.
+		endif
+             call S04_I14_TW_C01 ( mag, rupDist, ftype, vs, specT,
+     1                     period2, lnY, sigma, iflag )
+            attenname1 = 'Idriss14-TW_Adjusted, SSHAC'
+       endif
+
+C     Campbell&Bozorgnia 2013 - Horizontal Adjusted
+C     Model Number = 14031 Adjusted
+      if ( jcalc .eq. 14031 ) then
+         regionflag = 1
+         call S04_CB14_TW_C01 ( mag, rupdist, jbdist, ftype, specT,
+     1                    period2, lnY, sigma, iflag, vs,
+     2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
+     1                    phi, tau )
+         attenname1 = 'CB14-TW_Adjusted, SSHAC'
+       endif
+
+C  Subduction adjusted model
+C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
+C     Model Number = 14093
+      if ( jcalc .eq. 14093 ) then
+
+         call S04_AGA16_TW_C01 ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, depthtop, depth, disthypo )
+         attenname1 = 'AGA16_TW_Adjusted, SSHAC'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Single-Station Sigma, CENA, Low
-c     Model Number = 7104
-      if ( jcalc .eq. 7104 ) then
-        call S32_NGAEast_CompSSSig_Low ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_SingleStation_Sigma_CENA_Low'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+c ***** Lin and Lee Adjusted Subduction Model *****
+c      Lin and Lee SSHAC Adjusted - Horizontal, Subduction
+C     Model Number = 14097
+      if ( jcalc .eq. 14097 ) then
+         call S04_LL08_C02 ( mag, rupdist, specT,
+     1                    period2, lnY, sigma, iflag, Depthtop, ftype, vs )
+
+
+         attenname1 = 'Lin and Lee Adjusted model, Subduction'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Single-Station Sigma, CENA, Central
-c     Model Number = 7105
-      if ( jcalc .eq. 7105 ) then
-        call S32_NGAEast_CompSSSig_Cen ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_SingleStation_Sigma_CENA_Central'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+C-----Add adjusted model Version E-- using Taiwan GM data---------------------------
+
+C     Adjusted Akkar, Sandikkaya, and Bommer (2013)
+
+C     Model Number = 14032
+      if ( jcalc .eq. 14032 ) then
+         call S04_ASB14_TW_E02 ( mag, jbdist, specT,
+     1                    period2, lnY, sigma, iflag, ftype, Vs, phi, tau )
+         attenname1 = 'Akkar,Sandikkaya&Bommer-TW_Adjusted_E02, SSHAC'
+       endif
+
+c ******* Adjusted Bindi et al. (2013) Crustal Events, Horizontal *********
+
+C     Model Number = 14033
+      if ( jcalc .eq. 14033 ) then
+         call S04_Bindi14_TW_E02 ( mag, jbdist, ftype, specT,
+     1                     period2, lnY, sigma, iflag, vs, phi, tau )
+         attenname1 = 'Bindietal-TW_Adjusted_E02, SSHAC'
+       endif
+
+C     Model Number = 14034 Adjusted
+C     Abrahamson, Silva, and Kamai 2014 - Horizontal, Global, Mainshock, measured Vs30m
+
+      if ( jcalc .eq. 14034 ) then
+        regionflag = 1
+        msasflag = 0
+        vs30_Class = 1
+        call S04_ASK14_TW_E03 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
+     1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
+     2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
+
+       attenname1 = 'ASK14-TW_Adjusted_E03, SSHAC'
       endif
 
-c     Goulet et al., 2018 (PEER Report 2018/08) - NGA-East Composite Single-Station Sigma, CENA, High
-c     Model Number = 7106
-      if ( jcalc .eq. 7106 ) then
-        call S32_NGAEast_CompSSSig_High ( mag, specT, sigma, iflag )
-        attenname = 'NGAEast_Composite_SingleStation_Sigma_CENA_High'
-c       keep median ground motions large since this is only for sigma model
-        lnY = 1.0e10
+C     Model Number = 14048 Adjusted
+C     Abrahamson, Silva, and Kamai 2014 - Horizontal, Global, Mainshock, estimated Vs30m
+
+      if ( jcalc .eq. 14048 ) then
+        regionflag = 1
+        msasflag = 0
+        vs30_Class = 0
+        call S04_ASK14_TW_E03 ( mag, dipavgd, ftype, Rupwidth, rupDist, jbdist,
+     1            vs, hwflag, lnY, sigma, specT, period2, depthtop, iflag,
+     2            vs30_class, depthvs10, Rx, Ry0, regionflag, msasflag, phi, tau)
+
+       attenname1 = 'ASK14-TW_Adjusted_E03, SSHAC'
       endif
 
-c ******* NGA-Subduction 2020 Models *******
-c     Abrahamson and Gulerce (AG) 2020 Subduction model ****
-c     Model Numbers = 390 - 399 (depending on region)
-c     390 = Alaska without adjustments
-c     391 = Alaska with adjustments
-c     392 = Cascadia with adjustments
-c     393 = Central Am/Mexico
-c     394 = Japan
-c     395 = New Zealand
-c     396 = South America
-c     397 = Taiwan
-c     398 = Global
-c     399 = Cascadia without adjustments
-c     1398 = Global lower Epistemic Model
-c     2398 = Global upper Epistemic Model
-c     2392 = Cascadia with adjustments with Z25=Z25Ref
+C     Model Number = 14035 Adjusted
+C     Chiou and Youngs 2013 - Horizontal Adjusted
 
-C     Alaska Model without adjustments (iRegion = 1)
-      if (jcalc .eq. 390) then
-         iRegion = 1
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         ACadjfac = 0.0
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Alaska without adjustments'
-      endif
-C     Alaska Model with adjustments (iRegion = 1)
-      if (jcalc .eq. 391) then
-         iRegion = 1
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89 + ACadjfac
-         ACadjfac = 0.0
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-C     Apply the Alaska adjustment factors
-         lnY = lnY + ACadjfac
-         attenname = 'Abrahamson&Gulerce (2020), Alaska with adjustments'
-      endif
-C     Cascadia Model without adjustments (iRegion = 2)
-      if (jcalc .eq. 399) then
-         iRegion = 2
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Cascadia without adjustments'
-      endif
-C     Cascadia Model with adjustments (iRegion = 2)
-      if (jcalc .eq. 392) then
-         iRegion = 2
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89 + ACadjfac
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-C     Apply the Cascadia adjustment factors
-         lnY = lnY + ACadjfac
-         attenname = 'Abrahamson&Gulerce (2020), Cascadia with adjustments'
+      if ( jcalc .eq. 14035 ) then
+        regionflag = 0
+        msasflag = 0
+        vs30_Class = 1
+         call S04_CY14_TW_E04 ( mag, rupDist, jbdist, specT,
+     1                     period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
+     1                     phi, tau )
+
+       attenname1 = 'CY14-TW_Adjusted_E04, SSHAC'
       endif
 
-C     Cascadia Model with adjustments (iRegion = 2) with Z25=Z25ref
-      if (jcalc .eq. 2392) then
-         iRegion = 2
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-C     Set Z25 = Z25ref based on Vs relationship for Cascadia
-	 call S35_z25_interp ( vs, 200., 570., 8.52, 7.6, z25AG )
-         z25AG = z25AG/1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89 + ACadjfac
-         call S35_AG2020 ( mag, fType, rupDist, vs, Z25ag, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-C     Apply the Cascadia adjustment factors
-         lnY = lnY + ACadjfac
-         attenname = 'Abrahamson&Gulerce (2020), Cascadia with adjustments, Z25=Z25ref'
+C     Model Number = 14036 Adjusted
+C     Boore, Stewart, Seyhan and Atkinson 2013 - horizontal Adjusted
+
+      if ( jcalc .eq. 14036 ) then
+        regionflag = 0
+        basinflag = 1
+        msasflag = 0
+
+         call S04_BSSA14_TW_E02 ( mag, jbdist, specT,
+     1               period2, lnY, sigma, iflag, vs, ftype, pga4nl, depthvs10, regionflag, basinflag,
+     1               phi, tau )
+
+       attenname1 = 'BSSA14-TW_Adjusted_E02, SSHAC'
       endif
 
-C     Central America/Mexico Model (iRegion = 3)
-      if (jcalc .eq. 393) then
-         iRegion = 3
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Central Am/Mexico'
-      endif
-C     Japan Model (iRegion = 4)
-      if (jcalc .eq. 394) then
-         iRegion = 4
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Japan'
-      endif
-C     New Zealand Model (iRegion = 5)
-      if (jcalc .eq. 395) then
-         iRegion = 5
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), New Zealand'
-      endif
-C     South America Model (iRegion = 6)
-      if (jcalc .eq. 396) then
-         iRegion = 6
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), South America'
-      endif
-C     Taiwan Model (iRegion = 7)
-      if (jcalc .eq. 397) then
-         iRegion = 7
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Taiwan'
+C     Idriss 2013 - Horizontal Adjusted
+C     Model Number = 14037 Adjusted
+      if ( jcalc .eq. 14037 ) then
+            if (vs .gt. 1200) then
+                     vs = 1200.
+                  endif
+             call S04_I14_TW_E04 ( mag, rupDist, ftype, vs, specT,
+     1                     period2, lnY, sigma, iflag, Depthtop )
+            attenname1 = 'Idriss14-TW_Adjusted_E04, SSHAC'
+       endif
+
+C     Campbell&Bozorgnia 2013 - Horizontal Adjusted
+C     Model Number = 14038 Adjusted
+      if ( jcalc .eq. 14038 ) then
+         regionflag = 1
+         call S04_CB14_TW_E05 ( mag, rupdist, jbdist, ftype, specT,
+     1                    period2, lnY, sigma, iflag, vs,
+     2                    depthTop, D25, dipavgd, depth, HWFlag, Rx, rupwidth, regionflag,
+     1                    phi, tau )
+         attenname1 = 'CB14-TW_Adjusted_E05, SSHAC'
+
+                  endif
+
+C     Base Case Model, Variable DeltaC1 Adjustment - Central Values, Reg. Sigma
+C     Model Number = 14039
+      if ( jcalc .eq. 14039) then
+
+         call S04_AGA16_TW_F10 ( mag, ftype, rupDist, vs, lnY,
+     1            sigma, specT, period2, iflag, forearc, depthtop, depth, disthypo )
+        if (ftype .eq. 1.0) then
+         attenname1 = 'AGA16_TW_Adjusted_F10, Intraslab, SSHAC'
+          else
+         attenname1 = 'AGA16_TW_Adjusted_F10, Interface, SSHAC'
+        endif
       endif
 
-C     Global Model (iRegion = 8)
-      if (jcalc .eq. 398) then
-         iRegion = 8
-         epiflag = 0
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Global'
+c ***** Lin and Lee Adjusted Subduction Model *****
+c      Lin and Lee SSHAC Adjusted - Horizontal, Subduction
+C     Model Number = 14040
+      if ( jcalc .eq. 14040 ) then
+         call S04_LL08_F04 ( mag, rupdist, specT,
+     1                    period2, lnY, sigma, iflag, Depthtop, ftype, vs )
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Lin and Lee Adjusted model(E04), Subduction Intraslab'
+         else
+          attenname1 = 'Lin and Lee Adjusted model(E04), Subduction Interface'
+        endif
       endif
 
-C     Global Model (iRegion = 8) with lower Epistemic Uncertainty
-      if (jcalc .eq. 1398) then
-         iRegion = 8
-         epiflag = -1
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Global, Lower Epistemic'
+C ******* Taiwan SSHAC Project GMPE ****
+c     Chao et al. (2017) - Horizontal, Hard Rock, Crustal
+C     Model Number = 14091
+      if (jcalc .eq. 14091) then
+
+        sourceclass = 0.0
+        msasflag = 0
+        vs30_Class = 1
+         call S04_Chao2017 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1             attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
+
+         attenname1 = 'Chao etal(2017)-Crust, Hard Rock'
       endif
 
-C     Global Model (iRegion = 8) with upper Epistemic Uncertainty
-      if (jcalc .eq. 2398) then
-         iRegion = 8
-         epiflag = 1
-         specTPGA = 0.0
-         vsrock = 1000.0
-         call S35_AG2020 ( mag, fType, rupDist, vsrock, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            RockPGA, specTPGA, period2, iFlag, ACadjfac, epiflag )
-         rockPGA = LnY - 6.89
-         call S35_AG2020 ( mag, fType, rupDist, vs, D25, depthtop, iRegion, lnY, sigma, phi, tau,
-     1            exp(RockPGA), specT, period2, iFlag, ACadjfac, epiflag )
-         attenname = 'Abrahamson&Gulerce (2020), Global, Upper Epistemic'
+c     Chao et al. (2017) - Horizontal, Hard Rock, Subduction
+C     Model Number = 14092
+      if (jcalc .eq. 14092) then
+
+        sourceclass = 1.0
+
+        msasflag = 0
+        vs30_Class = 1
+
+         call S04_Chao2017 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1            attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Chao etal(2017)-Subduction, Hard Rock Intraslab'
+         else
+          attenname1 = 'Chao etal(2017)-Subduction, Hard Rock Interface'
+        endif
+
       endif
 
-C     NGA-SUB Kuehn, Bozorgnia, Campbell and Gregor (2019)
-C     Model Numbers = 650 - 662 (depending on region and plate mb values)
-C     Magnitude Break Values Rounded to nearest 1/10 magnitude unit
+c     Phung et al. (2017) - Horizontal, Hard Rock, Crustal, measured VS30
+C     Model Number = 14094
+      if (jcalc .eq. 14094) then
 
-C     Global Model.
-C     Model Number = 650
+        msasflag = 0
+        vs30_Class = 1
+        regionflag = 1
 
-      if ( jcalc .eq. 650 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.9
-         mbslab = 7.6
-         iRegion = 0
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Global'
+         call S04_PhungCrust2017 ( mag, rupDist, specT, period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, regionflag, msasflag,
+     1                     phi, tau )
+
+         attenname1 = 'Phung etal(2017)-Hard Rock, measured VS30'
       endif
 
-C     Alaska
-C     Model Number = 651
-      if ( jcalc .eq. 651 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.6
-         mbslab = 7.2
-         iRegion = 1
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Alaska'
+c     Phung et al. (2017) - Horizontal, Hard Rock, Crustal, estimated VS30
+C     Model Number = 14095
+      if (jcalc .eq. 14095) then
+
+        msasflag = 0
+        vs30_Class = 0
+        regionflag = 1
+
+         call S04_PhungCrust2017 ( mag, rupDist, specT, period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, regionflag, msasflag,
+     1                     phi, tau)
+
+         attenname1 = 'Phung etal(2017)-Hard Rock, estimated VS30 '
       endif
 
-C     Alaska
-C     Model Number = 664
-      if ( jcalc .eq. 664 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.3
-         mbslab = 7.2
-         iRegion = 1
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Alaska, mb=8.3'
-      endif
-C     Model Number = 665
-      if ( jcalc .eq. 665 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.9
-         mbslab = 7.2
-         iRegion = 1
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Alaska, mb=8.9'
+c     Phung et al. (2017) - Horizontal, Hard Rock, Subduction, for Taiwan
+C     Model Number = 14096
+      if (jcalc .eq. 14096) then
+
+        regionflag = 1
+
+         call S04_PhungSub2017 (  mag, rupDist, vs, depthvs10, Depthtop, lnY,
+     1            sigma, specT, period2, iflag, regionflag, Ftype)
+
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Phung etal(2017)-Subduction Intraslab, Hard Rock '
+         else
+          attenname1 = 'Phung etal(2017)-Subduction interface, Hard Rock'
+        endif
       endif
 
-C     Alaska Aluetian Islands Plate
-C     Model Number = 652
-      if ( jcalc .eq. 652 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.0
-         mbslab = 8.0
-         iRegion = 1
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Alaska-AleutianIslands'
+C     2018 update
+
+c     Chao et al. (2018) - Horizontal, Hard Rock, Crustal
+C     Model Number = 14041
+      if (jcalc .eq. 14041) then
+
+        sourceclass = 0.0  !for Crustal
+        msasflag = 0    !for mainshock
+        vs30_Class = 1  !for measured vs30
+         call S04_Chao2018 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1             attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
+
+         attenname1 = 'Chao etal(2018)-Crust, Hard Rock'
       endif
 
-C     Cascadia - No Basin
-C     Model Number = 653
-      if ( jcalc .eq. 653 ) then
-C     Set mb values for interface and slab cases
-C     Not for Cascadia Interface mb set at upper end of range (8.0) given
-c         the lack of interface data.
-         mbinter = 8.0
-         mbslab = 7.2
-         iRegion = 2
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Cascadia-NoBasin'
+c     Chao et al. (2018) - Horizontal, Hard Rock, Subduction
+C     Model Number = 14042
+      if (jcalc .eq. 14042) then
+
+        sourceclass = 1.0  !for Subduction
+        msasflag = 0
+        vs30_Class = 1
+
+         call S04_Chao2018 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1            attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
+
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Chao etal(2018)-Subduction, Hard Rock Intraslab'
+         else
+          attenname1 = 'Chao etal(2018)-Subduction, Hard Rock Interface'
+        endif
       endif
 
-C     Cascadia - Seattle Basin Site
-C     Model Number = 662
-      if ( jcalc .eq. 662 ) then
-C     Set mb values for interface and slab cases
-C     Not for Cascadia Interface mb set at upper end of range (8.0) given
-c         the lack of interface data.
-         mbinter = 8.0
-         mbslab = 7.2
-         iRegion = 2
-         CasBas = 1
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Cascadia-SeattleBasin'
+c     Chao et al. (2018) - Horizontal, Hard Rock, Crustal
+C     Model Number = 14046
+      if (jcalc .eq. 14046) then
+
+        sourceclass = 0.0  !for Crustal
+        msasflag = 0    !for mainshock
+        vs30_Class = 0  !for measured vs30
+         call S04_Chao2018 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1             attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
+
+         attenname1 = 'Chao etal(2018)-Crust, Hard Rock'
       endif
 
-C     Cascadia - Non-Seattle Basin Site
-C     Model Number = 663
-      if ( jcalc .eq. 663 ) then
-C     Set mb values for interface and slab cases
-C     Not for Cascadia Interface mb set at upper end of range (8.0) given
-c         the lack of interface data.
-         mbinter = 8.0
-         mbslab = 7.2
-         iRegion = 2
-         CasBas = 2
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Cascadia-Non-SeattleBasin'
-      endif
+c     Chao et al. (2018) - Horizontal, Hard Rock, Subduction
+C     Model Number = 14047
+      if (jcalc .eq. 14047) then
 
-C     Northern Central America / Mexico
-C     Model Number = 654
-      if ( jcalc .eq. 654 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.4
-         mbslab = 7.4
-         iRegion = 3
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Northern CAM'
-      endif
+        sourceclass = 1.0  !for Subduction
+        msasflag = 0
+        vs30_Class = 0
 
-C     Southern Central America / Mexico
-C     Model Number = 655
-      if ( jcalc .eq. 655 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.5
-         mbslab = 7.6
-         iRegion = 3
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Southern CAM'
-      endif
+         call S04_Chao2018 ( mag, rupdist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1            attenName1, period2, iflag, sourceclass, phi, tau, msasflag )
 
-C     Japan - Pacific Plate
-C     Model Number = 656
-      if ( jcalc .eq. 656 ) then
-C     Set mb values for interface and slab cases
-C     Period dependent adjustment applied within Subroutine
-         mbinter = 8.5
-         mbslab = 7.6
-         iRegion = 4
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Japan-PacificPlate'
-      endif
-
-C     Japan - Philippine Plate
-C     Model Number = 657
-      if ( jcalc .eq. 657 ) then
-C     Set mb values for interface and slab cases
-C     Period dependent adjustment applied within Subroutine
-         mbinter = 7.7
-         mbslab = 7.6
-         iRegion = 4
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Japan-PhilippinePlate'
-      endif
-
-C     Northern South America
-C     Model Number = 658
-      if ( jcalc .eq. 658 ) then
-C     Set mb values for interface and slab cases
-C     Period dependent adjustment applied within Subroutine
-         mbinter = 8.5
-         mbslab = 7.3
-         iRegion = 6
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Northern SA'
-      endif
-
-C     Southern South America
-C     Model Number = 659
-      if ( jcalc .eq. 659 ) then
-C     Set mb values for interface and slab cases
-C     Period dependent adjustment applied within Subroutine
-         mbinter = 8.6
-         mbslab = 7.2
-         iRegion = 6
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Southern SA'
-      endif
-
-C     Taiwan
-C     Model Number = 660
-      if ( jcalc .eq. 660 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.1
-         mbslab = 7.7
-         iRegion = 7
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), Taiwan'
-      endif
-
-C     New Zealand
-C     Model Number = 661
-      if ( jcalc .eq. 661 ) then
-C     Set mb values for interface and slab cases
-C     mb values currently set at global values
-         mbinter = 8.3
-         mbslab = 7.6
-         iRegion = 5
-         CasBas = 0
-         call S35_KBCG2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, depthtop, CasBas, depthvs10 )
-         attenname = 'Kuehn et al. (2019), New Zealand'
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Chao etal(2018)-Subduction, Hard Rock Intraslab'
+         else
+          attenname1 = 'Chao etal(2018)-Subduction, Hard Rock Interface'
+        endif
       endif
 
 
-C     NGA-SUB Parker, Stewart, Boore, Atkinson and Hassani (2020)
-C     Model Numbers = 610 - 626 (depending on region and Subducting plate mb values)
 
-C     Global Model.
-C     Model Number = 610
-      if ( jcalc .eq. 610 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.9
-         mbslab = 7.60
-         iRegion = 0
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Global'
-      endif
-C     Alaska Model.
-C     Model Number = 611
-      if ( jcalc .eq. 611 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.6
-         mbslab = 7.2
-         iRegion = 1
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Alaska'
-      endif
-C     Alaska Aleutian Island Model.
-C     Model Number = 612
-      if ( jcalc .eq. 612 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.0
-         mbslab = 7.98
-         iRegion = 2
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Alaska-AleutianIsland'
-      endif
-C     Cascadia Model, Outside Basin with Z25 (Previous version of the model no longer recommended)
-C     Model Number = 613
-      if ( jcalc .eq. 613 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.2
-         iRegion = 3
-         pnwbflag = 0
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Cascadia, Outside Basin'
+c     Phung et al. (2018) - Horizontal, Hard Rock, Crustal, measured VS30
+C     Model Number = 14043
+      if (jcalc .eq. 14043) then
+
+        vs30_Class = 1
+        regionflag = 1
+
+         call S04_PhungCrust2018 ( mag, rupDist, jbdist, specT, period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, regionflag, phi, tau, HWflag, Rx )
+
+         attenname1 = 'Phung etal(2018)-Hard Rock, measured VS30'
       endif
 
+c     Phung et al. (2018) - Horizontal, Hard Rock, Crustal, estimated VS30
+C     Model Number = 14044
+      if (jcalc .eq. 14044) then
 
-C     Cascadia Model, with Z25=Z25Ref
-C     Model Number = 623
-      if ( jcalc .eq. 623 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.2
-         iRegion = 3
-         pnwbflag = 4
-C     Set Z25 = Z25Ref based on Vs
-         x = (alog10(vs) - alog10(500.0) ) / (0.42*sqrt(2.0))
-         z25P = 10**(3.75-0.74*(1+erf(x)))
-         z25P = z25P/1000.0
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, Z25P, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Cascadia, with Z25=Z25Ref'
+        vs30_Class = 0
+        regionflag = 1  !for Taiwan
+
+         call S04_PhungCrust2018 ( mag, rupDist, jbdist, specT, period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, Depthtop, Ftype,
+     3                     depthvs10, vs30_class, regionflag, phi, tau, HWflag, Rx)
+
+         attenname1 = 'Phung etal(2018)-Hard Rock, estimated VS30 '
       endif
 
-C     Cascadia Model, with Z25 Basin model
-C     Model Number = 624
-      if ( jcalc .eq. 624 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.2
-         iRegion = 3
-         pnwbflag = 4
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Cascadia with Z25 value'
+c     Phung et al. (2018) - Horizontal, Hard Rock, Subduction, for Taiwan
+C     Model Number = 14045
+      if (jcalc .eq. 14045) then
+
+        regionflag = 1  !for Taiwan
+
+         call S04_PhungSub2018 (  mag, rupDist, vs, depthvs10, Depthtop, lnY,
+     1            sigma, specT, period2, iflag, regionflag, Ftype)
+
+        if (ftype .eq. 1.0) then
+          attenname1 = 'Phung etal(2018)-Subduction Intraslab, Hard Rock '
+         else
+          attenname1 = 'Phung etal(2018)-Subduction interface, Hard Rock'
+        endif
+      endif
+
+c ******* Taiwan Common Function Form Models *********
+c     Preliminary Models for Taiwan for Workshop 3, June 2017
+c *******             Crustal                *******
+
+C for NPP2
+C     Model Numbers 14051, Common Model 001
+      if ( jcalc .eq. 14051 ) then
+         call S04_Crustal_CFNPP2_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model001'
+       endif
+C     Model Numbers 14052, Common Model 002
+      if ( jcalc .eq. 14052 ) then
+         call S04_Crustal_CFNPP2_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model002'
+       endif
+C     Model Numbers 14053, Common Model 003
+      if ( jcalc .eq. 14053 ) then
+         call S04_Crustal_CFNPP2_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model003'
+       endif
+C     Model Numbers 14054, Common Model 004
+      if ( jcalc .eq. 14054 ) then
+         call S04_Crustal_CFNPP2_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model004'
+       endif
+C     Model Numbers 14055, Common Model 005
+      if ( jcalc .eq. 14055 ) then
+         call S04_Crustal_CFNPP2_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model005'
+       endif
+C     Model Numbers 14056, Common Model 006
+      if ( jcalc .eq. 14056 ) then
+         call S04_Crustal_CFNPP2_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model006'
+       endif
+C     Model Numbers 14057, Common Model 007
+      if ( jcalc .eq. 14057 ) then
+         call S04_Crustal_CFNPP2_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model007'
+       endif
+C     Model Numbers 14058, Common Model 008
+      if ( jcalc .eq. 14058 ) then
+         call S04_Crustal_CFNPP2_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model008'
+       endif
+C     Model Numbers 14059, Common Model 009
+      if ( jcalc .eq. 14059 ) then
+         call S04_Crustal_CFNPP2_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model009'
+       endif
+C     Model Numbers 14060, Common Model 010
+      if ( jcalc .eq. 14060 ) then
+         call S04_Crustal_CFNPP2_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model010'
+       endif
+C     Model Numbers 14061, Common Model 011
+      if ( jcalc .eq. 14061 ) then
+         call S04_Crustal_CFNPP2_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model011'
+       endif
+C     Model Numbers 14062, Common Model 012
+      if ( jcalc .eq. 14062 ) then
+         call S04_Crustal_CFNPP2_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model012'
+       endif
+C     Model Numbers 14063, Common Model 013
+      if ( jcalc .eq. 14063 ) then
+         call S04_Crustal_CFNPP2_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model013'
+       endif
+C     Model Numbers 14064, Common Model 014
+      if ( jcalc .eq. 14064 ) then
+         call S04_Crustal_CFNPP2_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model014'
+       endif
+C     Model Numbers 14065, Common Model 015
+      if ( jcalc .eq. 14065 ) then
+         call S04_Crustal_CFNPP2_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model015'
+       endif
+C     Model Numbers 14066, Common Model 016
+      if ( jcalc .eq. 14066 ) then
+         call S04_Crustal_CFNPP2_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model016'
+       endif
+C     Model Numbers 14067, Common Model 017
+      if ( jcalc .eq. 14067 ) then
+         call S04_Crustal_CFNPP2_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model017'
+       endif
+
+C for NPP3
+C     Model Numbers 14001, Common Model 001
+      if ( jcalc .eq. 14001 ) then
+         call S04_Crustal_CFNPP3_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model001'
+       endif
+C     Model Numbers 14002, Common Model 002
+      if ( jcalc .eq. 14002 ) then
+         call S04_Crustal_CFNPP3_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model002'
+       endif
+C     Model Numbers 14003, Common Model 003
+      if ( jcalc .eq. 14003 ) then
+         call S04_Crustal_CFNPP3_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model003'
+       endif
+C     Model Numbers 14004, Common Model 004
+      if ( jcalc .eq. 14004 ) then
+         call S04_Crustal_CFNPP3_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model004'
+       endif
+C     Model Numbers 14005, Common Model 005
+      if ( jcalc .eq. 14005 ) then
+         call S04_Crustal_CFNPP3_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model005'
+       endif
+C     Model Numbers 14006, Common Model 006
+      if ( jcalc .eq. 14006 ) then
+         call S04_Crustal_CFNPP3_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model006'
+       endif
+C     Model Numbers 14007, Common Model 007
+      if ( jcalc .eq. 14007 ) then
+         call S04_Crustal_CFNPP3_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model007'
+       endif
+C     Model Numbers 14008, Common Model 008
+      if ( jcalc .eq. 14008 ) then
+         call S04_Crustal_CFNPP3_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model008'
+       endif
+C     Model Numbers 14009, Common Model 009
+      if ( jcalc .eq. 14009 ) then
+         call S04_Crustal_CFNPP3_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model009'
+       endif
+C     Model Numbers 14010, Common Model 010
+      if ( jcalc .eq. 14010 ) then
+         call S04_Crustal_CFNPP3_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model010'
+       endif
+C     Model Numbers 14011, Common Model 011
+      if ( jcalc .eq. 14011 ) then
+         call S04_Crustal_CFNPP3_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model011'
+       endif
+C     Model Numbers 14012, Common Model 012
+      if ( jcalc .eq. 14012 ) then
+         call S04_Crustal_CFNPP3_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model012'
+       endif
+C     Model Numbers 14013, Common Model 013
+      if ( jcalc .eq. 14013 ) then
+         call S04_Crustal_CFNPP3_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model013'
+       endif
+C     Model Numbers 14014, Common Model 014
+      if ( jcalc .eq. 14014 ) then
+         call S04_Crustal_CFNPP3_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model014'
+       endif
+C     Model Numbers 14015, Common Model 015
+      if ( jcalc .eq. 14015 ) then
+         call S04_Crustal_CFNPP3_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model015'
+       endif
+C     Model Numbers 14016, Common Model 016
+      if ( jcalc .eq. 14016 ) then
+         call S04_Crustal_CFNPP3_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model016'
+       endif
+C     Model Numbers 14017, Common Model 017
+      if ( jcalc .eq. 14017 ) then
+         call S04_Crustal_CFNPP3_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model017'
+       endif
+
+
+ccc *******Subduction*******
+c
+C     Model Numbers 14071, Common Model 001
+      if ( jcalc .eq. 14071 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model001'
+       endif
+C     Model Numbers 14072, Common Model 002
+      if ( jcalc .eq. 14072 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model002'
+       endif
+C     Model Numbers 14073, Common Model 003
+      if ( jcalc .eq. 14073 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model003'
+       endif
+C     Model Numbers 14074, Common Model 004
+      if ( jcalc .eq. 14074 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model004'
+       endif
+C     Model Numbers 14075, Common Model 005
+      if ( jcalc .eq. 14075 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model005'
+       endif
+C     Model Numbers 14076, Common Model 006
+      if ( jcalc .eq. 14076 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model006'
+       endif
+C     Model Numbers 14077, Common Model 007
+      if ( jcalc .eq. 14077 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model007'
+       endif
+C     Model Numbers 14078, Common Model 008
+      if ( jcalc .eq. 14078 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model008'
+       endif
+C     Model Numbers 14079, Common Model 009
+      if ( jcalc .eq. 14079 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model009'
+       endif
+C     Model Numbers 14080, Common Model 010
+      if ( jcalc .eq. 14080 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model010'
+       endif
+C     Model Numbers 14081, Common Model 011
+      if ( jcalc .eq. 14081 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model011'
+       endif
+C     Model Numbers 14082, Common Model 012
+      if ( jcalc .eq. 14082 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model012'
+       endif
+C     Model Numbers 14083, Common Model 013
+      if ( jcalc .eq. 14083 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model013'
+       endif
+C     Model Numbers 14084, Common Model 014
+      if ( jcalc .eq. 14084 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model014'
+       endif
+C     Model Numbers 14085, Common Model 015
+      if ( jcalc .eq. 14085 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model015'
+       endif
+C     Model Numbers 14086, Common Model 016
+      if ( jcalc .eq. 14086 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model016'
+       endif
+C     Model Numbers 14087, Common Model 017
+      if ( jcalc .eq. 14087 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SubIntra_Common017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_SubInter_Common017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model017'
+       endif
+
+C------2018.10.18 add--------------------
+
+      if ( jcalc .eq. 14151 ) then
+         call S04_CruCF_NPP1_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14152 ) then
+         call S04_CruCF_NPP1_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14153 ) then
+         call S04_CruCF_NPP1_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14154 ) then
+         call S04_CruCF_NPP1_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14155 ) then
+         call S04_CruCF_NPP1_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14156 ) then
+         call S04_CruCF_NPP1_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14157 ) then
+         call S04_CruCF_NPP1_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14158 ) then
+         call S04_CruCF_NPP1_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14159 ) then
+         call S04_CruCF_NPP1_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14160 ) then
+         call S04_CruCF_NPP1_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14161 ) then
+         call S04_CruCF_NPP1_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14162 ) then
+         call S04_CruCF_NPP1_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14163 ) then
+         call S04_CruCF_NPP1_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14164 ) then
+         call S04_CruCF_NPP1_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14165 ) then
+         call S04_CruCF_NPP1_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14166 ) then
+         call S04_CruCF_NPP1_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14167 ) then
+         call S04_CruCF_NPP1_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP1 Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14168 ) then
+         call S04_CruCF_NPP2_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14169 ) then
+         call S04_CruCF_NPP2_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14170 ) then
+         call S04_CruCF_NPP2_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14171 ) then
+         call S04_CruCF_NPP2_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14172 ) then
+         call S04_CruCF_NPP2_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14173 ) then
+         call S04_CruCF_NPP2_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14174 ) then
+         call S04_CruCF_NPP2_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14175 ) then
+         call S04_CruCF_NPP2_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14176 ) then
+         call S04_CruCF_NPP2_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14177 ) then
+         call S04_CruCF_NPP2_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14178 ) then
+         call S04_CruCF_NPP2_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14179 ) then
+         call S04_CruCF_NPP2_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14180 ) then
+         call S04_CruCF_NPP2_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14181 ) then
+         call S04_CruCF_NPP2_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14182 ) then
+         call S04_CruCF_NPP2_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14183 ) then
+         call S04_CruCF_NPP2_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14184 ) then
+         call S04_CruCF_NPP2_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP2 Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14185 ) then
+         call S04_CruCF_NPP3_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14186 ) then
+         call S04_CruCF_NPP3_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14187 ) then
+         call S04_CruCF_NPP3_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14188 ) then
+         call S04_CruCF_NPP3_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14189 ) then
+         call S04_CruCF_NPP3_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14190 ) then
+         call S04_CruCF_NPP3_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14191 ) then
+         call S04_CruCF_NPP3_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14192 ) then
+         call S04_CruCF_NPP3_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14193 ) then
+         call S04_CruCF_NPP3_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14194 ) then
+         call S04_CruCF_NPP3_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14195 ) then
+         call S04_CruCF_NPP3_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14196 ) then
+         call S04_CruCF_NPP3_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14197 ) then
+         call S04_CruCF_NPP3_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14198 ) then
+         call S04_CruCF_NPP3_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14199 ) then
+         call S04_CruCF_NPP3_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14200 ) then
+         call S04_CruCF_NPP3_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14201 ) then
+         call S04_CruCF_NPP3_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP3 Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14202 ) then
+         call S04_CruCF_NPP4_001 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14203 ) then
+         call S04_CruCF_NPP4_002 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14204 ) then
+         call S04_CruCF_NPP4_003 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14205 ) then
+         call S04_CruCF_NPP4_004 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14206 ) then
+         call S04_CruCF_NPP4_005 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14207 ) then
+         call S04_CruCF_NPP4_006 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14208 ) then
+         call S04_CruCF_NPP4_007 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14209 ) then
+         call S04_CruCF_NPP4_008 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14210 ) then
+         call S04_CruCF_NPP4_009 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14211 ) then
+         call S04_CruCF_NPP4_010 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14212 ) then
+         call S04_CruCF_NPP4_011 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14213 ) then
+         call S04_CruCF_NPP4_012 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14214 ) then
+         call S04_CruCF_NPP4_013 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14215 ) then
+         call S04_CruCF_NPP4_014 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14216 ) then
+         call S04_CruCF_NPP4_015 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14217 ) then
+         call S04_CruCF_NPP4_016 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14218 ) then
+         call S04_CruCF_NPP4_017 ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1                               specT, lnY, sigma, iflag )
+
+         attenname1 = 'Crustal NPP4 Common Model017'
+       endif
+
+C------------Subduction---------------------------------------------------------------
+
+      if ( jcalc .eq. 14071 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14072 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14073 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14074 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14075 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14076 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14077 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14078 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14079 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14080 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14081 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14082 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14083 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14084 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14085 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14086 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14087 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP1_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP1_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14088 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14089 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14090 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14091 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14092 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14093 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14094 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14095 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14096 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14097 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14098 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14099 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14100 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14101 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14102 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14103 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14104 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP2_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP2_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14105 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14106 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14107 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14108 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14109 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14110 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14111 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14112 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14113 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14114 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14115 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14116 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14117 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14118 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14119 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14120 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14121 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP3_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP3_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model017'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14122 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_001 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model001'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14123 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_002 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model002'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14124 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_003 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model003'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14125 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_004 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model004'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14126 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_005 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model005'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14127 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_006 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model006'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14128 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_007 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model007'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14129 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_008 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model008'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14130 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_009 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model009'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14131 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_010 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model010'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14132 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_011 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model011'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14133 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_012 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model012'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14134 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_013 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model013'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14135 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_014 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model014'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14136 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_015 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model015'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14137 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_016 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model016'
+       endif
+C---------------------------------------------------------------------------
+      if ( jcalc .eq. 14138 ) then
+        if( ftype .eq. 1.0 )  then
+          call S04_SlabCF_NPP4_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+        elseif ( ftype .eq. 0.0 ) then
+          call S04_ITFCF_NPP4_017 ( mag, RupDist, depthtop, specT, lnY, sigma, iflag )
+          if (Ry0 .eq. 0.0) then
+            edge = 0.0
+           elseif (Ry0 .lt. 35.0 .and. Ry0 .gt. 0.0) then
+             edge = log(0.9 + (1.0-0.9)*0.5*(1.0+cos(Ry0/35.0*3.14159)))
+           else
+             edge = log(0.9)
+          endif
+          lnY = lnY + edge
+        endif
+         attenname1 = 'Sub Common Model017'
+       endif
+C---------------------------------------------------------------------------
+
+
+
+C-------------------------------------------------------------------------
+C           Taiwan SSHAC Project Sigma model sensitivity
+C-------------------------------------------------------------------------
+C     Taiwan Total Sigma: CV=0.15 Central
+C     Model Number = 15001
+      if ( jcalc .eq. 15001 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.15, Central'
+         iBranch = 1
+         call S04_Taiwan_SigmaSS__CV015 ( mag, sigma, iBranch )
+C     Kepp median ground motions large since this is only for sigma model
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.15 High
+C     Model Number = 15002
+      if ( jcalc .eq. 15002 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.15, High'
+         iBranch = 2
+         call S04_Taiwan_SigmaSS__CV015 ( mag, sigma, iBranch )
+C     Kepp median ground motions large since this is only for sigma model
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.15 Low
+C     Model Number = 15003
+      if ( jcalc .eq. 15003 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.15, Low'
+         iBranch = 3
+         call S04_Taiwan_SigmaSS__CV015 ( mag, sigma, iBranch )
+C     Kepp median ground motions large since this is only for sigma model
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 Central
+C     Model Number = 15004
+      if ( jcalc .eq. 15004 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, Central'
+         iBranch = 1
+         call S04_Taiwan_SigmaSS_CV02 ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 - high
+C     Model Number = 15005
+      if ( jcalc .eq. 15005 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, High'
+         iBranch = 2
+         call S04_Taiwan_SigmaSS_CV02 ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 Low
+C     Model Number = 15006
+      if ( jcalc .eq. 15006 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, Low'
+         iBranch = 3
+         call S04_Taiwan_SigmaSS_CV02 ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 Central, Crustal 2018 revised
+C     Model Number = 15007
+      if ( jcalc .eq. 15007 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, Central, Crustal'
+         iBranch = 1
+         call S04_Taiwan_SigmaSS_Crustal ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 - high, Crustal 2018 revised
+C     Model Number = 15008
+      if ( jcalc .eq. 15008 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, High, Crustal'
+         iBranch = 2
+         call S04_Taiwan_SigmaSS_Crustal ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.2 Low, Crustal 2018 revised
+C     Model Number = 15009
+      if ( jcalc .eq. 15009 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.2, Low, Crustal'
+         iBranch = 3
+         call S04_Taiwan_SigmaSS_Crustal ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.25 Central, Subduction 2018 revised
+C     Model Number = 15010
+      if ( jcalc .eq. 15010 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.25, Central, Subduction'
+         iBranch = 1
+         call S04_Taiwan_SigmaSS_Sub ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.25 - high, Subduction 2018 revised
+C     Model Number = 15011
+      if ( jcalc .eq. 15011 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.25, High, Subduction'
+         iBranch = 2
+         call S04_Taiwan_SigmaSS_Sub ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+C     Taiwan Total Sigma: CV=0.25 Low, Subduction 2018 revised
+C     Model Number = 15012
+      if ( jcalc .eq. 15012 ) then
+         attenname1 = 'Taiwan Total Sigma CV=0.25, Low, Subduction'
+         iBranch = 3
+         call S04_Taiwan_SigmaSS_Sub ( mag, sigma, iBranch )
+C        set dummy value for median (this is used only for sigma)
+         lnY = 1.0e10
+       endif
+
+c -------------------- end of Taiwan sensitivity models ----------------------
+c ***** Arroyo et al. (2010) Subduction Model-Interplate *****
+c     Arroyo et al. (2010) - Horizontal, Subduction-Interplate
+C     Model Number = 272
+      if ( jcalc .eq. 272 ) then
+         if (ftype .ne. 0) then
+            write (*,*)
+            write (*,*) 'Arroyo et al. (2010) Subduction atttenuation model'
+            write (*,*) 'is defined only for interplate events(interface)'
+            write (*,*) 'Mechanism Ftype = 0'
+            write (*,*) 'Please check the input file.'
+         else
+            call S02_Arroyo2010 ( mag, rupdist, lnY, specT,
+     1                    iflag, phi, tau, sigma )
+
+            attenname1 = 'Arroyo et al. (2010), Hor-Interplate, Rock'
+         endif
+       endif
+
+c ***** Montalva et al. (2017) Subduction Model-Interplate *****
+c     Montalva et al. (2017) - Horizontal, Subduction-Interplate
+C     Model Number = 3001
+      if ( jcalc .eq. 3001 ) then
+          call S02_Montalva2017 ( mag, fType, rupdist, vs, lnY, sigma, specT,
+     1                    period2, iflag, foreArc, depth, disthypo)
+C      subroutine Montalva2017 ( mag, fType, rRup, vs30, lnSa, sigma1,
+C     2           specT, period1, iflag, forearc, depth, disthypo )
+
+            attenname1 = 'Montalva et al. (2017), Hor-Subduction'
+
+      endif
+
+c ******* Chiou and Youngs Model *********
+C     Chiou and Youngs 2013 - Horizontal, measured Vs30, Ztor cap at 20 km
+C     Model Number = 2803
+      if ( jcalc .eq. 2803 ) then
+         vs30_class = 1
+         regionflag = 0
+          if ( depthTop .gt. 20. ) then
+             depthTop1 = 20.
+          else
+             depthTop1 = depthTop
+          endif
+
+         call S09_CY_NGAWest2_2013 ( mag, rupDist, jbdist, specT,
+     1                     period2, lnY, sigma, iflag,
+     2                     vs, dipavgd, depthTop1, Ftype,
+     3                     depthvs10, vs30_class, hwflag, Rx, regionflag,
+     1                     phi, tau )
+         attenname1 = 'CY_NGAWest2_2013-Hor,Measured Vs30m,Ztor20km'
+       endif
+
+c     Zhao et al. (2016) - Horizontal, Crustal
+C     Model Number = 1256
+      if (jcalc .eq. 1256) then
+        if ( vs >= 760 ) then
+c        Set Site Class = Hard Rock and Source Type = Crustal
+          sclass = 0.0
+          sourceclass = 0.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-Crust, Hard Rock'
+        elseif ( vs < 760 .and. vs > 600 ) then
+c        Set Site Class = Rock and Source Type
+          sclass = 1.0
+          sourceclass = 0.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-Crust, Rock (SC I)'
+
+        elseif ( vs <= 600 .and. vs > 300 ) then
+c        Set Site Class = Hard Soil and Source Type = Crustal
+          sclass = 2.0
+          sourceclass = 0.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-Crust, Hard Soil (SC II)'
+
+        elseif ( vs <= 300 .and. vs > 200 ) then
+c         Set Site Class = Medium Soil and Source Type = Crustal
+          sclass = 3.0
+          sourceclass = 0.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-Crust, Medium Soil (SC III)'
+
+        elseif ( vs <= 200 ) then
+c        Set Site Class = Soft Soil and Source Type = Crustal
+          sclass = 4.0
+          sourceclass = 0.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-Crust, Soft Soil (SC IV)'
+        endif
+
+      endif
+
+c     Zhao et al. (2016) - Horizontal, upper mantle
+C     Model Number = 3256
+      if (jcalc .eq. 3256) then
+
+        if (vs >= 760 ) then
+c        Set Site Class = Hard Rock and Source Type = upper mantle
+          sclass = 0.0
+          sourceclass = 1.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1            attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-upper mantle, Hard Rock'
+
+        elseif (vs < 760 .and. vs > 600 ) then
+c        Set Site Class = Rock and Source Type = upper mantle
+          sclass = 1.0
+          sourceclass = 1.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-upper mantle, Rock (SC I)'
+
+        elseif ( vs <= 600 .and. vs > 300  ) then
+c        Set Site Class = Hard Soil and Source Type = upper mantle
+          sclass = 2.0
+          sourceclass = 1.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-upper mantle, Hard Soil (SC II)'
+
+        elseif ( vs <= 300 .and. vs > 200 ) then
+c        Set Site Class = Medium Soil and Source Type = upper mantle
+          sclass = 3.0
+          sourceclass = 1.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-upper mantle, Medium Soil (SC III)'
+
+        elseif ( vs <= 200 ) then
+c        Set Site Class = Soft Soil and Source Type = upper mantle
+          sclass = 4.0
+          sourceclass = 1.0
+
+          call S02_Zhaoetal2016_cru ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, sourceclass, depth, phi, tau )
+
+          attenname1 = 'Zhao etal(2016)-upper mantle, Soft Soil (SC IV)'
+        endif
       endif
 
 
-C     Cascadia Model, Seattle Basin (Previous version of the model no longer recommended)
-C     Model Number = 614
-      if ( jcalc .eq. 614 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.2
-         iRegion = 3
-         pnwbflag = 1
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Cascadia, Seattle Basin'
-      endif
-C     Cascadia Model, Other PNW Basin (Previous version of the model no longer recommended)
-C     Model Number = 615
-      if ( jcalc .eq. 615 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.2
-         iRegion = 3
-         pnwbflag = 2
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Cascadia, Other PNW Basin'
-      endif
-C     Northern Central America/Mexico Model.
-C     Model Number = 616
-      if ( jcalc .eq. 616 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.4
-         mbslab = 7.4
-         iRegion = 4
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Northern-CAM'
-      endif
-C     Southern Central America/Mexico Model.
-C     Model Number = 617
-      if ( jcalc .eq. 617 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.40
-         mbslab = 7.60
-         iRegion = 4
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Southern-CAM'
+c     Zhao et al. (2016) - Horizontal, Rock, Subduction
+C     Model Number = 2251
+      if (jcalc .eq. 2251) then
+
+        if ( vs >= 760 ) then
+c        Set Site Class = Hard Rock and Source Type = Subduction
+          sclass = 0.0
+          if (ftype .eq. 1) then
+          call S02_Zhaoetal2016_slab ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          elseif (ftype .eq. 0) then
+          call S02_Zhaoetal2016_int ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          endif
+
+          attenname1 = 'Zhao etal(2016)-Sub., Hard Rock (SC I)'
+
+        elseif (vs < 760 .and. vs > 600 )  then
+c         Set Site Class = Rock and Source Type = Subduction
+          sclass = 1.0
+          if (ftype .eq. 1) then
+          call S02_Zhaoetal2016_slab ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          elseif (ftype .eq. 0) then
+          call S02_Zhaoetal2016_int ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          endif
+
+          attenname1 = 'Zhao etal(2016)-Sub., Rock (SC I)'
+
+        elseif ( vs <= 600 .and. vs > 300  ) then
+c         Set Site Class = Hard Soil and Source Type = Subduction
+          sclass = 2.0
+          if (ftype .eq. 1) then
+          call S02_Zhaoetal2016_slab ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          elseif (ftype .eq. 0) then
+          call S02_Zhaoetal2016_int ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          endif
+
+          attenname1 = 'Zhao etal(2016)-Sub., Hard Soil (SC II)'
+
+        elseif ( vs <= 300 .and. vs > 200 ) then
+c         Set Site Class = Medium Soil and Source Type = Subduction
+          sclass = 3.0
+          if (ftype .eq. 1) then
+          call S02_Zhaoetal2016_slab ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          elseif (ftype .eq. 0) then
+          call S02_Zhaoetal2016_int ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          endif
+
+          attenname1 = 'Zhao etal(2016)-Sub., Medium Soil (SC III)'
+
+        elseif ( vs <= 200 ) then
+c         Set Site Class = Soft Soil and Source Type = Subduction
+          sclass = 4.0
+          if (ftype .eq. 1) then
+          call S02_Zhaoetal2016_slab ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          elseif (ftype .eq. 0) then
+          call S02_Zhaoetal2016_int ( mag, rupdist, ftype, lnY, sigma, sclass, specT,
+     1             attenName1, period2,iflag, depth, phi, tau )
+          endif
+
+          attenname1 = 'Zhao etal(2016)-Sub., Soft Soil (SC IV)'
+        endif
       endif
 
-C     Japan Pacific Plate with Z25 value
-C     Model Number = 618
-      if ( jcalc .eq. 618 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.5
-         mbslab = 7.65
-         iRegion = 5
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Japan-PacificPlate with Z25 value'
+C     Taiwan Crustal Common Functional Form
+C         16,000 < jcalc < 17,000
+      if ( jcalc .gt. 16000 .and. jcalc .lt. 17000 ) then
+         coefcountrrup = jcalc - 16000
+         if (coefcountrrup .lt. 0) then
+            write (*,*) 'Incorrect jcalc for Taiwan Crustal Common Functional Model!!!'
+            write (*,*) 'Check input file.'
+            Stop 99
+         endif
+         call S04_Crustal_CF ( mag, RupDist, jbDist, depthtop, ftype, dipavgd, RupWidth, Rx, HWFlag,
+     1           specT, lnY, sigma, iflag, cfcoefrrup, coefcountrrup )
+         attenname1 = 'Taiwan Crustal Common Function Model'
       endif
 
-C     Japan Pacific Plate with Reference Z25 value (i.e., no basin effects)
-C     Model Number = 625
-      if ( jcalc .eq. 625 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.5
-         mbslab = 7.65
-         iRegion = 5
-         pnwbflag = 99
-C     Set Z25 = Z25Ref based on Vs
-         x = (alog10(vs) - alog10(500.0) ) / (0.33*sqrt(2.0))
-         z25P = 10**(3.05-0.8*(1+erf(x)))
-         z25P = z25P/1000.0
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, Z25P, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Japan-PacificPlate with Z25=Z25Ref'
+C     Taiwan Subduction Common Functional Form
+C         17,000 < jcalc < 18,000
+      if ( jcalc .gt. 17000 .and. jcalc .lt. 18000 ) then
+         coefcountrrup = jcalc - 17000
+         if (coefcountrrup .lt. 0) then
+            write (*,*) 'Incorrect jcalc for Taiwan Subduction Common Functional Model!!!'
+            write (*,*) 'Check input file.'
+            Stop 99
+         endif
+         call S04_Subduction_CF ( mag, RupDist, depthtop, specT, lnY, sigma, iflag, cfcoefrrup, coefcountrrup )
+         attenname1 = 'Taiwan Subduction Common Function Model'
       endif
-
-C     Japan Philippine Plate with Z25 value
-C     Model Number = 619
-      if ( jcalc .eq. 619 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.55
-         iRegion = 6
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Japan-PhilippinePlate with Z25 value'
-      endif
-
-C     Japan Philippine Plate with Reference Z25 value (i.e., no basin effects)
-C     Model Number = 626
-      if ( jcalc .eq. 626 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.7
-         mbslab = 7.55
-         iRegion = 6
-         pnwbflag = 99
-C     Set Z25 = Z25Ref based on Vs
-         x = (alog10(vs) - alog10(500.0) ) / (0.33*sqrt(2.0))
-         z25P = 10**(3.05-0.8*(1+erf(x)))
-         z25P = z25P/1000.0
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, Z25P, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Japan-PhilippinePlate with Z25=Z25Ref'
-      endif
-
-C     Northern South America
-C     Model Number = 620
-      if ( jcalc .eq. 620 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.5
-         mbslab = 7.3
-         iRegion = 7
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Northern-SA'
-      endif
-C     Southern South America
-C     Model Number = 621
-
-      if ( jcalc .eq. 621 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 8.6
-         mbslab = 7.25
-         iRegion = 8
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Southern-SA'
-      endif
-C     Taiwan
-C     Model Number = 622
-      if ( jcalc .eq. 622 ) then
-C     Set mb values for interface and slab cases
-         mbinter = 7.1
-         mbslab = 7.70
-         iRegion = 9
-         pnwbflag = 99
-         call S35_PSHAB2019 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           disthypo, iRegion, mbInter, mbSlab, pnwbflag )
-         attenname = 'Parker et al. (2020), Taiwan-East'
-      endif
-
-C     NGA-SUB: Si, Midorikawa, and Kishida (2019) - Japan Only
-C     Model Number = 675 Japan - No Basin Z25 Term
-C     Model Number = 676 Japan with Basin Z25 Term
-
-C     Note Moho Depth is fixed at default of 30 km.
-
-C     Model Number = 675
-      if ( jcalc .eq. 675 ) then
-C     Set mb values for interface and slab cases
-         mohodepth = 30.0
-         D25 = 0.0
-         call S35_SMK2020 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           mohodepth )
-         attenname = 'Si, Midorikawa, and Kishida(2020), Japan-No Basin'
-      endif
-C     Model Number = 676
-      if ( jcalc .eq. 676 ) then
-C     Set mb values for interface and slab cases
-         mohodepth = 30.0
-         call S35_SMK2020 ( mag, fType, rupDist, vs, D25, lnY,
-     1           sigma, phi, tau, specT, period2, iflag, depth,
-     2           mohodepth )
-         attenname = 'Si, Midorikawa, and Kishida(2020), Japan with Basin'
-      endif
-
-
 
 c     Check for valid jcalc
       if ( lnY .gt. 1.0e10 ) then
-         write (*,'( 2x,''invalid jcalc:'',i7,3f10.4,e12.4,f12.4)') jcalc, mag,
-     1      rupDist, ftype, lnY, sigma
+         write (*,'( 2x,''invalid jcalc:'',i7,3f10.4,e12.4,12f12.4)') jcalc, mag,
+     1      rupDist, ftype, lnY, sigma, specT, vs, depthtop, depthvs10, vs30_class,
+     1             period2, iflag, sourceclass, phi, tau, msasflag
          stop 99
       endif
 
+      attenName(jType,iAtten) = attenname1
       period1(jType,iProb) = period2
-      intflag = iflag
+      intflag(jType,iProb) = iflag
       siga = sigma
 
 c     Convert to g

@@ -51,8 +51,6 @@ c     and between min and max long and lat
       close (11)
       grid_n(iFlt) = j - 1
       rate_scale = sum1/sum
-
-
 c     Note: Rate_scale keeps track of the activity rate that is removed because
 c     it is at too large a distance (but is still in the activity rate of the input)
 
@@ -71,8 +69,6 @@ c     it is at too large a distance (but is still in the activity rate of the in
       write (*,'( 2x,''entry:'',i5)') i
       stop 99
       end
-
-
 c ----------------------------------------------------------------------
 
       subroutine S30_RdGrid2 ( iFlt, grid_a,grid_dlong,grid_dlat,grid_n,
@@ -82,9 +78,9 @@ c ----------------------------------------------------------------------
       implicit none
       include 'pfrisk.h'
 
-      integer grid_n(MAX_FLT), iFlt, nHead, i, n, j
-      real grid_long(MAX_FLT,MAX_GRID), grid_lat(MAX_FLT,MAX_GRID), grid_a(MAX_FLT,MAX_GRID),
-     1     grid_dlong(MAX_FLT), grid_dlat(MAX_FLT), grid_top(MAX_FLT,MAX_GRID), minLat,
+      integer grid_n(1), iFlt, nHead, i, n, j
+      real grid_long(MAX_FLT,1), grid_lat(MAX_FLT,1), grid_a(MAX_FLT,1),
+     1     grid_dlong(1), grid_dlat(1), grid_top(MAX_FLT,1), minLat,
      2     minLong, maxLat, maxLong, dummy, rate_scale
       real*8 sum, sum1
       character*80 filein

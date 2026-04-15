@@ -1046,13 +1046,13 @@ c     it takes into account the ftype of the fault unlike BJF 1993.
 
       integer MAXPER
       parameter (MAXPER=12)
-      real ftype, dist, m, lnY, sigma, period1, vs, r, ftype1
+      real ftype, dist, m, lnY, sigma, period1, vs, r
       real period(MAXPER), b2(MAXPER), b3(MAXPER),
      1     b5(MAXPER), b1ss(MAXPER), b1rv(MAXPER),
      1     bv(MAXPER), va(MAXPER), h(MAXPER), sigma1(MAXPER)
       character*80 attenName
       real specT, b1ssT, b1rvT, b2T, b3T, b5T, bvT, vaT, hT, sigma1T
-      integer count1, count2, nper, iflag, i
+      integer count1, count2, nper, iflag, i, ftype1
 
       data period / 0.00, 0.1, 0.15, 0.20, 0.24,
      1              0.30, 0.40, 0.50, 0.75, 1.00, 1.5, 2. /
@@ -1259,8 +1259,6 @@ C Interpolate the coefficients for the requested spectral period.
       f2 = 0.659
       f3 = -4.7
       g2 = 0.574
-
-
 c     Convert oblique to reverse for Campbell
       ftype1 = ftype
       if ( ftype1 .eq. 0.5 ) then
@@ -2499,16 +2497,12 @@ c ------------------------------------------------------------
 
       subroutine S02_Idriss91_95_rock_m61 ( m, d, ftype, lnY, sigma,
      1           specT, period1,iflag )
-
-      implicit none
-
-      integer MAXPER
       parameter (MAXPER=24)
-      real ftype, d, m, lnY, sigma, period1, b1, b2
+      real ftype, d, m, lnY, sigma, period1
       real a0(MAXPER), a1(MAXPER), a2(MAXPER), b0(MAXPER), sig0(MAXPER),
      1     period(MAXPER), sig1(MAXPER)
       real specT, a0T, a1T, a2T, b0T, sig0T, sig1T, pga91, pga95
-      integer nper, count1, count2, iflag, i
+      integer nper, count1, count2,iflag
 
       data period / 0.0, 0.03, 0.05, 0.075, 0.1, 0.11, 0.13, 0.15, 0.2,
      1              0.25, 0.30, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
@@ -4500,8 +4494,6 @@ C Interpolate the coefficients for the requested spectral period.
      1      c6T*(mag-10.0)**3.0
 
          sigma = sigT
-
-
 C     Now convert to gals.
       lnY = lnY + 6.89
 
@@ -7286,8 +7278,6 @@ c ---------------------------------------------------------------------
      1          -0.52, -0.52, -0.51, -0.5, -0.47, -0.44, -0.4, -0.38 /
       Data b2 / -0.14, -0.06, -0.14, -0.11, -0.11, -0.11, -0.13, -0.18,
      1          -0.19, -0.16, -0.14, -0.1, -0.06, 0.0, 0.0, 0.0, 0.0 /
-
-
 C     Set parameters
       c1 = 6.5
       pga_low = 0.06
@@ -7487,8 +7477,6 @@ C.....Now compute the site term........
 
       return
       END
-
-
 c ---------------------------------------------------------------------
 C     *** Akkar and Bommer (2010) ***
 c ---------------------------------------------------------------------
@@ -7752,8 +7740,6 @@ c ---------------------------------------------------------------------
       real mag, Rbjf, Ftype, Fn, Fr, Vs, lnY
       real a2, a5, a6, a7, c1, c, n, sigma, period1, pgaref
       INTEGER iFlag, count1, count2, nPer, i
-
-
       Data period / 0.00, -1.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.075, 0.1, 0.15,
      1              0.2, 0.3, 0.4, 0.5, 0.75, 1.00, 1.5, 2.00, 3.00, 4.00 /
       Data a1     / 1.85329, 5.61201, 1.87032, 1.95279, 2.07006, 2.20452, 2.35413,
@@ -7788,8 +7774,6 @@ c ---------------------------------------------------------------------
 c      Data sigma  / 0.7121, 0.6865, 0.7146, 0.7204, 0.7335, 0.7405, 0.7514, 0.7618,
 c     1              0.7812, 0.7832, 0.7676, 0.7623, 0.7781, 0.7653, 0.7863, 0.7849,
 c     2              0.8109, 0.8151, 0.8083, 0.7149 /
-
-
 
 C First check for the PGA case (i.e., specT=0.0)
       nPer = 20
@@ -7901,8 +7885,6 @@ C     Set frequency independent terms
       c1 = 6.75
       c = 2.5
       n = 3.2
-
-
 C     Compute the PGA for reference Vs=750m/s.
       if (mag .le. c1 ) then
          pgaref = a1(1) + a2*(mag-c1) + a3(1)*(8.5-mag)**2.0 +
@@ -8073,8 +8055,6 @@ c ---------------------------------------------------------------------
       Data dsd2 / -0.325, -0.3013, -0.3231, -0.318, -0.3143, -0.3064, -0.277,
      1            -0.3045, -0.3358, -0.2839, -0.305, -0.2651, -0.2308, -0.1724,
      2            -0.2379, -0.2569, -0.2358, -0.1482, -0.1356, -0.0862 /
-
-
 C     Set parameters
       vref = 750.0
       c1 = 6.75
@@ -8332,11 +8312,7 @@ C.....Site Response Term.........
         fsite = sb1T*alog(min(vs,vcon)/vref)
       endif
 
-
-
       lnY = fmag + fdis + fsof + faat + fsite
-
-
 C     Convert ground motion to units of gals.
       lnY = lnY + 6.89
 
@@ -8487,8 +8463,6 @@ c ---------------------------------------------------------------------
       data sigma3 / 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.7999,
      1              0.7997, 0.7988, 0.7966, 0.7792, 0.7504, 0.7136, 0.7035,
      1              0.7006, 0.7001, 0.7, 0.7, 0.7 /
-
-
 c      Note: Ctvz array is included but the model does not account for this.
 C            To apply this term in the model the distance of travel within the
 C            volcanic zone would need to be computed and used.
@@ -8920,8 +8894,6 @@ C     First compute the AS(1997) Hanging Wall
 
 c     Set distance through volcanic attenuation
       RVOL = 0.0*Rrup
-
-
 C     Next compute the PGA unprimed for later scaling.
       c1up = 0.14274
       c3up = 0.0
@@ -9033,8 +9005,6 @@ c----------------------------------------------------------------------
 
       Data C46 / -0.03250, -0.03250, -0.03250, -0.03441, -0.03594, -0.03823, -0.03535,
      1           -0.03354, -0.03211, -0.02857, -0.02500, -0.02008, -0.02008, -0.01587 /
-
-
       Data SigmaM6 / 0.4871, 0.4871, 0.4871, 0.5297, 0.5401, 0.5599, 0.5456, 0.5556,
      1               0.5658, 0.5611, 0.5573, 0.5419, 0.5419, 0.5809 /
       Data sigslope / -0.1011, -0.1011, -0.1011, -0.0703, -0.0292, 0.0172, -0.0566, -0.1064,
@@ -9162,8 +9132,6 @@ c     A rupture centroid depth of 50 km separates the deep from the shallow even
 
 c     Set distance through volcanic attenuation
       RVOL = 0.0*Rrup
-
-
 C     Next compute the PGA unprimed for later scaling.
       c11up = 8.57343
       c12up = 1.41400
@@ -9184,8 +9152,6 @@ C     Next compute the PGA unprimed for later scaling.
      2          c17up * alog (Rrup + c18up * exp(c19up * M)) +
      3          c20up * Hc + c24up * SI +
      4          c46up * RVOL * (1-DS)
-
-
       pgaup = pgaupab + c29up*Sc + (c30up*alog(exp(pgaupab)+0.03) + c43up)*Sd
 
 C     Next compute the primed PGA value.
@@ -9229,8 +9195,6 @@ C     Convert ground motion to units of gals.
 
       return
       end
-
-
 c----------------------------------------------------------------------
       subroutine S02_Bindi_Hor_2009 ( m, jbDist, specT,
      1                     period2, lnY, sigma, iflag, Sr, Ss, Sd )
@@ -9247,8 +9211,6 @@ c----------------------------------------------------------------------
       REAL period2, lnY, Sr, Ss, Sd, period1
 
       integer iflag, count1, count2, nPer, i
-
-
       data Period / 0.0, 0.01, 0.03, 0.04, 0.07, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35,
      1           0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 1.75, 2.0 /
       data a / 3.7691, 3.7691, 3.8802, 3.8569, 4.005, 4.0176, 4.1, 4.0808,
@@ -9282,8 +9244,6 @@ c----------------------------------------------------------------------
       data sig / 0.3523, 0.3523, 0.3521, 0.3648, 0.3649, 0.3734, 0.3832, 0.3924,
      1           0.3815, 0.375, 0.3842, 0.374, 0.3744, 0.3713, 0.3732, 0.3761,
      2           0.3756, 0.3784, 0.3907, 0.4119, 0.4059, 0.3987, 0.379 /
-
-
 C Find the requested spectral period and corresponding coefficients
       nPer = 23
 C First check for the PGA case (i.e., specT=0.0)
@@ -9434,8 +9394,6 @@ c----------------------------------------------------------------------
       data sig  /  0.337, 0.332, 0.337, 0.343, 0.358, 0.363, 0.365, 0.382, 0.374,
      1       0.363, 0.359, 0.349, 0.35, 0.349, 0.348, 0.354, 0.355, 0.357, 0.36,
      2       0.368, 0.373, 0.376, 0.373  /
-
-
 
 C Find the requested spectral period and corresponding coefficients
       nPer = 23
@@ -9991,8 +9949,6 @@ c04/08/13          t4=-2.1
 
 cnjg          Tspo = t1*rRup+t2*M+t3*Vs+t4
           Tspo = max(0.3,abs(t1*rRup+t2*M+t3*Vs+t4))
-
-
           Pern = (specT/Tspo)**Slope
 
           temp1 = (alog(specT)+Mu)/Si
@@ -10015,8 +9971,6 @@ C     Convert ground motion to units of gals
 
       return
       end
-
-
 c----------------------------------------------------------------------
       subroutine S02_DCPP_CommonASK ( m, Rrup, ztor, specT, lnY, sigma, iflag )
 
@@ -10256,8 +10210,6 @@ C     Convert ground motion to units of gals in natural log units.
 
       return
       end
-
-
 c----------------------------------------------------------------------
       subroutine S02_DCPP_Common001 ( m, Rrup, ztor, specT, lnY, sigma, iflag )
 
@@ -12654,8 +12606,6 @@ C     Convert ground motion to units of gals in natural log units.
       return
       end
 
-
-
 c----------------------------------------------------------------------
 C     SWUS Common Functional Model as a function of Rrup distance.
 C     Coefficients are passed from input file and are only applicable for
@@ -12717,8 +12667,6 @@ C     Convert ground motion to units of gals in natural log units.
 
       return
       end
-
-
 c----------------------------------------------------------------------
 C     SWUS Common Functional Model as a function of Rjb distance.
 C     Coefficients are passed from input file and are only applicable for
@@ -12780,7 +12728,6 @@ C     Convert ground motion to units of gals in natural log units.
       return
       end
 
-
 c----------------------------------------------------------------------
 C     SWUS DCPP Common Functional Model as a function of Rrup distance.
 C     Coefficients are passed from input file and are only applicable for
@@ -12790,15 +12737,14 @@ C     This version includes the fault mechanism term consistent for DCPP.
       Subroutine S02_SWUS_CFRrup_DCPP ( m, Rrup, Rjb, ztor, ftype, dip, Width, Rx, HWFlag,
      1                   specT, lnY, sigma, iflag, cfcoefrrup, coefcountRrup, phi, tau )
 
-      implicit none
       include 'pfrisk.h'
 
       REAL a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10
       real cfcoefRrup(MAX_Atten,11)
       REAL M, specT, sigma, Rrup, Ztor, lnY, termmag, ftype
       real Rjb, dip, Width, Rx, HWFactor, phi, tau
-      integer iflag, coefcountRrup, HWFlag, count1, count2, nper, i
-      real coefMech(22), period(22), period1, coefMechT, termmech
+      integer iflag, coefcountRrup, HWFlag, count1, count2, nper
+      real coefMech(22), period(22), period1, coefMechT
 
       data period / 0.0, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.15, 0.20, 0.25, 0.30,
      1              0.4, 0.5, 0.75, 1.00, 1.5, 2.0, 4.0, 4.0, 5.0, 7.50, 10.0 /
