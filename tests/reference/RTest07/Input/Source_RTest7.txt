@@ -1,9 +1,9 @@
 1  			iCoor  (0=x,y 1=long,lat)
 1  			Number of flts
 RTest7
-1.0 			Prob Activity 
+1.0 			Prob Activity
 7  			Number of seg models
-0.15 0.15 0.14 0.14 0.14 0.14 0.14  	  wts for seg models   
+0.15 0.15 0.14 0.14 0.14 0.14 0.14  	  wts for seg models
 9			Number of segments
 1 0 0 0 0 0 0 0 0		  flags for seg model 1
 0 1 1 0 0 0 0 0 0		  flags for seg model 2
@@ -28,17 +28,17 @@ A_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -67,17 +67,17 @@ B_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.7			  max mags
@@ -106,17 +106,17 @@ C_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.7			  max mags
@@ -145,17 +145,17 @@ D_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.3			  max mags
@@ -167,7 +167,7 @@ D_RTest7
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 0.0             	  fault mech
-1.0            	  	  wts for fault mech  
+1.0            	  	  wts for fault mech
 E_RTest7
 1  1  0.  0  0 		source type, atten type, sample step (km), dirflag, synflag
 1.0  			aleatory seg wt
@@ -184,17 +184,17 @@ E_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.3			  max mags
@@ -206,7 +206,7 @@ E_RTest7
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 0.0             	  fault mech
-1.0            	  	  wts for fault mech  
+1.0            	  	  wts for fault mech
 F_RTest7
 1  1  0.  0  0 		source type, atten type, sample step (km), dirflag, synflag
 1.0  			aleatory seg wt
@@ -223,17 +223,17 @@ F_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.8			  max mags
@@ -262,17 +262,17 @@ G_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.3			  max mags
@@ -301,17 +301,17 @@ H_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.3			  max mags
@@ -340,17 +340,17 @@ I_RTest7
 0			Number of act rates
 1.0  0.0  0.0  0.0	  wts for sr, act. rate, rec int, MoRate branches
 1             		Number of slip-rates
-2		   	  slip rates (mm/yr)  
+2		   	  slip rates (mm/yr)
 1       		  wts for slip rates
 0        		Number of rec. int.
 0			Number of moment rates
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3 
+0.0  0.0  0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 12.            		  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.8			  max mags

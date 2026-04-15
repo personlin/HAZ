@@ -1,9 +1,9 @@
 1  			iCoor  (0=x,y 1=long,lat)
 25  			Number of flts
 StairStep1
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 01_StairStep1
@@ -23,7 +23,7 @@ StairStep1
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -31,10 +31,10 @@ StairStep1
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -48,9 +48,9 @@ StairStep1
 1.0             	  fault mech
 1.0            		  wts for fault mech
 StairStep2
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 02_StairStep2
@@ -70,7 +70,7 @@ StairStep2
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -78,10 +78,10 @@ StairStep2
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -95,9 +95,9 @@ StairStep2
 1.0             	  fault mech
 1.0            		  wts for fault mech
 StairStep3
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 03_StairStep3
@@ -117,7 +117,7 @@ StairStep3
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -125,10 +125,10 @@ StairStep3
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -140,11 +140,11 @@ StairStep3
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep4
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 04_StairStep4
@@ -164,7 +164,7 @@ StairStep4
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -172,10 +172,10 @@ StairStep4
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -189,9 +189,9 @@ StairStep4
 1.0             	  fault mech
 1.0            		  wts for fault mech
 StairStep5
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 05_StairStep5
@@ -211,7 +211,7 @@ StairStep5
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -219,10 +219,10 @@ StairStep5
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -236,9 +236,9 @@ StairStep5
 1.0             	  fault mech
 1.0            		  wts for fault mech
 StairStep6
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 06_StairStep6
@@ -258,7 +258,7 @@ StairStep6
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -266,10 +266,10 @@ StairStep6
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -283,9 +283,9 @@ StairStep6
 1.0             	  fault mech
 1.0            		  wts for fault mech
 StairStep7
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 07_StairStep7
@@ -305,7 +305,7 @@ StairStep7
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -313,10 +313,10 @@ StairStep7
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -328,11 +328,11 @@ StairStep7
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep8
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 08_StairStep8
@@ -352,7 +352,7 @@ StairStep8
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -360,10 +360,10 @@ StairStep8
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -375,11 +375,11 @@ StairStep8
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep9
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 09_StairStep9
@@ -399,7 +399,7 @@ StairStep9
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -407,10 +407,10 @@ StairStep9
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -422,11 +422,11 @@ StairStep9
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep10
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 10_StairStep10
@@ -446,7 +446,7 @@ StairStep10
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -454,10 +454,10 @@ StairStep10
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -469,11 +469,11 @@ StairStep10
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep11
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 11_StairStep11
@@ -493,7 +493,7 @@ StairStep11
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -501,10 +501,10 @@ StairStep11
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -516,11 +516,11 @@ StairStep11
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep12
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 12_StairStep12
@@ -540,7 +540,7 @@ StairStep12
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -548,10 +548,10 @@ StairStep12
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -563,11 +563,11 @@ StairStep12
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep13
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 13_StairStep13
@@ -587,7 +587,7 @@ StairStep13
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.0005 1.0		  b-value, act rate, wt			
+0.8 0.0005 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -595,10 +595,10 @@ StairStep13
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 14.43            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -610,11 +610,11 @@ StairStep13
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep14
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 14_StairStep14
@@ -634,7 +634,7 @@ StairStep14
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -642,10 +642,10 @@ StairStep14
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -657,11 +657,11 @@ StairStep14
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep15
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 15_StairStep15
@@ -681,7 +681,7 @@ StairStep15
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -689,10 +689,10 @@ StairStep15
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -704,11 +704,11 @@ StairStep15
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep16
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 16_StairStep16
@@ -728,7 +728,7 @@ StairStep16
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -736,10 +736,10 @@ StairStep16
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -751,11 +751,11 @@ StairStep16
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep17
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 17_StairStep17
@@ -775,7 +775,7 @@ StairStep17
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -783,10 +783,10 @@ StairStep17
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -798,11 +798,11 @@ StairStep17
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep18
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 18_StairStep18
@@ -811,7 +811,7 @@ StairStep18
 90 73.41		dip, depth to top
 5			Number of long/lat pts
 -64.87280  0.44967	  long lat pts
--64.84100  0.44967	
+-64.84100  0.44967
 -64.84100 -0.44967
 -64.87280 -0.44967
 -64.87280  0.44967
@@ -822,7 +822,7 @@ StairStep18
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -830,10 +830,10 @@ StairStep18
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -845,11 +845,11 @@ StairStep18
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep19
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 19_StairStep19
@@ -869,7 +869,7 @@ StairStep19
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -877,10 +877,10 @@ StairStep19
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -892,11 +892,11 @@ StairStep19
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep20
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 20_StairStep20
@@ -916,7 +916,7 @@ StairStep20
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -924,10 +924,10 @@ StairStep20
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -939,11 +939,11 @@ StairStep20
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep21
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 21_StairStep21
@@ -963,7 +963,7 @@ StairStep21
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -971,10 +971,10 @@ StairStep21
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -986,11 +986,11 @@ StairStep21
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep22
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 22_StairStep22
@@ -1010,7 +1010,7 @@ StairStep22
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1018,10 +1018,10 @@ StairStep22
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -1033,11 +1033,11 @@ StairStep22
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep23
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 23_StairStep23
@@ -1057,7 +1057,7 @@ StairStep23
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1065,10 +1065,10 @@ StairStep23
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -1080,11 +1080,11 @@ StairStep23
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep24
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 24_StairStep24
@@ -1104,7 +1104,7 @@ StairStep24
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1112,10 +1112,10 @@ StairStep24
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags
@@ -1127,11 +1127,11 @@ StairStep24
 1.0           		  wts for fault mech models
 1              		Number of fault mech
 1.0             	  fault mech
-1.0            		  wts for fault mech 
+1.0            		  wts for fault mech
 StairStep25
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of set models
-1.   			  wts for seg models   
+1.   			  wts for seg models
 1			Number of segments
 1 			  flags for seg model
 25_StairStep25
@@ -1151,7 +1151,7 @@ StairStep25
 0.8          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.8 0.00054 1.0		  b-value, act rate, wt			
+0.8 0.00054 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0       	  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1159,10 +1159,10 @@ StairStep25
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 17.68            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.0			  max mags

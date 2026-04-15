@@ -1,9 +1,9 @@
 1  			iCoor  (0=x,y 1=long,lat)
 12  			Number of flts
 01_RTest6_W&C94_StrikeSlip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 01_RTest6_W&C94_StrikeSlip
@@ -101,7 +101,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -109,7 +109,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -117,10 +117,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -134,9 +134,9 @@
 0.0             	  	  fault mech (strike slip)
 1.0            		  wts for fault mech
 02_RTest6_W&C94_Reverse
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 02_RTest6_W&C94_Reverse
@@ -234,7 +234,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -242,7 +242,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -250,10 +250,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	 	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -267,9 +267,9 @@
 1.0             	  	  fault mech (reverse)
 1.0            		  wts for fault mech
 03_RTest6_W&C94_Normal
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 03_RTest6_W&C94_Normal
@@ -367,7 +367,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -375,7 +375,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -383,10 +383,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -400,9 +400,9 @@
 -1.0             	  fault mech (normal)
 1.0            		  wts for fault mech
 04_RTest6_W&C94_All
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 04_RTest6_W&C94_All
@@ -500,7 +500,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -508,7 +508,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -516,10 +516,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -533,9 +533,9 @@
 0.0            	 	  fault mech (strike slip)
 1.0            		  wts for fault mech
 05_RTest6_Leonard10_Interplate_dipslip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 05_RTest6_Leonard10_Interplate_dipslip
@@ -633,7 +633,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -641,7 +641,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -649,10 +649,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -666,9 +666,9 @@
 1.0            	 	  fault mech (reverse)
 1.0            		  wts for fault mech
 06_RTest6_Leonard10_Interplate_strikeslip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 06_RTest6_Leonard10_Interplate_strikeslip
@@ -766,7 +766,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -774,7 +774,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -782,10 +782,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -799,9 +799,9 @@
 0.0            	 	  fault mech (strike slip)
 1.0            		  wts for fault mech
 07_RTest6_Leonard10_SCR_dipslip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 07_RTest6_Leonard10_SCR_dipslip
@@ -899,7 +899,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -907,7 +907,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -915,10 +915,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -932,9 +932,9 @@
 1.0            	 	  fault mech (reverse)
 1.0            		  wts for fault mech
 08_RTest6_Leonard10_SCR_strikeslip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 08_RTest6_Leonard10_SCR_strikeslip
@@ -1032,7 +1032,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -1040,7 +1040,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1048,10 +1048,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -1065,9 +1065,9 @@
 0.0            	 	  fault mech (strike slip)
 1.0            		  wts for fault mech
 09_RTest6_constantAR
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 09_RTest6_constantAR
@@ -1165,7 +1165,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -1173,7 +1173,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1181,10 +1181,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -1198,9 +1198,9 @@
 0.0            	 	  fault mech (strike slip)
 1.0            		  wts for fault mech
 10_RTest6_NGA-West2AR_Normal
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 10_RTest6_NGA-West2AR_Normal
@@ -1298,7 +1298,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -1306,7 +1306,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1314,10 +1314,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	 	 mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	 	 mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	 	 fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -1331,9 +1331,9 @@
 -1.0            	 	  fault mech (normal)
 1.0            		  wts for fault mech
 11_RTest6_NGA-West2AR_StrikeSlip
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 11_RTest6_NGA-West2AR_StrikeSlip
@@ -1431,7 +1431,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -1439,7 +1439,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1447,10 +1447,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -1464,9 +1464,9 @@
 0.0            	 	  fault mech (strike slip)
 1.0            		  wts for fault mech
 12_RTest6_NGA-West2AR_Reverse
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 12_RTest6_NGA-West2AR_Reverse
@@ -1564,7 +1564,7 @@
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -1572,7 +1572,7 @@
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -1580,10 +1580,10 @@
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  	mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 15.            	  	fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0		Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 7.5			  max mags
@@ -1598,17 +1598,17 @@
 1.0            		  wts for fault mech
 
 
-   
 
 
 
-   
 
 
 
-   
 
 
 
-   
+
+
+
+
 

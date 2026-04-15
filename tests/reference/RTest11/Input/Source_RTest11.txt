@@ -1,9 +1,9 @@
 1  			iCoor  (0=x,y 1=long,lat)
 1  			Number of flts
 RTest11
-1.0 			Prob Activity 
+1.0 			Prob Activity
 1  			Number of seg models
-1.   		  	  wts for seg models   
+1.   		  	  wts for seg models
 1			Number of segments
 1 		  	  flags for seg model
 01_RTest11
@@ -101,7 +101,7 @@ RTest11
 -122.240  38.881
 -122.160  38.892
 -122.080  38.899
--122.000  38.901	
+-122.000  38.901
 1              		Number of dip variations
 0.           		  dip variations
 1.	       		  wt for dip variations
@@ -109,7 +109,7 @@ RTest11
 0.9          		  b-values
 1.            		  wts for b-values
 1			Number of act rates
-0.9 0.0395 1.0		  b-value, act rate, wt			
+0.9 0.0395 1.0		  b-value, act rate, wt
 0.0 1.0 0.0 0.0		  wts for sr, act. rate, rec int, MoRate branches
 0             		Number of slip-rates
 0        		Number of rec. int.
@@ -117,10 +117,10 @@ RTest11
 1             		Number of mag recur models
 1           		  mag recur model (1=exp)
 1.0			  wts for mag recur model
-0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3 
+0.0 0.0 0.0     	  mpdf1, mpdf2, mpdf3
 1             		Number of fault widths
 0.05            	  fault widths
-1.0          		  wts for fault widths 
+1.0          		  wts for fault widths
 0  0.0  0.0  0.0	Depth pdf model (0=uniform) and params
 1             		Number of max mags (fault width 1)
 6.5			  max mags
@@ -134,5 +134,5 @@ RTest11
 0.0             	  fault mech
 1.0            		  wts for fault mech
 
-   
+
 
