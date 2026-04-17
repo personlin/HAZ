@@ -459,7 +459,7 @@ c -----------------------------
 
 c     declarations passed in
       integer nSeg
-      real xSeg(MAX_SEG), ySeg(MAX_SEG), x0, y0
+      real xSeg(*), ySeg(*), x0, y0
 
 c     declarations passed out
       integer insideFlag

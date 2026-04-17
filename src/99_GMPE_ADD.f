@@ -2511,7 +2511,7 @@ C First check for the PGA case (i.e., specT=0.0)
         phis2sT = phis2s(1)
        goto 1011
 C   Function Form for PGAraw, max Regression     
-       elseif (specT .eq. -2.0) then
+       elseif (specT .eq. -2.0 .or. specT .eq. -1.0) then
          period1 = period(2)
          c1T = c1(2)
          c2T = c2(2)
@@ -10721,7 +10721,7 @@ C First check for the PGA case (i.e., specT=0.0)
         phis2sT = phis2s(1)
        goto 1011
 C   Function Form for PGV Regression     
-       elseif (specT .eq. -2.0) then
+       elseif (specT .eq. -2.0 .or. specT .eq. -1.0) then
          period1 = period(2)
          c1T = c1(2)
          c2T = c2(2)
@@ -10976,7 +10976,11 @@ C     Set Path scaling term
 C     Set Site scaling term 
     
       Z10ref = exp((-4.08/2.0)*alog((vs**2.0+355.4**2.0)/(1750**2.0+355.4**2.0)))
-      Ssitelin = c24T * alog(vs/vs30ref) + c25T*alog(Z10*1000/Z10ref)
+      if (Z10 .gt. 0.) then
+        Ssitelin = c24T * alog(vs/vs30ref) + c25T*alog(Z10*1000/Z10ref)
+      else
+        Ssitelin = c24T * alog(vs/vs30ref)
+      endif
 
       if(vs .LT. vs30ref ) then  
            C23flag=1
@@ -12162,7 +12166,7 @@ C First check for the PGA case (i.e., specT=0.0)
         phis2sT = phis2s(1)
        goto 1011
 C   Function Form for PGV Regression     
-       elseif (specT .eq. -2.0) then
+       elseif (specT .eq. -2.0 .or. specT .eq. -1.0) then
          period1 = period(2)
          c1T = c1(2)
          c2T = c2(2)
@@ -12417,7 +12421,11 @@ C     Set Path scaling term
 C     Set Site scaling term 
     
       Z10ref = exp((-4.08/2.0)*alog((vs**2.0+355.4**2.0)/(1750**2.0+355.4**2.0)))
-      Ssitelin = c24T * alog(vs/vs30ref) + c25T*alog(Z10*1000/Z10ref)
+      if (Z10 .gt. 0.) then
+        Ssitelin = c24T * alog(vs/vs30ref) + c25T*alog(Z10*1000/Z10ref)
+      else
+        Ssitelin = c24T * alog(vs/vs30ref)
+      endif
 
       if(vs .LT. vs30ref ) then  
            C23flag=1
