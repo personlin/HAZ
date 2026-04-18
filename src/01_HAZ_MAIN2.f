@@ -290,7 +290,7 @@ c            set the probabilities for the depths
              if ( iDepthFlag .eq. 0 ) then
                call S13_CalcDepthProb ( iDepthModel(iFlt), depthParam, iFlt, pLocY,
      1              sourceType(iFlt), nLocY, yStep(iFlt), zFlt(1,1),
-     2              faultWidth(iFlt,iFltWidth), rupWidth, dip(iFlt,iWidth,1) )
+     2              faultWidth(iFlt,iFltWidth), rupWidth, dip(iFlt,iFltWidth,1) )
                if (sourceType(iFlt) .le. 2 .or. sourceType(iFlt) .eq. 7) then
                  iDepthFlag = 1
                endif
