@@ -9,9 +9,9 @@ c     Set array dimensions
      1        MAX_ATTEN, MAX_FTYPE, MAX_S7, MAX_Ztor,
      2        MAX_EAST
 
-      parameter (MAX_FLT=200, MAX_SEG=100, MAX_INTEN=30, MAX_PROB=30,
+      parameter (MAX_FLT=570, MAX_SEG=100, MAX_INTEN=30, MAX_PROB=30,
      1           MAX_EPS=10, MAX_Xcost=10, MAXPARAM=431, MAX_MAG=30,
-     2           MAX_DIST=25, MAX_N1=200, MAX_WIDTH=15, MAX_DIST1=10000,
+     2           MAX_DIST=25, MAX_N1=570, MAX_WIDTH=15, MAX_DIST1=10000,
      3           MAX_GRID=32000, MAX_SYN=5, MAX_AMPMAG=25, MAX_AMPPER=15,
      4           MAX_AMPGM=15, MAX_PER=501, MAXDETM_DIST=2000, MAX_DD=12)
       parameter (MAXFLT_DD=1000, MAXFLT_AS=1000, MAX_NODE=100,
